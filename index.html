@@ -2251,6 +2251,10 @@
     .builder-footer button:disabled { opacity: .38; cursor: default; }
     .builder-step-count { color: var(--builder-muted); font-size: 12px; font-weight: 700; }
 
+    .mobile-intro,
+    .mobile-sheet-nav,
+    .mobile-skill-toggle { display: none; }
+
     @media (max-width: 940px) {
       .character-builder { padding: 14px; }
       .builder-dialog {
@@ -2323,11 +2327,447 @@
       .builder-footer { padding: 12px 18px; }
     }
 
+    /* 手機專屬操作版面：保留桌面印刷版，僅重新安排畫面閱讀與觸控方式。 */
+    @media (max-width: 720px) {
+      html { scroll-padding-top: 108px; }
+      body {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom));
+        background: #fff;
+      }
+      button, input, textarea, select { touch-action: manipulation; }
+
+      .screen-shell {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        display: block;
+        padding: 9px 12px 8px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, .2);
+      }
+      .brand {
+        width: 100%;
+        min-width: 0;
+      }
+      .brand strong { overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+      .brand > span { display: none; }
+      .brand .brand-patreon {
+        width: 32px;
+        height: 32px;
+        margin-left: auto;
+        flex: 0 0 auto;
+      }
+      .toolbar {
+        width: calc(100% + 24px);
+        margin: 7px -12px 0;
+        padding: 0 12px 2px;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      .toolbar::-webkit-scrollbar { display: none; }
+      .toolbar > * { flex: 0 0 auto; }
+      .toolbar a,
+      .toolbar button { min-height: 36px; padding: 8px 12px; font-size: 12px; }
+      .toolbar .mode-switch button { min-height: 32px; padding: 7px 10px; }
+
+      .fan-policy-notice,
+      .analysis { display: none; }
+      .mobile-intro {
+        display: block;
+        margin: 12px 12px 0;
+        border: 1px solid #bbb;
+        border-radius: 10px;
+        color: #444;
+        background: #fafafa;
+        font-size: 12px;
+      }
+      .mobile-intro summary {
+        min-height: 44px;
+        padding: 12px 14px;
+        color: #111;
+        font-weight: 850;
+        line-height: 20px;
+        cursor: pointer;
+      }
+      .mobile-intro-copy {
+        padding: 0 14px 14px;
+        border-top: 1px solid #ddd;
+      }
+      .mobile-intro-copy p { margin: 10px 0 0; line-height: 1.65; }
+      .mobile-intro-copy a { color: inherit; font-weight: 800; }
+      .mobile-intro-legal { color: #777; font-size: 9px; line-height: 1.5 !important; }
+
+      .prototype {
+        display: block;
+        width: 100%;
+        max-width: none;
+        margin: 12px auto 0;
+        padding: 0 10px;
+        scroll-margin-top: 105px;
+      }
+      .spread { display: contents; }
+      .panel {
+        display: none;
+        width: 100%;
+        min-height: 0;
+        padding: 0 0 24px;
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: #fff;
+        box-shadow: none;
+      }
+      .panel.is-mobile-active { display: block; }
+      #page-3.panel.is-mobile-active { display: flex; }
+      .panel::before { display: none; }
+      .panel::after,
+      #page-4::after {
+        position: static;
+        display: block;
+        margin-top: 18px;
+        padding: 12px 2px 0;
+        transform: none !important;
+        border-top: 1px solid #ddd;
+        font-size: 8px;
+        line-height: 1.45;
+        text-align: left;
+      }
+      .page-head {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 10px;
+        margin: 0 0 12px;
+        padding: 12px 2px 10px;
+      }
+      .page-head h2 { font-size: 25px; }
+      .character-head-fields {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+        gap: 7px;
+      }
+      .character-head-fields label {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2px;
+        white-space: normal;
+      }
+      .character-head-fields input { min-height: 32px; font-size: 16px; }
+
+      .card {
+        border-color: #bbb;
+        border-radius: 12px;
+      }
+      .card + .card,
+      #page-1 .main-sheet-layout > div > .card + .card { margin-top: 12px; }
+      .card-head { min-height: 44px; padding: 9px 11px; }
+      .card-head h3 { font-size: 14px; letter-spacing: .06em; }
+      .card-head span,
+      .hint { font-size: 10px; }
+      .card-body,
+      .tight .card-body { padding: 10px 11px; }
+
+      input.line,
+      textarea.line,
+      select.line {
+        min-height: 38px;
+        padding: 7px 2px 5px;
+        font-size: 16px;
+      }
+      textarea.line { min-height: 112px; }
+      input[type="checkbox"] { width: 18px; height: 18px; }
+
+      .identity.compact {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+      }
+      .identity.compact .name-field,
+      .identity.compact .clan-field { grid-column: 1 / -1; }
+      .identity.compact .player-field,
+      .identity.compact .age-field,
+      .identity.compact .occupation-field,
+      .identity.compact .homeland-field { grid-column: auto; }
+      .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }
+      .stat { min-height: 66px; padding: 7px 5px; }
+      .stat label { font-size: 11px; }
+      .stat input { font-size: 23px; }
+      .derived { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .derived label { font-size: 10px; }
+
+      .main-sheet-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .main-sheet-layout > div { display: contents; }
+      #page-1 .main-sheet-layout > div:first-child > .card:nth-child(1) { order: 1; }
+      #page-1 .main-sheet-layout > div:first-child > .card:nth-child(2) { order: 2; }
+      #page-1 .rune-affinity-card { order: 3; }
+      #page-1 .hp-summary-card { order: 4; }
+      #page-1 .hit-location-card { order: 5; }
+      #page-1 .main-sheet-layout > div:first-child > .card:nth-child(3) { order: 6; }
+      #page-1 .main-sheet-layout > div:first-child > .card:nth-child(4) { order: 7; }
+      #page-1 .main-sheet-layout > div:first-child > .card:nth-child(5) { order: 8; }
+      #page-1 .main-sheet-layout > div:first-child > .card:nth-child(6) { order: 9; }
+      .rune-affinity-card { height: auto; min-height: 472px; }
+      #page-1 #passion-rows { grid-template-columns: 1fr; gap: 0; }
+      #page-1 #passion-rows .passion-row { min-height: 38px; border-bottom: 1px solid var(--write-line); }
+      #page-1 #passion-rows .passion-row:last-child { border-bottom: 0; }
+      .passion-row { grid-template-columns: minmax(0, 1fr) 48px 24px; gap: 7px; }
+      .passion-row input[type="text"],
+      .passion-fixed-name { font-size: 15px; }
+      .passion-row .percent input { width: 38px; height: 32px; font-size: 16px; }
+      .hp-summary-card .circle-track,
+      .magic-summary .circle-track { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+      .hp-summary-card .circle-track label,
+      .circle-track label { min-height: 34px; }
+      .hp-summary-card .circle-track span,
+      .circle-track span { width: 30px; height: 30px; font-size: 12px; }
+
+      .weapon-card table,
+      .spell-table,
+      .sorcery-table,
+      .gear-table,
+      .hit-location-card table,
+      .weapon-card tbody,
+      .spell-table tbody,
+      .sorcery-table tbody,
+      .gear-table tbody,
+      .hit-location-card tbody { display: block; }
+      .weapon-card thead,
+      .spell-table thead,
+      .sorcery-table thead,
+      .gear-table thead,
+      .hit-location-card thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+      .weapon-card tbody,
+      .spell-table tbody,
+      .sorcery-table tbody,
+      .gear-table tbody,
+      .hit-location-card tbody { display: grid; gap: 9px; }
+      .weapon-card tr,
+      .spell-table tr,
+      .sorcery-table tr,
+      .gear-table tr,
+      .hit-location-card tr {
+        display: grid;
+        overflow: hidden;
+        border: 1px solid #ccc;
+        border-radius: 9px;
+        background: #fff;
+      }
+      .weapon-card tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .weapon-card td:nth-child(1),
+      .weapon-card td:nth-child(4) { grid-column: 1 / -1; }
+      .spell-table tr { grid-template-columns: minmax(0, 1fr) 86px; }
+      .spell-table td:nth-child(3) { grid-column: 1 / -1; }
+      .sorcery-table tr { grid-template-columns: minmax(0, 1fr) 88px; }
+      .gear-table tr { grid-template-columns: minmax(0, 1fr) 72px 86px; }
+      .hit-location-card tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hit-location-card td:nth-child(5) { grid-column: 1 / -1; }
+      .weapon-card td,
+      .spell-table td,
+      .sorcery-table td,
+      .gear-table td,
+      .hit-location-card td {
+        display: flex;
+        width: auto !important;
+        height: auto !important;
+        min-height: 62px;
+        padding: 7px 9px;
+        flex-direction: column;
+        justify-content: center;
+        border: 0;
+        border-right: 1px solid #e0e0e0;
+        border-bottom: 1px solid #e0e0e0;
+        text-align: left !important;
+      }
+      .weapon-card td::before,
+      .spell-table td::before,
+      .sorcery-table td::before,
+      .gear-table td::before,
+      .hit-location-card td::before {
+        content: attr(data-mobile-label);
+        display: block;
+        margin-bottom: 3px;
+        color: #777;
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+      .weapon-card td input,
+      .spell-table td input,
+      .sorcery-table td input,
+      .gear-table td input,
+      .hit-location-card td input {
+        min-height: 32px;
+        padding: 4px 0;
+        border-bottom: 1px solid var(--write-line);
+        font-size: 16px;
+        text-align: left !important;
+      }
+      .weapon-card td.check-cell { align-items: flex-start; }
+      .weapon-card td.check-cell input { width: 22px; border: 0; }
+
+      .skill-layout { display: block; }
+      .skill-column { display: contents; }
+      .skill-group {
+        margin: 0 0 10px !important;
+        overflow: hidden;
+        border: 1px solid #bbb;
+        border-radius: 11px;
+      }
+      .skill-group-head {
+        position: relative;
+        grid-template-columns: minmax(0, 1fr) 46px 38px 18px;
+        min-height: 50px;
+        padding: 7px 48px 7px 11px;
+        border-bottom: 1px solid #ddd;
+        background: #fafafa;
+      }
+      .skill-group-head h3 { min-height: 34px; padding: 7px 0; font-size: 15px; }
+      .skill-group-en { font-size: 9px; }
+      .skill-modifier {
+        grid-template-columns: 46px 38px 18px;
+        min-height: 34px;
+        padding: 2px 0;
+        font-size: 10px;
+      }
+      .skill-modifier input { height: 28px; font-size: 15px; }
+      .mobile-skill-toggle {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: grid;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        place-items: center;
+        border: 1px solid #aaa;
+        border-radius: 8px;
+        color: #111;
+        background: #fff;
+        font-size: 17px;
+        font-weight: 900;
+      }
+      .skill-group.is-mobile-collapsed > :not(.skill-group-head) { display: none; }
+      .skill-row {
+        grid-template-columns: minmax(0, 1fr) 48px 44px 24px;
+        min-height: 38px;
+        gap: 5px;
+        padding: 2px 11px;
+        border-bottom: 1px solid #eee;
+      }
+      .skill-row:last-child { border-bottom: 0; }
+      .skill-row .skill-name { font-size: 14px; }
+      .skill-name-en { font-size: 8px; }
+      .skill-name-long .skill-name-cn { font-size: 12px; }
+      .skill-row .base { font-size: 10px; }
+      .skill-row input[type="text"] { height: 32px; font-size: 16px; }
+      .skill-row input[type="checkbox"] { width: 19px; height: 19px; }
+      .skill-subhead { min-height: 34px; padding: 8px 11px 2px; font-size: 12px; }
+      .skill-quick-reference {
+        margin: 12px 0 0;
+        padding: 12px;
+        border: 1px solid #bbb;
+        border-top: 2px solid #111;
+        border-radius: 10px;
+      }
+      .skill-quick-reference > h3 { font-size: 16px; }
+      .skill-quick-list,
+      .skill-quick-note { font-size: 11px; }
+
+      .magic-summary-grid,
+      .magic-layout,
+      .magic-bottom-layout { grid-template-columns: 1fr; }
+      .magic-summary .rune-point-resource .circle-track { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+      .casting-inline { grid-template-columns: 1fr; gap: 4px; }
+      .casting-inline label { grid-template-columns: minmax(0, 1fr) 64px; }
+      .common-rune-spells { font-size: 11px; line-height: 1.6; }
+      .sorcery-card { height: auto; }
+      .spirit-primary,
+      .spirit-combat-fields { grid-template-columns: 1fr; gap: 8px; }
+      .spirit-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .spirit-record label { font-size: 10px; }
+      .spirit-record input.line { height: 38px; font-size: 16px; }
+
+      .page4-top {
+        display: block;
+        height: auto;
+      }
+      .page4-top > .card {
+        display: block;
+        height: auto;
+        margin-bottom: 12px;
+      }
+      .page4-top > .card > .card-body { display: block; }
+      .background-card textarea,
+      .asset-notes textarea { min-height: 180px; }
+      .coin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .coin-legend { font-size: 10px; line-height: 1.55; }
+      .asset-summary { grid-template-columns: 1fr; }
+      .fold-guide { display: none !important; }
+      .fold-gear,
+      body.layout-standard .fold-gear {
+        position: static;
+        transform: none;
+      }
+      .fold-gear-card { height: auto; }
+      .fold-gear-card .card-body { display: block; }
+      .fold-enc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 10px; }
+      .folding-only { display: none !important; }
+      .standard-only { display: inline !important; }
+
+      .mobile-sheet-nav {
+        position: fixed;
+        z-index: 55;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 5px;
+        padding: 7px 8px calc(7px + env(safe-area-inset-bottom));
+        border-top: 1px solid #bbb;
+        background: rgba(255, 255, 255, .96);
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, .14);
+        backdrop-filter: blur(12px);
+      }
+      .mobile-sheet-nav button {
+        display: grid;
+        min-width: 0;
+        min-height: 52px;
+        padding: 5px 2px;
+        place-items: center;
+        gap: 2px;
+        border: 0;
+        border-radius: 10px;
+        color: #666;
+        background: transparent;
+        font-size: 11px;
+        font-weight: 800;
+      }
+      .mobile-sheet-nav i { font-size: 16px; }
+      .mobile-sheet-nav button[aria-selected="true"] { color: #fff; background: #111; }
+      body.builder-open .mobile-sheet-nav { display: none; }
+    }
+
     @media print {
       @page { size: A4 portrait; margin: 0; }
       :root { background: white; }
       body { background: white; }
       .screen-only, .screen-shell, .analysis { display: none !important; }
+      .mobile-intro, .mobile-sheet-nav { display: none !important; }
       .prototype {
         display: flex;
         flex-direction: column;
@@ -2340,6 +2780,7 @@
         display: contents;
       }
       .panel {
+        display: block !important;
         flex: 0 0 297mm;
         width: 210mm;
         min-height: 297mm;
@@ -2356,7 +2797,7 @@
       #page-1 { order: 1; }
       #page-4 { order: 2; }
       #page-2 { order: 3; }
-      #page-3 { order: 4; break-after: auto; page-break-after: auto; }
+      #page-3 { display: flex !important; order: 4; break-after: auto; page-break-after: auto; }
       .panel::before { width: 2mm; }
       .panel::after { right: 8mm; bottom: 3mm; }
       #page-4::after { font-size: 6.2pt; line-height: 1.22; }
@@ -2388,6 +2829,16 @@
       <button type="button" id="clear-button">清除內容</button>
     </nav>
   </header>
+
+  <details class="mobile-intro screen-only">
+    <summary>免費・非官方角色表與使用說明</summary>
+    <div class="mobile-intro-copy">
+      <p>本網頁角色表依 <a href="https://www.chaosium.com/fan-material-policy/" target="_blank" rel="noreferrer">Chaosium Fan Material Policy</a> 製作。歡迎原樣下載、用於個人跑團及非商業分享；不得販售、轉售、收費提供、設為付費存取內容，或作為 Patreon 付費回饋。</p>
+      <p>手機版使用下方導覽切換角色、技能、魔法與背景；列印時仍使用原本兩張 A4 雙面版面。</p>
+      <p>如果喜歡我們的作品，歡迎透過 <a href="https://patreon.com/SassOmniverse" target="_blank" rel="noreferrer">Patreon <i class="fa-brands fa-patreon" aria-hidden="true"></i></a> 支持我們。本角色表的原創版面與網頁程式 © 2026 Sass Omniverse。</p>
+      <p class="mobile-intro-legal" lang="en">This website and character sheet use trademarks and/or copyrights owned by Chaosium Inc/Moon Design Publications LLC, which are used under Chaosium Inc’s Fan Material Policy. We are expressly prohibited from charging you to use or access this content. This website and character sheet are not published, endorsed, or specifically approved by Chaosium Inc. For more information about Chaosium Inc’s products, please visit www.chaosium.com.</p>
+    </div>
+  </details>
 
   <section class="fan-policy-notice screen-only" aria-labelledby="fan-policy-title">
     <div class="fan-policy-copy">
@@ -2726,6 +3177,13 @@
       </article>
     </section>
   </main>
+
+  <nav class="mobile-sheet-nav screen-only" aria-label="手機版角色表頁面" role="tablist">
+    <button type="button" data-mobile-page="1" role="tab" aria-controls="page-1" aria-selected="true"><i class="fa-solid fa-user-shield" aria-hidden="true"></i><span>角色</span></button>
+    <button type="button" data-mobile-page="2" role="tab" aria-controls="page-2" aria-selected="false"><i class="fa-solid fa-list-check" aria-hidden="true"></i><span>技能</span></button>
+    <button type="button" data-mobile-page="3" role="tab" aria-controls="page-3" aria-selected="false"><i class="fa-solid fa-wand-sparkles" aria-hidden="true"></i><span>魔法</span></button>
+    <button type="button" data-mobile-page="4" role="tab" aria-controls="page-4" aria-selected="false"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i><span>背景</span></button>
+  </nav>
 
 
   <script>
@@ -3571,6 +4029,49 @@
         ["name", "qty", "enc"].forEach(function (key) { tr.appendChild(el("td", {}, [input("gear_" + i + "_" + key)])); });
         return tr;
       });
+
+      function addMobileTableLabels() {
+        document.querySelectorAll(".panel table").forEach(function (table) {
+          var headings = Array.from(table.querySelectorAll("thead th")).map(function (heading) {
+            return String(heading.textContent || heading.getAttribute("aria-label") || "").trim();
+          });
+          table.querySelectorAll("tbody tr").forEach(function (row) {
+            Array.from(row.children).forEach(function (cell, index) {
+              cell.setAttribute("data-mobile-label", headings[index] || "欄位");
+            });
+          });
+        });
+      }
+
+      function prepareMobileSkillGroups() {
+        document.querySelectorAll(".skill-group").forEach(function (group, index) {
+          var head = group.querySelector(".skill-group-head");
+          if (!head || head.querySelector(".mobile-skill-toggle")) return;
+          var title = head.querySelector("h3");
+          var label = title ? String(title.textContent || "技能分類").trim() : "技能分類";
+          var button = el("button", {
+            class: "mobile-skill-toggle",
+            type: "button",
+            "aria-label": "展開「" + label + "」",
+            "aria-expanded": "false",
+            text: "+"
+          });
+          function setCollapsed(collapsed) {
+            group.classList.toggle("is-mobile-collapsed", collapsed);
+            button.setAttribute("aria-expanded", String(!collapsed));
+            button.setAttribute("aria-label", (collapsed ? "展開「" : "收合「") + label + "」");
+            button.textContent = collapsed ? "+" : "−";
+          }
+          button.addEventListener("click", function () {
+            setCollapsed(!group.classList.contains("is-mobile-collapsed"));
+          });
+          head.appendChild(button);
+          setCollapsed(index !== 0);
+        });
+      }
+
+      addMobileTableLabels();
+      prepareMobileSkillGroups();
 
       var PRAX_PASSIONS = [
         ["憎恨（混沌）", 60],
@@ -6759,6 +7260,52 @@
           setLayoutMode(button.getAttribute("data-layout-mode"), true);
         });
       });
+
+      var mobileLayoutQuery = window.matchMedia("(max-width: 720px)");
+
+      function mobilePageFromHash() {
+        var match = String(window.location.hash || "").match(/^#page-([1-4])$/);
+        return match ? match[1] : "1";
+      }
+
+      function activateMobilePage(page, options) {
+        var selected = /^[1-4]$/.test(String(page)) ? String(page) : "1";
+        document.querySelectorAll(".panel[data-page]").forEach(function (panel) {
+          var active = panel.getAttribute("data-page") === selected;
+          panel.classList.toggle("is-mobile-active", active);
+          if (mobileLayoutQuery.matches) panel.setAttribute("aria-hidden", String(!active));
+          else panel.removeAttribute("aria-hidden");
+        });
+        document.querySelectorAll("[data-mobile-page]").forEach(function (button) {
+          var active = button.getAttribute("data-mobile-page") === selected;
+          button.setAttribute("aria-selected", String(active));
+          button.tabIndex = active ? 0 : -1;
+        });
+        if (options && options.updateHash && window.location.hash !== "#page-" + selected) {
+          window.history.pushState(null, "", "#page-" + selected);
+        }
+        if (options && options.scroll && mobileLayoutQuery.matches) {
+          window.requestAnimationFrame(function () {
+            document.getElementById("prototype").scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        }
+      }
+
+      function syncMobileLayout() {
+        document.body.classList.toggle("mobile-sheet-view", mobileLayoutQuery.matches);
+        activateMobilePage(mobilePageFromHash());
+      }
+
+      document.querySelectorAll("[data-mobile-page]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          activateMobilePage(button.getAttribute("data-mobile-page"), { updateHash: true, scroll: true });
+        });
+      });
+      window.addEventListener("hashchange", function () { activateMobilePage(mobilePageFromHash()); });
+      window.addEventListener("popstate", function () { activateMobilePage(mobilePageFromHash()); });
+      if (mobileLayoutQuery.addEventListener) mobileLayoutQuery.addEventListener("change", syncMobileLayout);
+      else mobileLayoutQuery.addListener(syncMobileLayout);
+      syncMobileLayout();
 
       var savedLayoutMode = "folding";
       try { savedLayoutMode = localStorage.getItem(MODE_KEY) || "folding"; } catch (e) { savedLayoutMode = "folding"; }
