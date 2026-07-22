@@ -413,8 +413,13 @@
       margin-bottom: 9px;
     }
     .identity .wide { grid-column: span 2; }
-    .identity.compact { grid-template-columns: 2fr .8fr .8fr 1.25fr; }
-    .identity.compact .occupation-field { max-width: 9.5em; }
+    .identity.compact { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+    .identity.compact .name-field { grid-column: span 6; }
+    .identity.compact .player-field,
+    .identity.compact .age-field { grid-column: span 3; }
+    .identity.compact .occupation-field { grid-column: span 3; }
+    .identity.compact .homeland-field { grid-column: span 5; }
+    .identity.compact .clan-field { grid-column: span 4; }
     .stats {
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -2496,12 +2501,12 @@
             <section class="card tight">
               <div class="card-body">
                 <div class="identity compact">
-                  <label class="field wide">姓名<input type="text" class="line persist" name="name"></label>
-                  <label class="field">玩家<input type="text" class="line persist" name="player"></label>
-                  <label class="field">年齡<input type="text" class="line persist" name="birth_age"></label>
+                  <label class="field name-field">姓名<input type="text" class="line persist" name="name"></label>
+                  <label class="field player-field">玩家<input type="text" class="line persist" name="player"></label>
+                  <label class="field age-field">年齡<input type="text" class="line persist" name="birth_age"></label>
                   <label class="field occupation-field">職業<input type="text" class="line persist" name="occupation"></label>
-                  <label class="field">故土<input type="text" class="line persist" name="homeland"></label>
-                  <label class="field wide">氏族／部族<input type="text" class="line persist" name="clan_tribe"></label>
+                  <label class="field homeland-field">故土<input type="text" class="line persist" name="homeland"></label>
+                  <label class="field clan-field">氏族／部族<input type="text" class="line persist" name="clan_tribe"></label>
                 </div>
                 <input type="hidden" class="persist" name="homeland_template_applied">
               </div>
