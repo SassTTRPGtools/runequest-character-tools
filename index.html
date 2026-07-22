@@ -163,14 +163,18 @@
 
     .fan-policy-notice {
       display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 14px;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+      align-items: center;
+      gap: 18px;
       max-width: 1480px;
       margin: 22px auto 0;
       padding: 18px 20px;
       border: 2px solid #111;
       background: #fff;
       box-shadow: 6px 6px 0 #111;
+    }
+    .fan-policy-copy {
+      min-width: 0;
     }
     .fan-policy-notice h2 {
       margin: 0 0 12px;
@@ -180,6 +184,14 @@
     }
     .fan-policy-notice p { margin: 0; line-height: 1.65; }
     .fan-policy-summary { max-width: 1120px; font-size: 13px; }
+    .fan-policy-logo {
+      display: block;
+      width: 100%;
+      height: auto;
+      justify-self: end;
+      max-height: 160px;
+      object-fit: contain;
+    }
     .fan-policy-summary + .fan-policy-summary { margin-top: 7px; }
     .fan-policy-summary a { color: inherit; font-weight: 800; }
     .patreon-inline { white-space: nowrap; }
@@ -2378,12 +2390,13 @@
   </header>
 
   <section class="fan-policy-notice screen-only" aria-labelledby="fan-policy-title">
-    <div>
+    <div class="fan-policy-copy">
       <h2 id="fan-policy-title">免費・符文巡旅（RuneQuest）非官方角色表</h2>
       <p class="fan-policy-summary">本網頁角色表依 <a href="https://www.chaosium.com/fan-material-policy/" target="_blank" rel="noreferrer">Chaosium Fan Material Policy</a> 製作。歡迎原樣下載、用於個人跑團及非商業分享；不得販售、轉售、收費提供、設為付費存取內容，或作為 Patreon 付費回饋。</p>
       <p class="fan-policy-summary">如果喜歡我們的作品，歡迎透過 <a class="patreon-inline" href="https://patreon.com/SassOmniverse" target="_blank" rel="noreferrer">Patreon <i class="fa-brands fa-patreon" aria-hidden="true"></i></a> 支持我們。</p>
       <p class="fan-policy-summary">本角色表的原創版面與網頁程式 © 2026 Sass Omniverse。</p>
     </div>
+    <img class="fan-policy-logo" src="logo.svg" alt="Sass Omniverse brand logo">
     <p class="fan-policy-legal" lang="en">This website and character sheet use trademarks and/or copyrights owned by Chaosium Inc/Moon Design Publications LLC, which are used under Chaosium Inc’s Fan Material Policy. We are expressly prohibited from charging you to use or access this content. This website and character sheet are not published, endorsed, or specifically approved by Chaosium Inc. For more information about Chaosium Inc’s products, please visit <a href="https://www.chaosium.com/" target="_blank" rel="noreferrer">www.chaosium.com</a>.</p>
   </section>
 
