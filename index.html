@@ -192,6 +192,14 @@
       body.sheet-preview .prototype select {
         caret-color: transparent;
       }
+      body.sheet-preview .prototype .preview-editable-location-hp,
+      body.sheet-preview .prototype .preview-editable-resource,
+      body.sheet-preview .prototype .preview-editable-weapon-hp {
+        caret-color: auto;
+      }
+      body.sheet-preview .prototype input[type="checkbox"].preview-editable-resource {
+        cursor: pointer;
+      }
       body.sheet-preview .prototype input:not([type="checkbox"]):not([type="radio"]),
       body.sheet-preview .prototype textarea,
       body.sheet-preview .prototype select {
@@ -411,6 +419,146 @@
       letter-spacing: .08em;
     }
     .card-head span, .hint { color: var(--muted); font-size: 10px; }
+    .sheet-action-button {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 9px;
+      color: var(--ink);
+      background: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .sheet-action-button:hover,
+    .sheet-action-button:focus-visible {
+      color: #fff;
+      background: #111;
+      outline: 0;
+    }
+    body.rest-open { overflow: hidden; }
+    .rest-modal {
+      position: fixed;
+      z-index: 110;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(0, 0, 0, .72);
+    }
+    .rest-modal[hidden] { display: none; }
+    .rest-dialog {
+      width: min(560px, 100%);
+      overflow: hidden;
+      border: 1px solid #392f28;
+      border-radius: 8px;
+      color: #29211b;
+      background: #fffdf8;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .38);
+    }
+    .rest-dialog-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      border-bottom: 1px solid #c9bba8;
+    }
+    .rest-dialog-head h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -.02em;
+    }
+    .rest-dialog-close {
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      border: 1px solid #c9bba8;
+      border-radius: 4px;
+      color: #6f6258;
+      background: transparent;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .rest-dialog-close:hover,
+    .rest-dialog-close:focus-visible {
+      color: #fff;
+      border-color: #7c3428;
+      background: #7c3428;
+      outline: 0;
+    }
+    .rest-options {
+      display: grid;
+      gap: 10px;
+      padding: 18px 20px 20px;
+    }
+    .rest-option {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px 16px;
+      padding: 13px 14px;
+      border: 1px solid #c9bba8;
+      border-radius: 6px;
+      background: #fff;
+    }
+    .rest-option-copy strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 14px;
+    }
+    .rest-option-copy small {
+      display: block;
+      color: #6f6258;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+    .rest-hour-controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 7px;
+    }
+    .rest-hour-controls input {
+      width: 68px;
+      border: 1px solid #9f8f7d;
+      border-radius: 4px;
+      padding: 8px 7px;
+      color: #29211b;
+      background: #fff;
+      font: inherit;
+      font-size: 14px;
+      text-align: center;
+    }
+    .rest-hour-controls span {
+      color: #6f6258;
+      font-size: 12px;
+      font-weight: 750;
+    }
+    .rest-apply-button {
+      min-width: 82px;
+      border: 1px solid #29211b;
+      border-radius: 5px;
+      padding: 8px 12px;
+      color: #fff;
+      background: #29211b;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .rest-apply-button:hover,
+    .rest-apply-button:focus-visible {
+      border-color: #7c3428;
+      background: #7c3428;
+      outline: 0;
+    }
+    .rest-error {
+      grid-column: 1 / -1;
+      margin: -2px 0 0;
+      color: #8a0000;
+      font-size: 11px;
+      font-weight: 750;
+    }
+    .rest-error[hidden] { display: none; }
     .card-body { padding: 8px 9px; }
     .tight .card-body { padding: 6px 8px; }
 
@@ -528,6 +676,34 @@
     }
     .circle-resource.mp-resource { background: #fff; }
     .resource-title { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; font-size: 11px; font-weight: 800; }
+    .resource-values {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5px;
+      margin-top: 5px;
+    }
+    .resource-value {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: end;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 800;
+    }
+    .resource-value input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      border-bottom: 1px solid var(--ink);
+      outline: 0;
+      padding: 0 2px;
+      background: transparent;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 850;
+      text-align: center;
+    }
     .circle-track {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -559,6 +735,11 @@
       line-height: 1;
     }
     .circle-track input:checked + span { border-color: var(--ink); font-weight: 800; }
+    .circle-track label.is-spent span {
+      color: #777;
+      text-decoration-line: line-through;
+      text-decoration-thickness: 1.5px;
+    }
     .circle-track label:has(input:focus-visible) span { outline: 2px solid var(--accent); outline-offset: 1px; }
     .hp-summary-card .circle-track {
       grid-template-columns: repeat(13, minmax(0, 1fr));
@@ -2544,6 +2725,7 @@
       .card-head h3 { font-size: 14px; letter-spacing: .06em; }
       .card-head span,
       .hint { font-size: 10px; }
+      .sheet-action-button { min-height: 34px; padding: 7px 11px; font-size: 11px; }
       .card-body,
       .tight .card-body { padding: 10px 11px; }
 
@@ -2850,14 +3032,23 @@
       }
       .mobile-sheet-nav i { font-size: 16px; }
       .mobile-sheet-nav button[aria-selected="true"] { color: #fff; background: #111; }
-      body.builder-open .mobile-sheet-nav { display: none; }
+      body.builder-open .mobile-sheet-nav,
+      body.rest-open .mobile-sheet-nav { display: none; }
+
+      .rest-modal { padding: 12px; }
+      .rest-dialog-head { padding: 15px 16px; }
+      .rest-options { padding: 14px 16px 16px; }
+      .rest-option { grid-template-columns: 1fr; }
+      .rest-hour-controls { justify-content: flex-start; flex-wrap: wrap; }
+      .rest-hour-controls .rest-apply-button { margin-left: auto; }
+      .rest-option > .rest-apply-button { width: 100%; }
     }
 
     @media print {
       @page { size: A4 portrait; margin: 0; }
       :root { background: white; }
       body { background: white; }
-      .screen-only, .screen-shell, .analysis { display: none !important; }
+      .screen-only, .screen-shell, .analysis, button { display: none !important; }
       .mobile-intro, .mobile-sheet-nav { display: none !important; }
       .prototype {
         display: flex;
@@ -2974,6 +3165,43 @@
           <button type="button" class="builder-primary" id="builder-apply" hidden>完成並套用</button>
         </div>
       </footer>
+    </section>
+  </div>
+
+  <div class="rest-modal screen-only" id="rest-modal" hidden aria-hidden="true">
+    <section class="rest-dialog" role="dialog" aria-modal="true" aria-labelledby="rest-dialog-title">
+      <header class="rest-dialog-head">
+        <h2 id="rest-dialog-title">選擇休息時間</h2>
+        <button type="button" class="rest-dialog-close" id="rest-dialog-close" aria-label="關閉休息視窗">×</button>
+      </header>
+      <div class="rest-options">
+        <div class="rest-option">
+          <div class="rest-option-copy">
+            <strong>休息數小時</strong>
+            <small>每小時恢復最大魔力點的 1/24。</small>
+          </div>
+          <div class="rest-hour-controls">
+            <input type="number" id="rest-hours-input" min="1" step="1" value="4" inputmode="numeric" aria-label="休息時數">
+            <span>小時</span>
+            <button type="button" class="rest-apply-button" id="rest-hours-button">休息</button>
+          </div>
+          <p class="rest-error" id="rest-error" role="alert" hidden></p>
+        </div>
+        <div class="rest-option">
+          <div class="rest-option-copy">
+            <strong>休息一週</strong>
+            <small>魔力點回滿，所有部位依恢復率／週恢復。</small>
+          </div>
+          <button type="button" class="rest-apply-button" id="rest-week-button">休息一週</button>
+        </div>
+        <div class="rest-option">
+          <div class="rest-option-copy">
+            <strong>休息一季</strong>
+            <small>魔力點、所有部位生命值與符文點全部回滿。</small>
+          </div>
+          <button type="button" class="rest-apply-button" id="rest-season-button">休息一季</button>
+        </div>
+      </div>
     </section>
   </div>
 
@@ -3156,7 +3384,10 @@
             </section>
 
             <section class="card tight hit-location-card">
-              <div class="card-head"><h3>護甲與命中部位</h3><span>灰字為人類預設</span></div>
+              <div class="card-head">
+                <h3>護甲與命中部位</h3>
+                <button type="button" class="sheet-action-button screen-only" id="rest-button">休息</button>
+              </div>
               <div class="card-body">
                 <table>
                   <thead><tr><th>部位</th><th>骰值</th><th>護甲值</th><th>生命值</th><th>目前生命值</th></tr></thead>
@@ -3195,6 +3426,10 @@
           <div class="card-body magic-summary-grid">
             <div class="circle-resource mp-resource">
               <div class="resource-title"><span>魔力點</span><small>MP</small></div>
+              <div class="resource-values">
+                <label class="resource-value"><span>最大</span><input type="text" inputmode="numeric" class="persist preview-editable-resource" name="mp_max"></label>
+                <label class="resource-value"><span>目前</span><input type="text" inputmode="numeric" class="persist preview-editable-resource" name="mp_current"></label>
+              </div>
               <div class="circle-track" id="mp-track-magic" role="group" aria-label="魔力點圈選"></div>
             </div>
             <div class="circle-resource rune-point-resource">
@@ -3203,6 +3438,10 @@
                 <label class="cult-inline"><span>教團</span><input type="text" class="persist" name="cult_rank"></label>
                 <small>RP</small>
               </div>
+              <div class="resource-values">
+                <label class="resource-value"><span>最大</span><input type="text" inputmode="numeric" class="persist preview-editable-resource" name="rp_max"></label>
+                <label class="resource-value"><span>目前</span><input type="text" inputmode="numeric" class="persist preview-editable-resource" name="rp_current"></label>
+              </div>
               <div class="circle-track" id="rp-track-magic" role="group" aria-label="符文點圈選"></div>
             </div>
             <div class="circle-resource rune-point-resource">
@@ -3210,6 +3449,10 @@
                 <span>符文點</span>
                 <label class="cult-inline"><span>教團</span><input type="text" class="persist" name="associated_cult"></label>
                 <small>RP</small>
+              </div>
+              <div class="resource-values">
+                <label class="resource-value"><span>最大</span><input type="text" inputmode="numeric" class="persist preview-editable-resource" name="rp2_max"></label>
+                <label class="resource-value"><span>目前</span><input type="text" inputmode="numeric" class="persist preview-editable-resource" name="rp2_current"></label>
               </div>
               <div class="circle-track" id="rp2-track-magic" role="group" aria-label="第二組符文點圈選"></div>
             </div>
@@ -3773,6 +4016,11 @@
             field.readOnly = true;
             field.setAttribute("aria-label", "自動計算靈體戰鬥傷害");
           }
+          if (key === "hp") {
+            field.classList.add("preview-editable-weapon-hp");
+            field.setAttribute("inputmode", "numeric");
+            field.setAttribute("aria-label", (isSpiritCombat ? "靈體戰鬥" : "近戰武器 " + (i + 1)) + "耐久");
+          }
           tr.appendChild(el("td", {}, [field]));
         });
         var xpName = i === 3 ? "spirit_combat_weapon_xp" : "weapon_" + i + "_xp";
@@ -3784,7 +4032,13 @@
         var weaponIndex = i + 4;
         var tr = el("tr");
         ["name", "skill", "sr", "damage", "hp"].forEach(function (key) {
-          tr.appendChild(el("td", {}, [input("weapon_" + weaponIndex + "_" + key)]));
+          var field = input("weapon_" + weaponIndex + "_" + key);
+          if (key === "hp") {
+            field.classList.add("preview-editable-weapon-hp");
+            field.setAttribute("inputmode", "numeric");
+            field.setAttribute("aria-label", "遠程武器 " + (i + 1) + "耐久");
+          }
+          tr.appendChild(el("td", {}, [field]));
         });
         tr.appendChild(el("td", { class: "check-cell" }, [input("weapon_" + weaponIndex + "_xp", "", "checkbox")]));
         return tr;
@@ -3813,6 +4067,10 @@
             locationField.classList.add("calculated-field");
             locationField.setAttribute("data-location-hp-index", String(locationIndex));
             locationField.setAttribute("aria-label", loc[0] + "自動計算生命值");
+          }
+          if (key === "current_hp") {
+            locationField.classList.add("preview-editable-location-hp");
+            locationField.setAttribute("inputmode", "numeric");
           }
           tr.appendChild(el("td", {}, [locationField]));
         });
@@ -4070,11 +4328,21 @@
             hpField.value = locationHp === null ? "" : String(locationHp);
           }
           syncCalculatedDefault(currentHpField, numericFieldValue("location_" + index + "_hp"), "data-location-hp-default");
+          if (currentHpField) currentHpField.classList.add("preview-editable-location-hp");
         }
         var currentHp = currentTotalHitPoints(hp);
         setCalculatedValue("current_hp_total", currentHp);
-        setCircleValue("hp", 50, currentHp === null ? null : Math.max(0, Math.min(50, currentHp)));
-        syncCircleDefault("mp-track-magic", "mp", 24, pow);
+        syncCircleTrack("hp", 50, hp, currentHp);
+        var mpMaximumField = document.querySelector('[name="mp_max"]');
+        syncCalculatedDefault(mpMaximumField, pow, "data-resource-default");
+        var mpMaximum = numericFieldValue("mp_max");
+        var mpCurrentField = document.querySelector('[name="mp_current"]');
+        syncCalculatedDefault(mpCurrentField, mpMaximum, "data-resource-default");
+        syncCalculatedDefault(document.querySelector('[name="rp_max"]'), 10, "data-resource-default");
+        syncCalculatedDefault(document.querySelector('[name="rp2_max"]'), 10, "data-resource-default");
+        syncResourceTrack("mp", 24);
+        syncResourceTrack("rp", 10);
+        syncResourceTrack("rp2", 10);
       }
 
       function makeCircleTrack(targetId, prefix, maximum, leadingState, derived) {
@@ -4086,6 +4354,9 @@
           if (derived) {
             mark.classList.remove("persist");
             mark.disabled = true;
+          } else if (/^(mp|rp|rp2)$/.test(prefix)) {
+            mark.classList.remove("persist");
+            mark.classList.add("preview-editable-resource");
           }
           return el("label", {}, [mark, el("span", { text: String(i) })]);
         });
@@ -4102,6 +4373,67 @@
       makeCircleTrack("mp-track-magic", "mp", 24, "昏迷");
       makeCircleTrack("rp-track-magic", "rp", 10);
       makeCircleTrack("rp2-track-magic", "rp2", 10);
+
+      function syncCircleTrack(prefix, circleMaximum, maximum, current) {
+        var visibleMaximum = maximum === null ? null : Math.max(0, Math.min(circleMaximum, maximum));
+        setCircleValue(prefix, circleMaximum, visibleMaximum);
+        for (var i = 0; i <= circleMaximum; i += 1) {
+          var mark = document.querySelector('[name="' + prefix + '_mark_' + i + '"]');
+          var label = mark ? mark.closest("label") : null;
+          if (!label) continue;
+          label.classList.toggle("is-spent", visibleMaximum !== null && current !== null && i > current && i <= visibleMaximum);
+        }
+      }
+
+      function syncResourceTrack(prefix, circleMaximum) {
+        syncCircleTrack(
+          prefix,
+          circleMaximum,
+          numericFieldValue(prefix + "_max"),
+          numericFieldValue(prefix + "_current")
+        );
+      }
+
+      function syncCircleResourceMaximum(prefix, circleMaximum) {
+        var selected = checkedCircleValue(prefix, circleMaximum);
+        var field = document.querySelector('[name="' + prefix + '_max"]');
+        if (!selected.length) {
+          syncResourceTrack(prefix, circleMaximum);
+          return;
+        }
+        if (field) {
+          field.value = String(selected[selected.length - 1]);
+          field.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+      }
+
+      function initializeResourceValues() {
+        [["mp", 24, numericFieldValue("char_pow")], ["rp", 10, 10], ["rp2", 10, 10]].forEach(function (resource) {
+          var prefix = resource[0];
+          var circleMaximum = resource[1];
+          var defaultMaximum = resource[2];
+          var maximumField = document.querySelector('[name="' + prefix + '_max"]');
+          var currentField = document.querySelector('[name="' + prefix + '_current"]');
+          var selected = checkedCircleValue(prefix, circleMaximum);
+          if (maximumField && String(maximumField.value || "").trim() === "" && defaultMaximum !== null) {
+            maximumField.value = String(defaultMaximum);
+          }
+          if (currentField && String(currentField.value || "").trim() === "") {
+            if (selected.length) currentField.value = String(selected[selected.length - 1]);
+            else if (prefix === "mp" && defaultMaximum !== null) currentField.value = String(defaultMaximum);
+          }
+          syncResourceTrack(prefix, circleMaximum);
+        });
+      }
+
+      [["mp", 24], ["rp", 10], ["rp2", 10]].forEach(function (resource) {
+        var track = document.getElementById(resource[0] + "-track-magic");
+        if (!track) return;
+        track.addEventListener("change", function () {
+          syncCircleResourceMaximum(resource[0], resource[1]);
+          saveData();
+        });
+      });
 
       function spellRow(prefix, i) {
         var tr = el("tr");
@@ -4169,7 +4501,7 @@
           var fields = row.querySelectorAll('input[type="text"]');
           mark(fields[0]);
           mark(fields[1]);
-          mark(fields[3], "預覽模式：點一下複製傷害格式");
+          mark(fields[3], "預覽模式：點一下複製傷害與武器名稱");
         });
         document.querySelectorAll(".rune-node, .power-rune-node").forEach(function (row) {
           mark(row.querySelector(".rune-node-head span, .power-rune-name"));
@@ -4195,6 +4527,10 @@
         mark(spiritCast);
         if (spiritCast) mark(spiritCast.closest("label").querySelector("span"));
         mark(document.querySelector('[name="dodge_core"]'));
+        document.querySelectorAll("#characteristics .stat").forEach(function (stat) {
+          mark(stat.querySelector("label"));
+          mark(stat.querySelector("input"));
+        });
       }
 
       function parseRollNumber(value) {
@@ -4205,6 +4541,17 @@
       }
 
       function rollCopyPayload(trigger) {
+        var characteristic = trigger.closest("#characteristics .stat");
+        if (characteristic) {
+          var characteristicName = characteristic.querySelector("label");
+          var characteristicField = characteristic.querySelector("input");
+          var characteristicValue = characteristicField ? parseRollNumber(characteristicField.value) : null;
+          return characteristicName && characteristicValue !== null ? {
+            value: characteristicValue,
+            name: String(characteristicName.textContent || "").trim()
+          } : null;
+        }
+
         var skillRow = trigger.closest(".skill-row");
         if (skillRow) {
           var skillValueField = Array.prototype.find.call(skillRow.querySelectorAll('input[type="text"]'), function (field) {
@@ -4224,14 +4571,9 @@
         if (weaponRow) {
           var weaponFields = weaponRow.querySelectorAll('input[type="text"]');
           var weaponName = weaponFields[0] ? String(weaponFields[0].value || "").trim() : "";
-          if (trigger.matches('input[name$="_damage"]')) {
-            var weaponDamage = String(trigger.value || "").trim();
-            return weaponName && weaponDamage ? {
-              text: weaponDamage + ", " + weaponName,
-              missingMessage: "請先填寫武器名稱與傷害。"
-            } : {
-              missingMessage: "請先填寫武器名稱與傷害。"
-            };
+          if (trigger === weaponFields[3]) {
+            var weaponDamage = String(weaponFields[3].value || "").trim();
+            return weaponName && weaponDamage ? { value: weaponDamage, name: weaponName } : null;
           }
           var weaponValue = weaponFields[1] ? parseRollNumber(weaponFields[1].value) : null;
           return weaponName && weaponValue !== null ? { value: weaponValue, name: weaponName } : null;
@@ -4318,11 +4660,11 @@
 
       function copyRollFrom(trigger) {
         var payload = rollCopyPayload(trigger);
-        if (!payload || (!payload.text && (payload.value === undefined || !payload.name))) {
-          showCopyToast(payload && payload.missingMessage ? payload.missingMessage : "請先填寫檢定名稱與百分比。");
+        if (!payload) {
+          showCopyToast("請先填寫名稱與數值。");
           return;
         }
-        var textValue = payload.text || String(payload.value) + ", " + payload.name;
+        var textValue = String(payload.value) + ", " + payload.name;
         var clipboardPromise = navigator.clipboard && window.isSecureContext
           ? navigator.clipboard.writeText(textValue)
           : Promise.resolve(fallbackCopyText(textValue));
@@ -4347,8 +4689,9 @@
             if (!field.hasAttribute("data-preview-readonly")) field.setAttribute("data-preview-readonly", String(Boolean(field.readOnly)));
             if (!field.hasAttribute("data-preview-disabled")) field.setAttribute("data-preview-disabled", String(Boolean(field.disabled)));
             var isGrowthCheckbox = field.matches('input[type="checkbox"][name$="_xp"]');
-            if (!isGrowthCheckbox && field.matches('input[type="checkbox"], input[type="radio"], select')) field.disabled = true;
-            else field.readOnly = true;
+            var isPreviewEditable = field.matches(".preview-editable-location-hp, .preview-editable-resource, .preview-editable-weapon-hp");
+            if (!isGrowthCheckbox && !isPreviewEditable && field.matches('input[type="checkbox"], input[type="radio"], select')) field.disabled = true;
+            else if (!isPreviewEditable) field.readOnly = true;
           } else {
             if (field.hasAttribute("data-preview-readonly")) {
               field.readOnly = field.getAttribute("data-preview-readonly") === "true";
@@ -4375,7 +4718,7 @@
             target.removeAttribute("aria-keyshortcuts");
           }
         });
-        if (preview) showCopyToast("預覽模式：點選名稱、％數或傷害，即可複製對應格式。");
+        if (preview) showCopyToast("預覽模式：點選名稱或％數，即可複製「數值, 名稱」。");
       }
 
       markRollCopyTargets();
@@ -7398,7 +7741,8 @@
         setSheetValue("cult_rank", builderState.cult);
         applyCultGuideSkills(builderState.cult);
         addPassionFromBuilder(builderState.cultPassion);
-        setSheetValue("rp_mark_3", true);
+        setSheetValue("rp_current", 3);
+        setSheetValue("rp_max", 10);
 
         setSheetValue("reputation", 5);
 
@@ -7446,10 +7790,14 @@
         }
         if (!data.honor && data.passion_0_value) data.honor = data.passion_0_value;
         if (!data.honor_xp && data.passion_0_xp) data.honor_xp = data.passion_0_xp;
-        if (data.rp_current !== undefined && !Object.keys(data).some(function (key) { return key.indexOf("rp_mark_") === 0 && data[key]; })) {
-          var legacyRunePoints = parseInt(data.rp_current, 10);
-          if (legacyRunePoints >= 0 && legacyRunePoints <= 10) data["rp_mark_" + legacyRunePoints] = true;
-        }
+        [["mp", 24], ["rp", 10], ["rp2", 10]].forEach(function (resource) {
+          var prefix = resource[0];
+          var maximum = resource[1];
+          if (data[prefix + "_current"] !== undefined && String(data[prefix + "_current"]).trim() !== "") return;
+          for (var value = 0; value <= maximum; value += 1) {
+            if (data[prefix + "_mark_" + value]) data[prefix + "_current"] = String(value);
+          }
+        });
         for (var i = 0; i < 10; i += 1) {
           var currentKey = "location_" + i + "_current_hp";
           var legacyKey = "location_" + i + "_wound";
@@ -7558,6 +7906,10 @@
         if (event.target.classList.contains("persist")) {
           syncSharedField(event.target);
           syncOpposedRune(event.target, false);
+          if (/^(mp|rp|rp2)_(current|max)$/.test(event.target.name || "")) {
+            var resourcePrefix = event.target.name.replace(/_(current|max)$/, "");
+            syncResourceTrack(resourcePrefix, resourcePrefix === "mp" ? 24 : 10);
+          }
           recalculateDerived();
           saveData();
         }
@@ -7588,6 +7940,128 @@
         button.addEventListener("click", function () {
           setInteractionMode(button.getAttribute("data-interaction-mode"));
         });
+      });
+      var restModal = document.getElementById("rest-modal");
+      var restHoursInput = document.getElementById("rest-hours-input");
+      var restError = document.getElementById("rest-error");
+
+      function showRestError(message) {
+        restError.textContent = message || "";
+        restError.hidden = !message;
+      }
+
+      function openRestDialog() {
+        showRestError("");
+        restModal.hidden = false;
+        restModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("rest-open");
+        window.setTimeout(function () {
+          restHoursInput.focus();
+          restHoursInput.select();
+        }, 0);
+      }
+
+      function closeRestDialog() {
+        restModal.hidden = true;
+        restModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("rest-open");
+        document.getElementById("rest-button").focus();
+      }
+
+      function roundedResourceValue(value) {
+        return Math.round(value * 100) / 100;
+      }
+
+      function displayResourceValue(value) {
+        var rounded = roundedResourceValue(value);
+        return Number.isInteger(rounded) ? String(rounded) : String(rounded);
+      }
+
+      function fillResource(prefix) {
+        var maximum = numericFieldValue(prefix + "_max");
+        var currentField = document.querySelector('[name="' + prefix + '_current"]');
+        if (maximum === null || !currentField) return false;
+        currentField.value = displayResourceValue(maximum);
+        return true;
+      }
+
+      function restoreAllLocations(amount, fillCompletely) {
+        var changed = false;
+        for (var i = 0; i < 10; i += 1) {
+          var maximum = numericFieldValue("location_" + i + "_hp");
+          var currentField = document.querySelector('[name="location_' + i + '_current_hp"]');
+          if (maximum === null || !currentField) continue;
+          var current = numericFieldValue("location_" + i + "_current_hp");
+          var restored = fillCompletely
+            ? maximum
+            : Math.min(maximum, (current === null ? maximum : current) + amount);
+          currentField.value = displayResourceValue(restored);
+          changed = true;
+        }
+        return changed;
+      }
+
+      function finalizeRest(message) {
+        recalculateDerived();
+        saveData();
+        closeRestDialog();
+        showCopyToast(message);
+      }
+
+      function restForHours() {
+        var hours = Number(restHoursInput.value);
+        if (!Number.isFinite(hours) || hours <= 0) {
+          showRestError("請輸入大於 0 的休息時數。");
+          restHoursInput.focus();
+          return;
+        }
+        var maximum = numericFieldValue("mp_max");
+        var currentField = document.querySelector('[name="mp_current"]');
+        if (maximum === null || maximum <= 0 || !currentField) {
+          showRestError("請先填寫魔力點最大值。");
+          return;
+        }
+        var current = numericFieldValue("mp_current");
+        if (current === null) current = 0;
+        var restored = Math.min(maximum, current + (maximum * hours / 24));
+        var gained = Math.max(0, roundedResourceValue(restored - current));
+        currentField.value = displayResourceValue(restored);
+        finalizeRest("已休息 " + displayResourceValue(hours) + " 小時：恢復 " + displayResourceValue(gained) + " MP。");
+      }
+
+      function restOneWeek() {
+        var recovery = numericFieldValue("healing_rate");
+        fillResource("mp");
+        if (recovery !== null && recovery > 0) restoreAllLocations(recovery, false);
+        if (recovery === null || recovery <= 0) {
+          finalizeRest("已休息一週：魔力點已回滿；尚無恢復率，部位生命值未變。");
+        } else {
+          finalizeRest("已休息一週：部位恢復 " + displayResourceValue(recovery) + " 點，魔力點已回滿。");
+        }
+      }
+
+      function restOneSeason() {
+        restoreAllLocations(0, true);
+        ["mp", "rp", "rp2"].forEach(fillResource);
+        finalizeRest("已休息一季：魔力點、所有部位生命值與符文點已回滿。");
+      }
+
+      document.getElementById("rest-button").addEventListener("click", openRestDialog);
+      document.getElementById("rest-dialog-close").addEventListener("click", closeRestDialog);
+      document.getElementById("rest-hours-button").addEventListener("click", restForHours);
+      document.getElementById("rest-week-button").addEventListener("click", restOneWeek);
+      document.getElementById("rest-season-button").addEventListener("click", restOneSeason);
+      restHoursInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          restForHours();
+        }
+      });
+      restModal.addEventListener("click", function (event) {
+        if (event.target === restModal) closeRestDialog();
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !restModal.hidden) closeRestDialog();
       });
       document.getElementById("export-json-button").addEventListener("click", exportJson);
       document.getElementById("import-json-button").addEventListener("click", function () {
@@ -7681,6 +8155,7 @@
       setLayoutMode(savedLayoutMode, false);
 
       loadData();
+      initializeResourceValues();
       var loadedHomeland = String(homelandAppliedField.value || "").trim();
       if (loadedHomeland && HOMELAND_TEMPLATES[loadedHomeland]) {
         applyHomelandDisplayDetails(HOMELAND_TEMPLATES[loadedHomeland]);
