@@ -160,6 +160,62 @@
       font-weight: 800;
     }
     .toolbar .builder-launch:hover { background: #e6e6e6; }
+    .interaction-switch { border-color: rgba(255,255,255,.45); }
+    .copy-toast {
+      position: fixed;
+      z-index: 80;
+      right: 22px;
+      bottom: 22px;
+      max-width: min(420px, calc(100vw - 32px));
+      padding: 10px 14px;
+      transform: translateY(12px);
+      border: 1px solid #111;
+      border-radius: 8px;
+      color: #fff;
+      background: rgba(0, 0, 0, .94);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .24);
+      font-size: 13px;
+      font-weight: 750;
+      line-height: 1.4;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .16s ease, transform .16s ease;
+    }
+    .copy-toast.is-visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    @media screen {
+      body.sheet-preview [data-edit-only] { display: none !important; }
+      body.sheet-preview .prototype input,
+      body.sheet-preview .prototype textarea,
+      body.sheet-preview .prototype select {
+        caret-color: transparent;
+      }
+      body.sheet-preview .prototype input:not([type="checkbox"]):not([type="radio"]),
+      body.sheet-preview .prototype textarea,
+      body.sheet-preview .prototype select {
+        outline: 0;
+      }
+      body.sheet-preview .roll-copy-target {
+        cursor: copy !important;
+        border-radius: 4px;
+        transition: color .12s ease, background .12s ease, box-shadow .12s ease;
+      }
+      body.sheet-preview .roll-copy-target:hover,
+      body.sheet-preview .roll-copy-target:focus-visible {
+        color: #000;
+        background: #ededed !important;
+        box-shadow: 0 0 0 2px #111;
+        outline: 0;
+      }
+      body.sheet-preview .prototype input:disabled,
+      body.sheet-preview .prototype select:disabled {
+        color: inherit;
+        opacity: 1;
+        -webkit-text-fill-color: currentColor;
+      }
+    }
 
     .fan-policy-notice {
       display: grid;
@@ -515,6 +571,13 @@
       min-height: 18px;
       white-space: nowrap;
     }
+    .hp-total-fields {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      min-width: 0;
+    }
     .hp-total-field {
       display: grid;
       grid-template-columns: auto 42px;
@@ -533,6 +596,12 @@
       text-align: center;
       font-size: 13px;
       font-weight: 900;
+    }
+    .hp-total-field.current-hp input { border-bottom-width: 2px; }
+    .derived-circle-track label { cursor: default; }
+    .derived-circle-track input:disabled + span {
+      color: inherit;
+      opacity: 1;
     }
     .active-spell-card textarea {
       width: 100%;
@@ -2372,6 +2441,13 @@
       .toolbar a,
       .toolbar button { min-height: 36px; padding: 8px 12px; font-size: 12px; }
       .toolbar .mode-switch button { min-height: 32px; padding: 7px 10px; }
+      .copy-toast {
+        right: 12px;
+        bottom: calc(76px + env(safe-area-inset-bottom));
+        left: 12px;
+        max-width: none;
+        text-align: center;
+      }
 
       .fan-policy-notice,
       .analysis { display: none; }
@@ -2521,6 +2597,21 @@
       .passion-row input[type="text"],
       .passion-fixed-name { font-size: 15px; }
       .passion-row .percent input { width: 38px; height: 32px; font-size: 16px; }
+      .hp-total-fields {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+        gap: 8px;
+      }
+      .hp-total-field {
+        grid-template-columns: minmax(0, 1fr) 52px;
+        white-space: normal;
+      }
+      .hp-total-field input {
+        width: 52px;
+        min-height: 32px;
+        font-size: 17px;
+      }
       .hp-summary-card .circle-track,
       .magic-summary .circle-track { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
       .hp-summary-card .circle-track label,
@@ -2817,18 +2908,23 @@
       <span>角色表 · 兩張 A4 雙面 · 自動儲存</span>
     </div>
     <nav class="toolbar" aria-label="角色表頁面">
-      <button type="button" class="builder-launch" id="create-character-button">建立角色</button>
+      <button type="button" class="builder-launch" id="create-character-button" data-edit-only>建立角色</button>
+      <div class="mode-switch interaction-switch" role="group" aria-label="操作模式">
+        <button type="button" data-interaction-mode="edit" aria-pressed="true">編輯</button>
+        <button type="button" data-interaction-mode="preview" aria-pressed="false">預覽</button>
+      </div>
       <div class="mode-switch" role="group" aria-label="版型模式">
         <button type="button" data-layout-mode="folding" aria-pressed="true">摺疊版</button>
         <button type="button" data-layout-mode="standard" aria-pressed="false">普通版</button>
       </div>
       <button type="button" id="export-json-button">匯出 JSON</button>
-      <button type="button" id="import-json-button">匯入 JSON</button>
+      <button type="button" id="import-json-button" data-edit-only>匯入 JSON</button>
       <input type="file" id="import-json-file" accept="application/json,.json" hidden>
       <button type="button" id="print-button">列印／另存一般 PDF</button>
-      <button type="button" id="clear-button">清除內容</button>
+      <button type="button" id="clear-button" data-edit-only>清除內容</button>
     </nav>
   </header>
+  <div class="copy-toast screen-only" id="copy-toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <details class="mobile-intro screen-only">
     <summary>免費・非官方角色表與使用說明</summary>
@@ -3049,7 +3145,10 @@
             <section class="card tight hp-summary-card">
               <div class="card-head">
                 <h3>生命值</h3>
-                <label class="hp-total-field"><span>總生命值</span><input type="text" class="persist calculated-field" name="total_hp" readonly aria-label="自動計算總生命值"></label>
+                <div class="hp-total-fields">
+                  <label class="hp-total-field"><span>最大生命值</span><input type="text" class="persist calculated-field" name="total_hp" readonly aria-label="自動計算最大生命值"></label>
+                  <label class="hp-total-field current-hp"><span>目前生命值</span><input type="text" class="persist calculated-field" name="current_hp_total" readonly aria-label="依命中部位自動計算目前生命值"></label>
+                </div>
               </div>
               <div class="card-body">
                 <div class="circle-track" id="hp-track" role="group" aria-label="生命值圈選"></div>
@@ -3823,6 +3922,18 @@
         return bases[index] + step;
       }
 
+      function currentTotalHitPoints(maximum) {
+        if (maximum === null) return null;
+        var damage = 0;
+        for (var i = 0; i < 10; i += 1) {
+          var locationMaximum = numericFieldValue("location_" + i + "_hp");
+          var locationCurrent = numericFieldValue("location_" + i + "_current_hp");
+          if (locationMaximum === null || locationCurrent === null) continue;
+          damage += Math.max(0, locationMaximum - locationCurrent);
+        }
+        return maximum - damage;
+      }
+
       function setCalculatedValue(name, value) {
         document.querySelectorAll('[name="' + name + '"]').forEach(function (field) {
           field.value = value === null ? "" : String(value);
@@ -3944,29 +4055,39 @@
           setCalculatedValue("modifier_" + key, skillCategoryModifier(key));
         });
 
-        humanLocations.forEach(function (location, index) {
+        for (var locationIndex = 0; locationIndex < 10; locationIndex += 1) {
+          var location = humanLocations[locationIndex];
+          var index = locationIndex;
           var nameField = document.querySelector('[name="location_' + index + '_name"]');
           var hpField = document.querySelector('[name="location_' + index + '_hp"]');
           var currentHpField = document.querySelector('[name="location_' + index + '_current_hp"]');
-          if (!nameField || !hpField) return;
+          if (!nameField || !hpField) continue;
           var currentName = String(nameField.value || "").trim();
-          var usesHumanDefault = currentName === "" || currentName === location[0];
+          var usesHumanDefault = Boolean(location) && (currentName === "" || currentName === location[0]);
           hpField.readOnly = usesHumanDefault;
           if (usesHumanDefault) {
             var locationHp = hp === null ? null : locationHitPoints(hp, index);
             hpField.value = locationHp === null ? "" : String(locationHp);
-            syncCalculatedDefault(currentHpField, locationHp, "data-location-hp-default");
           }
-        });
-        syncCircleDefault("hp-track", "hp", 50, hp);
+          syncCalculatedDefault(currentHpField, numericFieldValue("location_" + index + "_hp"), "data-location-hp-default");
+        }
+        var currentHp = currentTotalHitPoints(hp);
+        setCalculatedValue("current_hp_total", currentHp);
+        setCircleValue("hp", 50, currentHp === null ? null : Math.max(0, Math.min(50, currentHp)));
         syncCircleDefault("mp-track-magic", "mp", 24, pow);
       }
 
-      function makeCircleTrack(targetId, prefix, maximum, leadingState) {
+      function makeCircleTrack(targetId, prefix, maximum, leadingState, derived) {
         var target = document.getElementById(targetId);
+        if (derived) target.classList.add("derived-circle-track");
         if (leadingState) target.appendChild(el("span", { class: "track-state", text: leadingState }));
         makeRows(targetId, maximum + 1, function (i) {
-          return el("label", {}, [input(prefix + "_mark_" + i, "", "checkbox"), el("span", { text: String(i) })]);
+          var mark = input(prefix + "_mark_" + i, "", "checkbox");
+          if (derived) {
+            mark.classList.remove("persist");
+            mark.disabled = true;
+          }
+          return el("label", {}, [mark, el("span", { text: String(i) })]);
         });
         function keepSingleCircle(event) {
           if (!event.target.matches('input[type="checkbox"]') || !event.target.checked) return;
@@ -3977,7 +4098,7 @@
         target.addEventListener("input", keepSingleCircle);
         target.addEventListener("change", keepSingleCircle);
       }
-      makeCircleTrack("hp-track", "hp", 50, "死亡");
+      makeCircleTrack("hp-track", "hp", 50, "死亡", true);
       makeCircleTrack("mp-track-magic", "mp", 24, "昏迷");
       makeCircleTrack("rp-track-magic", "rp", 10);
       makeCircleTrack("rp2-track-magic", "rp2", 10);
@@ -4029,6 +4150,235 @@
         ["name", "qty", "enc"].forEach(function (key) { tr.appendChild(el("td", {}, [input("gear_" + i + "_" + key)])); });
         return tr;
       });
+
+      function markRollCopyTargets() {
+        function mark(node, title) {
+          if (!node) return;
+          node.classList.add("roll-copy-target");
+          node.setAttribute("title", title || "預覽模式：點一下複製檢定格式");
+        }
+
+        document.querySelectorAll(".skill-row").forEach(function (row) {
+          mark(row.querySelector(".skill-name"));
+          mark(row.querySelector(".skill-custom-name"));
+          mark(Array.prototype.find.call(row.querySelectorAll('input[type="text"]'), function (field) {
+            return !/_name$/.test(field.name || "");
+          }));
+        });
+        document.querySelectorAll(".weapon-card tbody tr").forEach(function (row) {
+          var fields = row.querySelectorAll('input[type="text"]');
+          mark(fields[0]);
+          mark(fields[1]);
+          mark(fields[3], "預覽模式：點一下複製傷害格式");
+        });
+        document.querySelectorAll(".rune-node, .power-rune-node").forEach(function (row) {
+          mark(row.querySelector(".rune-node-head span, .power-rune-name"));
+          mark(row.querySelector(".rune-node-value, .power-rune-value"));
+        });
+        document.querySelectorAll(".passion-row").forEach(function (row) {
+          mark(row.querySelector(".passion-fixed-name"));
+          mark(Array.prototype.find.call(row.children, function (child) {
+            return child.matches && child.matches('input[type="text"]');
+          }));
+          mark(row.querySelector(".percent input"));
+        });
+        document.querySelectorAll(".sorcery-table tbody tr").forEach(function (row) {
+          var fields = row.querySelectorAll('input[type="text"]');
+          mark(fields[0]);
+          mark(fields[1]);
+        });
+        document.querySelectorAll('.spirit-record input[name$="_combat_skill"]').forEach(function (field) {
+          mark(field);
+          mark(field.closest("label").querySelector("span"));
+        });
+        var spiritCast = document.querySelector('[name="spirit_cast"]');
+        mark(spiritCast);
+        if (spiritCast) mark(spiritCast.closest("label").querySelector("span"));
+        mark(document.querySelector('[name="dodge_core"]'));
+      }
+
+      function parseRollNumber(value) {
+        var match = String(value === undefined || value === null ? "" : value).replace(/,/g, "").match(/[+-]?\d+(?:\.\d+)?/);
+        if (!match) return null;
+        var parsed = Number(match[0]);
+        return Number.isFinite(parsed) ? parsed : null;
+      }
+
+      function rollCopyPayload(trigger) {
+        var skillRow = trigger.closest(".skill-row");
+        if (skillRow) {
+          var skillValueField = Array.prototype.find.call(skillRow.querySelectorAll('input[type="text"]'), function (field) {
+            return !/_name$/.test(field.name || "");
+          });
+          var skillNameNode = skillRow.querySelector(".skill-name-cn");
+          var customSkillName = skillRow.querySelector(".skill-custom-name");
+          var skillName = String(skillNameNode ? skillNameNode.textContent : (customSkillName ? customSkillName.value : "")).trim();
+          var enteredValue = skillValueField ? parseRollNumber(skillValueField.value) : null;
+          var skillValue = enteredValue === null ? skillBaseValue(skillRow) : enteredValue;
+          var modifierField = skillRow.closest(".skill-group").querySelector(".skill-modifier input");
+          var modifier = modifierField ? parseRollNumber(modifierField.value) : 0;
+          return skillName ? { value: skillValue + (modifier === null ? 0 : modifier), name: skillName } : null;
+        }
+
+        var weaponRow = trigger.closest(".weapon-card tbody tr");
+        if (weaponRow) {
+          var weaponFields = weaponRow.querySelectorAll('input[type="text"]');
+          var weaponName = weaponFields[0] ? String(weaponFields[0].value || "").trim() : "";
+          if (trigger.matches('input[name$="_damage"]')) {
+            var weaponDamage = String(trigger.value || "").trim();
+            return weaponName && weaponDamage ? {
+              text: weaponDamage + ", " + weaponName,
+              missingMessage: "請先填寫武器名稱與傷害。"
+            } : {
+              missingMessage: "請先填寫武器名稱與傷害。"
+            };
+          }
+          var weaponValue = weaponFields[1] ? parseRollNumber(weaponFields[1].value) : null;
+          return weaponName && weaponValue !== null ? { value: weaponValue, name: weaponName } : null;
+        }
+
+        var passionRow = trigger.closest(".passion-row");
+        if (passionRow) {
+          var passionNameNode = passionRow.querySelector(".passion-fixed-name");
+          var passionNameField = Array.prototype.find.call(passionRow.children, function (child) {
+            return child.matches && child.matches('input[type="text"]');
+          });
+          var passionName = String(passionNameNode ? passionNameNode.textContent : (passionNameField ? passionNameField.value : "")).trim();
+          var passionValue = parseRollNumber(passionRow.querySelector(".percent input").value);
+          return passionName && passionValue !== null ? { value: passionValue, name: passionName } : null;
+        }
+
+        var runeRow = trigger.closest(".rune-node, .power-rune-node");
+        if (runeRow) {
+          var runeNameNode = runeRow.querySelector(".rune-node-head span, .power-rune-name");
+          var runeValueField = runeRow.querySelector(".rune-node-value, .power-rune-value");
+          var runeName = runeNameNode ? String(runeNameNode.textContent || "").trim() : "";
+          var runeValue = runeValueField ? parseRollNumber(runeValueField.value) : null;
+          return runeName && runeValue !== null ? { value: runeValue, name: runeName } : null;
+        }
+
+        var sorceryRow = trigger.closest(".sorcery-table tbody tr");
+        if (sorceryRow) {
+          var sorceryFields = sorceryRow.querySelectorAll('input[type="text"]');
+          var sorceryName = sorceryFields[0] ? String(sorceryFields[0].value || "").trim() : "";
+          var sorceryValue = sorceryFields[1] ? parseRollNumber(sorceryFields[1].value) : null;
+          return sorceryName && sorceryValue !== null ? { value: sorceryValue, name: sorceryName } : null;
+        }
+
+        if (trigger.matches('[name="spirit_cast"]') || trigger.closest("label") && trigger.closest("label").querySelector('[name="spirit_cast"]')) {
+          var castField = document.querySelector('[name="spirit_cast"]');
+          var castValue = castField ? parseRollNumber(castField.value) : null;
+          return castValue !== null ? { value: castValue, name: "靈體魔法施法" } : null;
+        }
+
+        var spiritRecord = trigger.closest(".spirit-record");
+        if (spiritRecord) {
+          var spiritSkill = spiritRecord.querySelector('input[name$="_combat_skill"]');
+          var spiritSkillValue = spiritSkill ? parseRollNumber(spiritSkill.value) : null;
+          var spiritNameField = spiritRecord.querySelector(".spirit-primary input");
+          var spiritName = spiritNameField ? String(spiritNameField.value || "").trim() : "";
+          return spiritSkillValue !== null ? {
+            value: spiritSkillValue,
+            name: spiritName ? spiritName + "：靈體戰鬥" : "靈體戰鬥"
+          } : null;
+        }
+
+        if (trigger.matches('[name="dodge_core"]')) {
+          var dodgeValue = parseRollNumber(trigger.value);
+          return dodgeValue !== null ? { value: dodgeValue, name: "閃避" } : null;
+        }
+        return null;
+      }
+
+      var copyToastTimer;
+      function showCopyToast(message) {
+        var toast = document.getElementById("copy-toast");
+        if (!toast) return;
+        toast.textContent = message;
+        toast.classList.add("is-visible");
+        clearTimeout(copyToastTimer);
+        copyToastTimer = window.setTimeout(function () {
+          toast.classList.remove("is-visible");
+        }, 2200);
+      }
+
+      function fallbackCopyText(textValue) {
+        var helper = document.createElement("textarea");
+        helper.value = textValue;
+        helper.setAttribute("readonly", "");
+        helper.style.position = "fixed";
+        helper.style.opacity = "0";
+        document.body.appendChild(helper);
+        helper.select();
+        var copied = false;
+        try { copied = document.execCommand("copy"); } catch (error) { copied = false; }
+        helper.remove();
+        return copied;
+      }
+
+      function copyRollFrom(trigger) {
+        var payload = rollCopyPayload(trigger);
+        if (!payload || (!payload.text && (payload.value === undefined || !payload.name))) {
+          showCopyToast(payload && payload.missingMessage ? payload.missingMessage : "請先填寫檢定名稱與百分比。");
+          return;
+        }
+        var textValue = payload.text || String(payload.value) + ", " + payload.name;
+        var clipboardPromise = navigator.clipboard && window.isSecureContext
+          ? navigator.clipboard.writeText(textValue)
+          : Promise.resolve(fallbackCopyText(textValue));
+        clipboardPromise.then(function (result) {
+          if (result === false) throw new Error("copy failed");
+          showCopyToast("已複製：" + textValue);
+        }).catch(function () {
+          if (fallbackCopyText(textValue)) showCopyToast("已複製：" + textValue);
+          else showCopyToast("瀏覽器不允許自動複製，請改用手動複製。");
+        });
+      }
+
+      function setInteractionMode(mode) {
+        var selected = mode === "preview" ? "preview" : "edit";
+        var preview = selected === "preview";
+        document.body.classList.toggle("sheet-preview", preview);
+        document.querySelectorAll("[data-interaction-mode]").forEach(function (button) {
+          button.setAttribute("aria-pressed", String(button.getAttribute("data-interaction-mode") === selected));
+        });
+        document.querySelectorAll("#prototype input, #prototype textarea, #prototype select").forEach(function (field) {
+          if (preview) {
+            if (!field.hasAttribute("data-preview-readonly")) field.setAttribute("data-preview-readonly", String(Boolean(field.readOnly)));
+            if (!field.hasAttribute("data-preview-disabled")) field.setAttribute("data-preview-disabled", String(Boolean(field.disabled)));
+            var isGrowthCheckbox = field.matches('input[type="checkbox"][name$="_xp"]');
+            if (!isGrowthCheckbox && field.matches('input[type="checkbox"], input[type="radio"], select')) field.disabled = true;
+            else field.readOnly = true;
+          } else {
+            if (field.hasAttribute("data-preview-readonly")) {
+              field.readOnly = field.getAttribute("data-preview-readonly") === "true";
+              field.removeAttribute("data-preview-readonly");
+            }
+            if (field.hasAttribute("data-preview-disabled")) {
+              field.disabled = field.getAttribute("data-preview-disabled") === "true";
+              field.removeAttribute("data-preview-disabled");
+            }
+          }
+        });
+        document.querySelectorAll(".roll-copy-target").forEach(function (target) {
+          if (preview) {
+            if (!target.hasAttribute("data-preview-tabindex")) {
+              target.setAttribute("data-preview-tabindex", target.hasAttribute("tabindex") ? target.getAttribute("tabindex") : "");
+            }
+            target.tabIndex = 0;
+            target.setAttribute("aria-keyshortcuts", "Enter Space");
+          } else {
+            var previousTabIndex = target.getAttribute("data-preview-tabindex");
+            if (previousTabIndex === "") target.removeAttribute("tabindex");
+            else if (previousTabIndex !== null) target.setAttribute("tabindex", previousTabIndex);
+            target.removeAttribute("data-preview-tabindex");
+            target.removeAttribute("aria-keyshortcuts");
+          }
+        });
+        if (preview) showCopyToast("預覽模式：點選名稱、％數或傷害，即可複製對應格式。");
+      }
+
+      markRollCopyTargets();
 
       function addMobileTableLabels() {
         document.querySelectorAll(".panel table").forEach(function (table) {
@@ -7220,6 +7570,25 @@
           saveData();
         }
       });
+      document.addEventListener("click", function (event) {
+        if (!document.body.classList.contains("sheet-preview")) return;
+        var trigger = event.target.closest(".roll-copy-target");
+        if (!trigger || !document.getElementById("prototype").contains(trigger)) return;
+        event.preventDefault();
+        copyRollFrom(trigger);
+      });
+      document.addEventListener("keydown", function (event) {
+        if (!document.body.classList.contains("sheet-preview") || (event.key !== "Enter" && event.key !== " ")) return;
+        var trigger = event.target.closest(".roll-copy-target");
+        if (!trigger || !document.getElementById("prototype").contains(trigger)) return;
+        event.preventDefault();
+        copyRollFrom(trigger);
+      });
+      document.querySelectorAll("[data-interaction-mode]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          setInteractionMode(button.getAttribute("data-interaction-mode"));
+        });
+      });
       document.getElementById("export-json-button").addEventListener("click", exportJson);
       document.getElementById("import-json-button").addEventListener("click", function () {
         document.getElementById("import-json-file").click();
@@ -7319,6 +7688,7 @@
       }
       initializeOpposedRunes();
       recalculateDerived();
+      setInteractionMode("edit");
     }());
   </script>
 </body>
