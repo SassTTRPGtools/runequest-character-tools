@@ -4243,6 +4243,7 @@
         ["name", "skill", "sr", "damage", "hp"].forEach(function (key) {
           var fieldName = isSpiritCombat ? "spirit_combat_weapon_" + key : "weapon_" + weaponIndex + "_" + key;
           var field = input(fieldName);
+          var cellChildren = [field];
           if (isSpiritCombat && (key === "name" || key === "sr")) {
             field.value = key === "name" ? "靈體戰鬥" : "12";
             field.classList.add("calculated-field");
@@ -4250,16 +4251,15 @@
             field.setAttribute("aria-label", key === "name" ? "固定靈體戰鬥武器列" : "固定靈體戰鬥 SR");
           }
           if (isSpiritCombat && key === "damage") {
-            field.classList.add("calculated-field");
-            field.readOnly = true;
-            field.setAttribute("aria-label", "自動計算靈體戰鬥傷害");
+            field.setAttribute("aria-label", "靈體戰鬥傷害；留空時自動計算，也可手動輸入");
+            cellChildren.push(input("spirit_combat_weapon_damage_override", "", "hidden"));
           }
           if (key === "hp") {
             field.classList.add("preview-editable-weapon-hp");
             field.setAttribute("inputmode", "numeric");
             field.setAttribute("aria-label", (isSpiritCombat ? "靈體戰鬥" : "武器 " + (rowIndex + 1)) + "耐久");
           }
-          tr.appendChild(el("td", {}, [field]));
+          tr.appendChild(el("td", {}, cellChildren));
         });
         var xpName = isSpiritCombat ? "spirit_combat_weapon_xp" : "weapon_" + weaponIndex + "_xp";
         tr.appendChild(el("td", { class: "check-cell" }, [input(xpName, "", "checkbox")]));
@@ -4434,6 +4434,33 @@
         field.setAttribute(attributeName, next);
       }
 
+      function syncSpiritCombatDamage(value) {
+        var field = document.querySelector('[name="spirit_combat_weapon_damage"]');
+        var overrideField = document.querySelector('[name="spirit_combat_weapon_damage_override"]');
+        if (!field || !overrideField) return;
+        var next = value === null ? "" : String(value);
+        var current = String(field.value || "").trim();
+        var previous = field.getAttribute("data-calculated-default");
+        var isManual = overrideField.value === "1";
+
+        // 舊版沒有覆寫狀態；若既有值不同於目前計算值，視為手動輸入。
+        if (!isManual && previous === null && current !== "" && current !== next) {
+          overrideField.value = "1";
+          isManual = true;
+        }
+        if (!isManual) field.value = next;
+        field.setAttribute("data-calculated-default", next);
+        field.setAttribute("aria-label", isManual
+          ? "靈體戰鬥傷害；目前使用手動輸入，清空後恢復自動計算"
+          : "靈體戰鬥傷害；目前為自動計算，也可直接輸入覆寫");
+      }
+
+      function updateSpiritCombatDamageOverride(source) {
+        if (!source || source.name !== "spirit_combat_weapon_damage") return;
+        var overrideField = document.querySelector('[name="spirit_combat_weapon_damage_override"]');
+        if (overrideField) overrideField.value = String(source.value || "").trim() === "" ? "" : "1";
+      }
+
       function checkedCircleValue(prefix, maximum) {
         var selected = [];
         for (var i = 0; i <= maximum; i += 1) {
@@ -4522,7 +4549,7 @@
         initializeFixedSheetValues();
         setCalculatedValue("total_hp", hp);
         setCalculatedValue("damage_bonus", damageBonus(str, siz));
-        setCalculatedValue("spirit_combat_weapon_damage", spiritCombatDamage(pow, cha));
+        syncSpiritCombatDamage(spiritCombatDamage(pow, cha));
         setCalculatedValue("spirit_cast", pow === null || pow <= 0 ? null : pow * 5);
         setCalculatedValue("cha_limit", cha === null || cha <= 0 ? null : cha);
         setCalculatedValue("healing_rate", healingRate(con));
@@ -8234,6 +8261,8 @@
             var importedHomeland = String(homelandAppliedField.value || "").trim();
             applyHomelandDisplayDetails(HOMELAND_TEMPLATES[importedHomeland] || null);
             initializeOpposedRunes();
+            var importedSpiritCombatDamage = document.querySelector('[name="spirit_combat_weapon_damage"]');
+            if (importedSpiritCombatDamage) importedSpiritCombatDamage.removeAttribute("data-calculated-default");
             recalculateDerived();
             localStorage.setItem(STORAGE_KEY, JSON.stringify(collectPersistData()));
             window.alert("JSON 已匯入，角色表與瀏覽器紀錄均已更新。");
@@ -8258,6 +8287,7 @@
         if (event.target.classList.contains("persist")) {
           syncSharedField(event.target);
           syncOpposedRune(event.target, false);
+          updateSpiritCombatDamageOverride(event.target);
           if (/^(mp|rp|rp2)_(current|max)$/.test(event.target.name || "")) {
             var resourcePrefix = event.target.name.replace(/_(current|max)$/, "");
             syncResourceTrack(resourcePrefix, resourcePrefix === "mp" ? 24 : 10);
@@ -8270,6 +8300,7 @@
         if (event.target.classList.contains("persist")) {
           syncSharedField(event.target);
           syncOpposedRune(event.target, true);
+          updateSpiritCombatDamageOverride(event.target);
           recalculateDerived();
           saveData();
         }
