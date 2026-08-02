@@ -1519,8 +1519,7 @@
     }
     #page-3 .spell-table td { height: 29px; }
     #page-3 .spell-table th:nth-child(1) { width: 38%; }
-    #page-3 .spell-table th:nth-child(2) { width: 14%; }
-    #page-3 .spell-table th:nth-child(3) { width: auto; }
+    #page-3 .spell-table th:nth-child(2) { width: auto; }
     .common-rune-spells {
       margin-top: 6px;
       padding-top: 6px;
@@ -3027,8 +3026,7 @@
       .weapon-card tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .weapon-card td:nth-child(1),
       .weapon-card td:nth-child(4) { grid-column: 1 / -1; }
-      .spell-table tr { grid-template-columns: minmax(0, 1fr) 86px; }
-      .spell-table td:nth-child(3) { grid-column: 1 / -1; }
+      .spell-table tr { grid-template-columns: minmax(0, 1fr); }
       .sorcery-table tr { grid-template-columns: minmax(0, 1fr) 112px; }
       .gear-table tr { grid-template-columns: minmax(0, 1fr) 72px 86px; }
       .hit-location-card tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -3676,7 +3674,7 @@
               <div class="card-head"><h3>符文魔法</h3></div>
               <div class="card-body">
                 <table class="spell-table">
-                  <thead><tr><th>法術名稱</th><th>費用</th><th>備註</th></tr></thead>
+                  <thead><tr><th>法術名稱</th><th>備註</th></tr></thead>
                   <tbody id="rune-spell-rows"></tbody>
                 </table>
                 <div class="common-rune-spells"><strong>通用法術：</strong>命令教團靈體 (2)、驅散魔法 (1)、神諭 (1)、延續術 (1)、尋敵術 (1)、治癒傷口 (1)、複合法術 (1)、聖化術 (1)、靈視術 (1)、靈體屏障 (1)、召喚 (教團靈體) (1–3)、守護結界 (1)</div>
@@ -3695,7 +3693,7 @@
               </div>
               <div class="card-body">
                 <table class="spell-table">
-                  <thead><tr><th>法術名稱</th><th>費用</th><th>備註</th></tr></thead>
+                  <thead><tr><th>法術名稱</th><th>備註</th></tr></thead>
                   <tbody id="spirit-spell-rows"></tbody>
                 </table>
               </div>
@@ -4644,7 +4642,7 @@
 
       function spellRow(prefix, i) {
         var tr = el("tr");
-        ["name", "cost", "note"].forEach(function (key) {
+        ["name", "note"].forEach(function (key) {
           tr.appendChild(el("td", {}, [input(prefix + "_" + i + "_" + key)]));
         });
         return tr;
@@ -7891,14 +7889,7 @@
       function fillSpellRows(prefix, textValue) {
         var spells = String(textValue || "").split(/[、,，\n]+/).map(function (name) { return name.trim(); }).filter(Boolean);
         spells.slice(0, 8).forEach(function (spell, index) {
-          var cost = "";
-          var costMatch = spell.match(/[（(](\d+)(?:\s*點)?[）)]/);
-          if (costMatch) {
-            cost = costMatch[1];
-            spell = spell.replace(costMatch[0], "").trim();
-          }
           setSheetValue(prefix + "_" + index + "_name", spell);
-          setSheetValue(prefix + "_" + index + "_cost", cost);
         });
       }
 
@@ -8087,9 +8078,27 @@
 
       document.getElementById("builder-apply").addEventListener("click", applyBuilderState);
 
+      function mergeLegacySpellCosts(data) {
+        if (!data || typeof data !== "object" || Array.isArray(data)) return data;
+        ["rune_spell", "spirit_spell"].forEach(function (prefix) {
+          for (var i = 0; i < 8; i += 1) {
+            var nameKey = prefix + "_" + i + "_name";
+            var costKey = prefix + "_" + i + "_cost";
+            var name = data[nameKey] === undefined || data[nameKey] === null ? "" : String(data[nameKey]).trim();
+            var cost = data[costKey] === undefined || data[costKey] === null ? "" : String(data[costKey]).trim();
+            if (!name || !cost) continue;
+            var plainSuffix = " (" + cost + ")";
+            var pointSuffix = "（" + cost + "點）";
+            if (!name.endsWith(plainSuffix) && !name.endsWith(pointSuffix)) data[nameKey] = name + plainSuffix;
+          }
+        });
+        return data;
+      }
+
       function loadData() {
         var data = {};
         try { data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch (e) { data = {}; }
+        mergeLegacySpellCosts(data);
         var shouldMigrateRuneDefaults = false;
         try { shouldMigrateRuneDefaults = localStorage.getItem(RUNE_BLANK_MIGRATION_KEY) !== "done"; } catch (e) { shouldMigrateRuneDefaults = false; }
         if (shouldMigrateRuneDefaults) {
@@ -8190,6 +8199,7 @@
             var parsed = JSON.parse(String(reader.result || ""));
             if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("JSON 根層級必須是物件。");
             var imported = parsed.data && typeof parsed.data === "object" && !Array.isArray(parsed.data) ? parsed.data : parsed;
+            mergeLegacySpellCosts(imported);
             var fields = Array.from(document.querySelectorAll(".persist"));
             var knownNames = {};
             fields.forEach(function (field) { knownNames[field.name] = true; });
