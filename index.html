@@ -361,6 +361,20 @@
       border-bottom: 2px solid var(--ink);
     }
     .page-head h2 { margin: 2px 0 0; font-size: 28px; line-height: 1; letter-spacing: -.04em; }
+    .page-title-with-note {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+    }
+    .page-title-note {
+      color: var(--muted);
+      font-size: 8.5px;
+      font-weight: 650;
+      letter-spacing: .02em;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
     .character-head-fields {
       display: grid;
       grid-template-columns: repeat(3, minmax(92px, 1fr));
@@ -784,18 +798,19 @@
       color: inherit;
       opacity: 1;
     }
+    .main-sheet-layout > .active-spell-card {
+      grid-column: 1 / -1;
+      margin-top: 0;
+    }
     .active-spell-card textarea {
       width: 100%;
-      height: 94px;
+      height: 56px;
       border: 0;
       outline: 0;
       resize: none;
-      background-image: linear-gradient(to bottom, transparent 0, transparent 25px, var(--write-line) 25px, var(--write-line) 26px);
-      background-position: 0 26px;
-      background-size: 100% 26px;
-      background-repeat: repeat-y;
+      background: transparent;
       font-size: 12px;
-      line-height: 26px;
+      line-height: 1.55;
     }
     .magic-points-row { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 7px; margin-top: 7px; }
     .magic-point {
@@ -882,8 +897,8 @@
       position: absolute;
       z-index: 1;
       display: grid;
-      width: 48px;
-      height: 44px;
+      width: 64px;
+      height: 46px;
       place-items: center;
       transform: translate(-50%, -50%);
     }
@@ -905,7 +920,7 @@
     .rune-node-head input { width: 11px; height: 11px; margin: 0; }
     .rune-node-body {
       display: grid;
-      grid-template-rows: 15px 28px;
+      grid-template-rows: 17px 28px;
       width: 100%;
       height: 100%;
       min-height: 0;
@@ -952,7 +967,67 @@
       font-weight: 800;
     }
     .percent span { font-size: 10px; color: var(--muted); }
-    .passion-row { grid-template-columns: minmax(0,1fr) 31px 14px; }
+    .success-values {
+      display: grid;
+      grid-template-columns: minmax(24px, 1fr) 5px minmax(12px, auto) 5px minmax(10px, auto);
+      align-items: baseline;
+      width: 100%;
+      min-width: 58px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .success-values .success-source,
+    .success-values .success-standard {
+      grid-column: 1;
+      grid-row: 1;
+      min-width: 0;
+      text-align: right;
+    }
+    .success-values .success-source {
+      z-index: 1;
+      width: 100% !important;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
+    .success-values .success-source:focus {
+      z-index: 3;
+      color: var(--ink);
+      -webkit-text-fill-color: currentColor;
+    }
+    .success-values .success-source:focus + .success-standard { visibility: hidden; }
+    .success-standard {
+      z-index: 2;
+      overflow: hidden;
+      font-size: 1em;
+      font-weight: 850;
+      text-overflow: clip;
+      pointer-events: none;
+    }
+    .success-values .success-separator {
+      color: #888;
+      font-size: 7px;
+      font-weight: 650;
+      text-align: center;
+    }
+    .success-values .success-special {
+      color: #555;
+      font-size: 8px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .success-values .success-critical {
+      color: #777;
+      font-size: 6.5px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .success-values.is-empty .success-separator { visibility: hidden; }
+    body.sheet-preview .success-standard.roll-copy-target { pointer-events: auto; }
+    .percent .success-values { min-width: 62px; }
+    .passion-row {
+      grid-template-columns: minmax(0, min(180px, calc(100% - 108px))) 88px 14px minmax(0, 1fr);
+      column-gap: 2px;
+    }
     .passion-row, .quick-row {
       display: grid;
       align-items: center;
@@ -960,13 +1035,14 @@
       min-height: 28px;
       border-bottom: 1px solid var(--write-line);
     }
+    .passion-row { column-gap: 2px; }
     .passion-row:last-child, .quick-row:last-child { border-bottom: 0; }
     .passion-row input[type="text"] {
       min-width: 0;
       border: 0;
       background: transparent;
       outline: 0;
-      font-size: 9.5px;
+      font-size: 10.5px;
       font-weight: 650;
       letter-spacing: -.12px;
     }
@@ -978,7 +1054,15 @@
       font-size: 11px;
       font-weight: 650;
     }
-    .passion-row .percent input { width: 24px; }
+    .passion-row .percent input { width: 100%; }
+    .passion-row .success-standard { font-size: 10px; }
+    .passion-row .success-special { font-size: 7.5px; }
+    .passion-row .success-critical { font-size: 6px; }
+    .passion-row .success-separator { font-size: 6px; }
+    .passion-row > input[type="checkbox"] {
+      justify-self: end;
+      margin-left: 0;
+    }
     .passion-fixed-name { font-size: 11px; font-weight: 750; }
     .quick-row { grid-template-columns: minmax(0,1fr) 42px 14px; }
 
@@ -1002,8 +1086,8 @@
       width: 54%;
       margin: 0 auto;
     }
-    .power-axis-human { grid-template-columns: 27px max-content 31px 11px; }
-    .power-axis-beast { grid-template-columns: 11px 31px max-content 27px; }
+    .power-axis-human { grid-template-columns: 27px max-content 60px 11px; }
+    .power-axis-beast { grid-template-columns: 11px 60px max-content 27px; }
     .power-pairs {
       display: grid;
       gap: 1px;
@@ -1013,7 +1097,7 @@
       position: relative;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 46px;
+      gap: 18px;
     }
     .power-pair-row::before {
       content: "";
@@ -1037,11 +1121,11 @@
       text-align: center;
     }
     .power-rune-left {
-      grid-template-columns: 11px 31px 27px max-content;
+      grid-template-columns: 11px 60px 27px max-content;
       justify-content: end;
     }
     .power-rune-right {
-      grid-template-columns: max-content 27px 31px 11px;
+      grid-template-columns: max-content 27px 60px 11px;
       justify-content: start;
     }
     .power-rune-head {
@@ -1064,6 +1148,8 @@
       font-size: 11.5px;
       font-weight: 800;
     }
+    .rune-node .success-values,
+    .power-rune-node .success-values { min-width: 58px; }
 
     table {
       width: 100%;
@@ -1099,6 +1185,18 @@
     td input:focus, td select:focus { background: var(--accent-pale); }
     td.check-cell { text-align: center; }
     td.check-cell input { width: 12px; }
+    .weapon-card th:nth-child(2),
+    .weapon-card td:nth-child(2) {
+      padding-right: 0;
+      padding-left: 0;
+      text-align: center;
+    }
+    .weapon-card td:nth-child(2) .success-values {
+      grid-template-columns: 30px 5px 14px 5px 12px;
+      width: 66px;
+      min-width: 66px;
+      margin-inline: auto;
+    }
     .hit-location-card td { height: 24px; }
     .hit-location-card td:nth-child(1) { width: 27%; }
     .hit-location-card td:nth-child(2) { width: 20%; }
@@ -1130,7 +1228,7 @@
     .skill-group + .skill-group { margin-top: 8px; }
     .skill-group-head {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 39px 33px 14px;
+      grid-template-columns: minmax(0, 1fr) 34px 68px 14px;
       align-items: center;
       gap: 3px;
       min-height: 25px;
@@ -1164,7 +1262,7 @@
     .skill-modifier {
       display: grid;
       grid-column: 2 / 5;
-      grid-template-columns: 39px 33px 14px;
+      grid-template-columns: 34px 68px 14px;
       align-items: center;
       gap: 3px;
       min-height: 25px;
@@ -1195,7 +1293,7 @@
     .skill-modifier-spacer { grid-column: 2 / 5; width: auto; min-height: 25px; }
     .skill-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 39px 33px 14px;
+      grid-template-columns: minmax(0, 1fr) 34px 68px 14px;
       align-items: center;
       min-height: 15.5px;
       gap: 3px;
@@ -1285,6 +1383,18 @@
       align-items: start;
     }
     .skill-quick-row strong { font-weight: 850; }
+    .skill-quick-row.is-fumble .skill-quick-range {
+      display: grid;
+      gap: 0;
+      min-width: 0;
+      font-size: 8.8px;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+    .skill-quick-range-title {
+      margin-bottom: 1px;
+      font-weight: 750;
+    }
     .skill-quick-note {
       margin: 0;
       font-size: 9.5px;
@@ -1329,7 +1439,7 @@
     .magic-summary .rune-point-resource .circle-track { grid-template-columns: repeat(6, minmax(0, 1fr)); }
     .rune-point-title {
       display: grid;
-      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-columns: auto minmax(0, 1fr);
       align-items: center;
       gap: 6px;
     }
@@ -1433,7 +1543,7 @@
       margin-top: 8px;
     }
     .sorcery-table th:nth-child(1) { width: auto; }
-    .sorcery-table th:nth-child(2) { width: 62px; text-align: center; }
+    .sorcery-table th:nth-child(2) { width: 88px; text-align: center; }
     .sorcery-table td { height: 26px; }
     .sorcery-table td:last-child input { text-align: center; }
     .spirit-record + .spirit-record {
@@ -1471,10 +1581,10 @@
     #page-1 .passion-row { min-height: 26px; }
     #page-1 #passion-rows {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       column-gap: 8px;
     }
-    #page-1 #passion-rows .passion-row:nth-last-child(-n + 3) { border-bottom: 0; }
+    #page-1 #passion-rows .passion-row:nth-last-child(-n + 2) { border-bottom: 0; }
     .spell-table td { height: 29px; }
 
     .gear-table th:nth-child(1) { width: auto; }
@@ -2667,7 +2777,7 @@
       }
       .spread { display: contents; }
       .panel {
-        display: none;
+        display: none !important;
         width: 100%;
         min-height: 0;
         padding: 0 0 24px;
@@ -2677,7 +2787,7 @@
         background: #fff;
         box-shadow: none;
       }
-      .panel.is-mobile-active { display: block; }
+      .panel.is-mobile-active { display: block !important; }
       #page-3.panel.is-mobile-active { display: flex; }
       .panel::before { display: none; }
       .panel::after,
@@ -2700,6 +2810,12 @@
         padding: 12px 2px 10px;
       }
       .page-head h2 { font-size: 25px; }
+      .page-title-with-note {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .page-title-note { font-size: 10px; white-space: normal; }
       .character-head-fields {
         grid-template-columns: repeat(3, minmax(0, 1fr));
         width: 100%;
@@ -2770,15 +2886,15 @@
       #page-1 .main-sheet-layout > div:first-child > .card:nth-child(3) { order: 6; }
       #page-1 .main-sheet-layout > div:first-child > .card:nth-child(4) { order: 7; }
       #page-1 .main-sheet-layout > div:first-child > .card:nth-child(5) { order: 8; }
-      #page-1 .main-sheet-layout > div:first-child > .card:nth-child(6) { order: 9; }
+      #page-1 .main-sheet-layout > .active-spell-card { order: 9; margin-top: 12px; }
       .rune-affinity-card { height: auto; min-height: 472px; }
       #page-1 #passion-rows { grid-template-columns: 1fr; gap: 0; }
       #page-1 #passion-rows .passion-row { min-height: 38px; border-bottom: 1px solid var(--write-line); }
       #page-1 #passion-rows .passion-row:last-child { border-bottom: 0; }
-      .passion-row { grid-template-columns: minmax(0, 1fr) 48px 24px; gap: 7px; }
+      .passion-row { grid-template-columns: minmax(0, 1fr) 104px 24px; gap: 7px; }
       .passion-row input[type="text"],
       .passion-fixed-name { font-size: 15px; }
-      .passion-row .percent input { width: 38px; height: 32px; font-size: 16px; }
+      .passion-row .percent input { width: 100%; height: 32px; font-size: 16px; }
       .hp-total-fields {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2844,7 +2960,7 @@
       .weapon-card td:nth-child(4) { grid-column: 1 / -1; }
       .spell-table tr { grid-template-columns: minmax(0, 1fr) 86px; }
       .spell-table td:nth-child(3) { grid-column: 1 / -1; }
-      .sorcery-table tr { grid-template-columns: minmax(0, 1fr) 88px; }
+      .sorcery-table tr { grid-template-columns: minmax(0, 1fr) 112px; }
       .gear-table tr { grid-template-columns: minmax(0, 1fr) 72px 86px; }
       .hit-location-card tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .hit-location-card td:nth-child(5) { grid-column: 1 / -1; }
@@ -2891,6 +3007,43 @@
       }
       .weapon-card td.check-cell { align-items: flex-start; }
       .weapon-card td.check-cell input { width: 22px; border: 0; }
+      .passion-row .success-values,
+      .skill-row .success-values,
+      .weapon-card .success-values,
+      .sorcery-table .success-values,
+      .spirit-combat-fields .success-values,
+      .field > .success-values {
+        grid-template-columns: minmax(30px, 1fr) 7px 22px 7px 18px;
+        min-width: 86px;
+      }
+      .weapon-card td:nth-child(2) .success-values {
+        width: 100%;
+        margin-inline: 0;
+      }
+      .passion-row .success-standard,
+      .skill-row .success-standard,
+      .weapon-card .success-standard,
+      .sorcery-table .success-standard,
+      .spirit-combat-fields .success-standard,
+      .field > .success-values .success-standard { font-size: 16px; }
+      .passion-row .success-special,
+      .skill-row .success-special,
+      .weapon-card .success-special,
+      .sorcery-table .success-special,
+      .spirit-combat-fields .success-special,
+      .field > .success-values .success-special { font-size: 11px; }
+      .passion-row .success-critical,
+      .skill-row .success-critical,
+      .weapon-card .success-critical,
+      .sorcery-table .success-critical,
+      .spirit-combat-fields .success-critical,
+      .field > .success-values .success-critical { font-size: 9px; }
+      .passion-row .success-separator,
+      .skill-row .success-separator,
+      .weapon-card .success-separator,
+      .sorcery-table .success-separator,
+      .spirit-combat-fields .success-separator,
+      .field > .success-values .success-separator { font-size: 9px; }
 
       .skill-layout { display: block; }
       .skill-column { display: contents; }
@@ -2902,7 +3055,7 @@
       }
       .skill-group-head {
         position: relative;
-        grid-template-columns: minmax(0, 1fr) 46px 38px 18px;
+        grid-template-columns: minmax(0, 1fr) 46px 96px 18px;
         min-height: 50px;
         padding: 7px 48px 7px 11px;
         border-bottom: 1px solid #ddd;
@@ -2911,7 +3064,7 @@
       .skill-group-head h3 { min-height: 34px; padding: 7px 0; font-size: 15px; }
       .skill-group-en { font-size: 9px; }
       .skill-modifier {
-        grid-template-columns: 46px 38px 18px;
+        grid-template-columns: 46px 96px 18px;
         min-height: 34px;
         padding: 2px 0;
         font-size: 10px;
@@ -2935,7 +3088,7 @@
       }
       .skill-group.is-mobile-collapsed > :not(.skill-group-head) { display: none; }
       .skill-row {
-        grid-template-columns: minmax(0, 1fr) 48px 44px 24px;
+        grid-template-columns: minmax(0, 1fr) 48px 96px 24px;
         min-height: 38px;
         gap: 5px;
         padding: 2px 11px;
@@ -3083,6 +3236,7 @@
       .panel::before { width: 2mm; }
       .panel::after { right: 8mm; bottom: 3mm; }
       #page-4::after { font-size: 6.2pt; line-height: 1.22; }
+      #page-1 .active-spell-card textarea { height: 32px; }
       .fold-guide, .fold-gear { left: 8mm; right: 8mm; }
       .fold-gear { bottom: 14mm; }
       input, textarea, select { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
@@ -3329,7 +3483,7 @@
               <div class="card-body">
                 <table class="melee-weapon-table">
                   <thead>
-                    <tr><th>武器</th><th style="width:10%">%</th><th style="width:12%">SR</th><th style="width:25%">傷害</th><th style="width:10%">耐久</th><th style="width:13px" aria-label="成長"></th></tr>
+                    <tr><th>武器</th><th style="width:20%">%</th><th style="width:11%">SR</th><th style="width:23%">傷害</th><th style="width:10%">耐久</th><th style="width:13px" aria-label="成長"></th></tr>
                   </thead>
                   <tbody id="melee-weapon-rows"></tbody>
                 </table>
@@ -3341,19 +3495,13 @@
               <div class="card-body">
                 <table class="ranged-weapon-table">
                   <thead>
-                    <tr><th>武器/射程</th><th style="width:10%">%</th><th style="width:12%">射速</th><th style="width:25%">傷害</th><th style="width:10%">耐久</th><th style="width:13px" aria-label="成長"></th></tr>
+                    <tr><th>武器/射程</th><th style="width:20%">%</th><th style="width:11%">射速</th><th style="width:23%">傷害</th><th style="width:10%">耐久</th><th style="width:13px" aria-label="成長"></th></tr>
                   </thead>
                   <tbody id="ranged-weapon-rows"></tbody>
                 </table>
               </div>
             </section>
 
-            <section class="card tight active-spell-card">
-              <div class="card-head"><h3>生效法術</h3><span>效果 · 時間</span></div>
-              <div class="card-body">
-                <textarea class="persist" name="active_effects" aria-label="生效法術紀錄"></textarea>
-              </div>
-            </section>
           </div>
           <div>
             <section class="card tight rune-affinity-card">
@@ -3396,6 +3544,13 @@
               </div>
             </section>
           </div>
+
+          <section class="card tight active-spell-card">
+            <div class="card-head"><h3>生效法術</h3><span>效果 · 時間</span></div>
+            <div class="card-body">
+              <textarea class="persist" name="active_effects" aria-label="生效法術紀錄"></textarea>
+            </div>
+          </section>
         </div>
 
       </article>
@@ -3405,8 +3560,9 @@
     <section class="spread spread-inside" aria-label="A4 第二張正反面">
       <article class="panel" id="page-2" data-page="2" style="--screen-order:2">
         <header class="page-head">
-          <div>
+          <div class="page-title-with-note">
             <h2>技能</h2>
+            <small class="page-title-note">已自動計算修正值到技能中</small>
           </div>
         </header>
 
@@ -3436,7 +3592,6 @@
               <div class="resource-title rune-point-title">
                 <span>符文點</span>
                 <label class="cult-inline"><span>教團</span><input type="text" class="persist" name="cult_rank"></label>
-                <small>RP</small>
               </div>
               <div class="resource-values">
                 <label class="resource-value"><span>最大</span><input type="text" inputmode="numeric" class="persist preview-editable-resource" name="rp_max"></label>
@@ -3448,7 +3603,6 @@
               <div class="resource-title rune-point-title">
                 <span>符文點</span>
                 <label class="cult-inline"><span>教團</span><input type="text" class="persist" name="associated_cult"></label>
-                <small>RP</small>
               </div>
               <div class="resource-values">
                 <label class="resource-value"><span>最大</span><input type="text" inputmode="numeric" class="persist preview-editable-resource" name="rp2_max"></label>
@@ -3963,14 +4117,24 @@
             ["關鍵成功", "≤ 技能值的 1/20"],
             ["特殊成功", "≤ 技能值的 1/5"],
             ["一般成功", "≤ 技能值"],
-            ["失敗", "> 技能值，或擲出 96–00"],
-            ["關鍵失敗", "技能值 01–10: 96–00; 11–30: 97–00; 31–50: 98–00; 51–70: 99–00; 71+: 00"]
+            ["失敗", "> 技能值，或擲出 96–00"]
           ].forEach(function (rule) {
             skillCheckList.appendChild(el("div", { class: "skill-quick-row" }, [
               el("strong", { text: rule[0] }),
               el("span", { text: rule[1] })
             ]));
           });
+          skillCheckList.appendChild(el("div", { class: "skill-quick-row is-fumble" }, [
+            el("strong", { text: "關鍵失敗" }),
+            el("span", { class: "skill-quick-range" }, [
+              el("span", { class: "skill-quick-range-title", text: "技能值" }),
+              el("span", { text: "01–10: 96–00;" }),
+              el("span", { text: "11–30: 97–00;" }),
+              el("span", { text: "31–50: 98–00;" }),
+              el("span", { text: "51–70: 99–00;" }),
+              el("span", { text: "71+: 00;" })
+            ])
+          ]));
           skillCheckSection.appendChild(skillCheckList);
           quickReference.appendChild(skillCheckSection);
 
@@ -4343,6 +4507,7 @@
         syncResourceTrack("mp", 24);
         syncResourceTrack("rp", 10);
         syncResourceTrack("rp2", 10);
+        updateAllSuccessDisplays();
       }
 
       function makeCircleTrack(targetId, prefix, maximum, leadingState, derived) {
@@ -4483,6 +4648,100 @@
         return tr;
       });
 
+      function enhanceSuccessField(field, kind) {
+        if (!field) return null;
+        var existing = field.closest(".success-values");
+        if (existing) return existing;
+        var parent = field.parentNode;
+        if (!parent) return null;
+        var wrapper = el("span", { class: "success-values", "data-success-kind": kind || "percent" });
+        parent.insertBefore(wrapper, field);
+        field.classList.add("success-source");
+        wrapper.appendChild(field);
+        wrapper.appendChild(el("span", { class: "success-standard" }));
+        wrapper.appendChild(el("span", { class: "success-separator", text: "/", "aria-hidden": "true" }));
+        wrapper.appendChild(el("span", { class: "success-special", "aria-hidden": "true" }));
+        wrapper.appendChild(el("span", { class: "success-separator", text: "/", "aria-hidden": "true" }));
+        wrapper.appendChild(el("span", { class: "success-critical", "aria-hidden": "true" }));
+        return wrapper;
+      }
+
+      function initializeSuccessDisplays() {
+        document.querySelectorAll(".skill-row").forEach(function (row) {
+          var valueField = Array.prototype.find.call(row.querySelectorAll('input[type="text"]'), function (field) {
+            return !/_name$/.test(field.name || "");
+          });
+          enhanceSuccessField(valueField, "skill");
+        });
+        document.querySelectorAll(".weapon-card tbody tr").forEach(function (row) {
+          var fields = row.querySelectorAll('input[type="text"]');
+          enhanceSuccessField(fields[1], "weapon");
+        });
+        document.querySelectorAll(".rune-node, .power-rune-node").forEach(function (row) {
+          enhanceSuccessField(row.querySelector(".rune-node-value, .power-rune-value"), "rune");
+        });
+        document.querySelectorAll(".passion-row .percent input").forEach(function (field) {
+          enhanceSuccessField(field, "passion");
+        });
+        document.querySelectorAll(".sorcery-table tbody tr").forEach(function (row) {
+          var fields = row.querySelectorAll('input[type="text"]');
+          enhanceSuccessField(fields[1], "sorcery");
+        });
+        document.querySelectorAll('.spirit-record input[name$="_combat_skill"]').forEach(function (field) {
+          enhanceSuccessField(field, "spirit-combat");
+        });
+        enhanceSuccessField(document.querySelector('[name="dodge_core"]'), "dodge");
+      }
+
+      function successStandardValue(field) {
+        if (!field) return null;
+        var skillRow = field.closest(".skill-row");
+        if (skillRow) {
+          var customName = skillRow.querySelector(".skill-custom-name");
+          if (customName && !String(customName.value || "").trim()) return null;
+          var enteredValue = parseRollNumber(field.value);
+          var rawValue = enteredValue === null ? skillBaseValue(skillRow) : enteredValue;
+          var modifierField = skillRow.closest(".skill-group").querySelector(".skill-modifier input");
+          var modifier = modifierField ? parseRollNumber(modifierField.value) : 0;
+          return rawValue + (modifier === null ? 0 : modifier);
+        }
+        return parseRollNumber(field.value);
+      }
+
+      function formatSuccessNumber(value) {
+        if (value === null || !Number.isFinite(value)) return "";
+        var rounded = Math.round(value * 100) / 100;
+        return String(rounded);
+      }
+
+      function successThreshold(value, divisor) {
+        if (value === null || !Number.isFinite(value) || value <= 0) return null;
+        return Math.max(1, Math.round(value / divisor));
+      }
+
+      function updateSuccessDisplay(wrapper) {
+        var field = wrapper.querySelector(".success-source");
+        var standard = successStandardValue(field);
+        var special = successThreshold(standard, 5);
+        var critical = successThreshold(standard, 20);
+        var standardNode = wrapper.querySelector(".success-standard");
+        standardNode.textContent = formatSuccessNumber(standard);
+        wrapper.querySelector(".success-special").textContent = formatSuccessNumber(special);
+        wrapper.querySelector(".success-critical").textContent = formatSuccessNumber(critical);
+        wrapper.classList.toggle("is-empty", standard === null);
+        if (standard === null) {
+          wrapper.removeAttribute("aria-label");
+          standardNode.removeAttribute("aria-label");
+        } else {
+          wrapper.setAttribute("aria-label", "標準 " + formatSuccessNumber(standard) + "；特殊 " + formatSuccessNumber(special) + "；關鍵 " + formatSuccessNumber(critical));
+          standardNode.setAttribute("aria-label", "標準值 " + formatSuccessNumber(standard) + "，點選複製");
+        }
+      }
+
+      function updateAllSuccessDisplays() {
+        document.querySelectorAll(".success-values").forEach(updateSuccessDisplay);
+      }
+
       function markRollCopyTargets() {
         function mark(node, title) {
           if (!node) return;
@@ -4490,43 +4749,48 @@
           node.setAttribute("title", title || "預覽模式：點一下複製檢定格式");
         }
 
+        function successTarget(field) {
+          var wrapper = field ? field.closest(".success-values") : null;
+          return wrapper ? wrapper.querySelector(".success-standard") : field;
+        }
+
         document.querySelectorAll(".skill-row").forEach(function (row) {
           mark(row.querySelector(".skill-name"));
           mark(row.querySelector(".skill-custom-name"));
-          mark(Array.prototype.find.call(row.querySelectorAll('input[type="text"]'), function (field) {
+          mark(successTarget(Array.prototype.find.call(row.querySelectorAll('input[type="text"]'), function (field) {
             return !/_name$/.test(field.name || "");
-          }));
+          })), "預覽模式：點一下複製標準技能值");
         });
         document.querySelectorAll(".weapon-card tbody tr").forEach(function (row) {
           var fields = row.querySelectorAll('input[type="text"]');
           mark(fields[0]);
-          mark(fields[1]);
+          mark(successTarget(fields[1]), "預覽模式：點一下複製標準技能值");
           mark(fields[3], "預覽模式：點一下複製傷害與武器名稱");
         });
         document.querySelectorAll(".rune-node, .power-rune-node").forEach(function (row) {
           mark(row.querySelector(".rune-node-head span, .power-rune-name"));
-          mark(row.querySelector(".rune-node-value, .power-rune-value"));
+          mark(successTarget(row.querySelector(".rune-node-value, .power-rune-value")), "預覽模式：點一下複製標準符文值");
         });
         document.querySelectorAll(".passion-row").forEach(function (row) {
           mark(row.querySelector(".passion-fixed-name"));
           mark(Array.prototype.find.call(row.children, function (child) {
             return child.matches && child.matches('input[type="text"]');
           }));
-          mark(row.querySelector(".percent input"));
+          mark(successTarget(row.querySelector(".percent input")), "預覽模式：點一下複製標準烈情值");
         });
         document.querySelectorAll(".sorcery-table tbody tr").forEach(function (row) {
           var fields = row.querySelectorAll('input[type="text"]');
           mark(fields[0]);
-          mark(fields[1]);
+          mark(successTarget(fields[1]), "預覽模式：點一下複製標準巫術值");
         });
         document.querySelectorAll('.spirit-record input[name$="_combat_skill"]').forEach(function (field) {
-          mark(field);
+          mark(successTarget(field), "預覽模式：點一下複製標準靈體戰鬥值");
           mark(field.closest("label").querySelector("span"));
         });
         var spiritCast = document.querySelector('[name="spirit_cast"]');
         mark(spiritCast);
         if (spiritCast) mark(spiritCast.closest("label").querySelector("span"));
-        mark(document.querySelector('[name="dodge_core"]'));
+        mark(successTarget(document.querySelector('[name="dodge_core"]')), "預覽模式：點一下複製標準閃避值");
         document.querySelectorAll("#characteristics .stat").forEach(function (stat) {
           mark(stat.querySelector("label"));
           mark(stat.querySelector("input"));
@@ -4625,8 +4889,11 @@
           } : null;
         }
 
-        if (trigger.matches('[name="dodge_core"]')) {
-          var dodgeValue = parseRollNumber(trigger.value);
+        var dodgeField = trigger.matches('[name="dodge_core"]')
+          ? trigger
+          : (trigger.closest(".success-values") ? trigger.closest(".success-values").querySelector('[name="dodge_core"]') : null);
+        if (dodgeField) {
+          var dodgeValue = parseRollNumber(dodgeField.value);
           return dodgeValue !== null ? { value: dodgeValue, name: "閃避" } : null;
         }
         return null;
@@ -4688,6 +4955,10 @@
           if (preview) {
             if (!field.hasAttribute("data-preview-readonly")) field.setAttribute("data-preview-readonly", String(Boolean(field.readOnly)));
             if (!field.hasAttribute("data-preview-disabled")) field.setAttribute("data-preview-disabled", String(Boolean(field.disabled)));
+            if (field.matches(".success-source") && !field.hasAttribute("data-preview-source-tabindex")) {
+              field.setAttribute("data-preview-source-tabindex", field.hasAttribute("tabindex") ? field.getAttribute("tabindex") : "");
+              field.tabIndex = -1;
+            }
             var isGrowthCheckbox = field.matches('input[type="checkbox"][name$="_xp"]');
             var isPreviewEditable = field.matches(".preview-editable-location-hp, .preview-editable-resource, .preview-editable-weapon-hp");
             if (!isGrowthCheckbox && !isPreviewEditable && field.matches('input[type="checkbox"], input[type="radio"], select')) field.disabled = true;
@@ -4700,6 +4971,12 @@
             if (field.hasAttribute("data-preview-disabled")) {
               field.disabled = field.getAttribute("data-preview-disabled") === "true";
               field.removeAttribute("data-preview-disabled");
+            }
+            if (field.hasAttribute("data-preview-source-tabindex")) {
+              var previousSourceTabIndex = field.getAttribute("data-preview-source-tabindex");
+              if (previousSourceTabIndex === "") field.removeAttribute("tabindex");
+              else field.setAttribute("tabindex", previousSourceTabIndex);
+              field.removeAttribute("data-preview-source-tabindex");
             }
           }
         });
@@ -4721,6 +4998,8 @@
         if (preview) showCopyToast("預覽模式：點選名稱或％數，即可複製「數值, 名稱」。");
       }
 
+      initializeSuccessDisplays();
+      updateAllSuccessDisplays();
       markRollCopyTargets();
 
       function addMobileTableLabels() {
@@ -7742,7 +8021,9 @@
         applyCultGuideSkills(builderState.cult);
         addPassionFromBuilder(builderState.cultPassion);
         setSheetValue("rp_current", 3);
-        setSheetValue("rp_max", 10);
+        setSheetValue("rp_max", 3);
+        setSheetValue("rp2_current", 0);
+        setSheetValue("rp2_max", 0);
 
         setSheetValue("reputation", 5);
 
