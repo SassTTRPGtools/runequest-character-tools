@@ -1264,6 +1264,15 @@
       background: #fff;
     }
     .skill-group + .skill-group { margin-top: 8px; }
+    @media (min-width: 721px) {
+      #page-2 .page-head { margin-bottom: 10px; }
+      .skill-column:nth-child(2) .skill-group + .skill-group { margin-top: 3px; }
+      .skill-group-continuation .skill-group-head,
+      .skill-group-continuation .skill-group-head h3,
+      .skill-group-continuation .skill-modifier { min-height: 20px; }
+      .skill-group-continuation .skill-group-head h3,
+      .skill-group-continuation .skill-modifier { padding-top: 0; padding-bottom: 0; }
+    }
     .skill-group-head {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 34px 68px 14px;
@@ -4056,7 +4065,7 @@
         {
           title: "其他技能", key: "other", noModifier: true, items: (function () {
             var rows = [];
-            for (var i = 0; i < 20; i += 1) rows.push(customSkill("", "", i));
+            for (var i = 0; i < 18; i += 1) rows.push(customSkill("", "", i));
             return rows;
           }())
         },
@@ -4092,15 +4101,24 @@
 
       var groupByKey = {};
       skills.forEach(function (group) { groupByKey[group.key] = group; });
+      var knowledgeContinuationItems = groupByKey.knowledge.items.slice(-2);
+      var knowledgeMainGroup = Object.assign({}, groupByKey.knowledge, {
+        items: groupByKey.knowledge.items.slice(0, -2)
+      });
+      var knowledgeContinuationGroup = Object.assign({}, groupByKey.knowledge, {
+        title: "知識技能（續）",
+        items: knowledgeContinuationItems,
+        continuation: true
+      });
       var skillColumns = [
-        [groupByKey.agility, groupByKey.communication, groupByKey.knowledge],
-        [groupByKey.magic, groupByKey.manipulation, groupByKey.perception, groupByKey.stealth, groupByKey.other],
+        [groupByKey.agility, groupByKey.communication, knowledgeMainGroup],
+        [knowledgeContinuationGroup, groupByKey.magic, groupByKey.manipulation, groupByKey.perception, groupByKey.stealth, groupByKey.other],
         [groupByKey.melee_weapon, groupByKey.missile_weapon, groupByKey.shield, groupByKey.natural_weapon]
       ];
       skillColumns.forEach(function (groups, columnIndex) {
         var column = el("div", { class: "skill-column" });
         groups.forEach(function (group) {
-          var box = el("section", { class: "skill-group" });
+          var box = el("section", { class: "skill-group" + (group.continuation ? " skill-group-continuation" : "") });
           var head = el("div", { class: "skill-group-head" });
           var groupTitle = el("h3");
           groupTitle.appendChild(el("span", { text: group.title }));
@@ -7001,6 +7019,7 @@
         skillColumns.forEach(function (columnGroups) {
           var column = el("div", { class: "builder-skill-sheet-column" });
           columnGroups.forEach(function (sourceGroup) {
+            if (sourceGroup.continuation) return;
             var group = projection.groupMap[sourceGroup.key];
             if (!group || !group.entries.length) return;
             var modifier = builderSkillModifierNumber(sourceGroup);
