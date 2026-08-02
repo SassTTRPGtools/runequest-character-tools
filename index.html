@@ -1025,8 +1025,10 @@
     body.sheet-preview .success-standard.roll-copy-target { pointer-events: auto; }
     .percent .success-values { min-width: 62px; }
     .passion-row {
-      grid-template-columns: minmax(0, min(180px, calc(100% - 108px))) 88px 14px minmax(0, 1fr);
-      column-gap: 2px;
+      grid-template-columns: minmax(0, 1fr) 16px;
+      grid-template-rows: 13px 11px;
+      column-gap: 3px;
+      row-gap: 0;
     }
     .passion-row, .quick-row {
       display: grid;
@@ -1035,16 +1037,27 @@
       min-height: 28px;
       border-bottom: 1px solid var(--write-line);
     }
-    .passion-row { column-gap: 2px; }
+    .passion-row { column-gap: 3px; row-gap: 0; }
     .passion-row:last-child, .quick-row:last-child { border-bottom: 0; }
-    .passion-row input[type="text"] {
+    .passion-row .passion-name {
+      grid-column: 1;
+      grid-row: 1;
+      align-self: end;
+      width: 100%;
       min-width: 0;
       border: 0;
       background: transparent;
       outline: 0;
       font-size: 10.5px;
       font-weight: 650;
+      line-height: 1;
       letter-spacing: -.12px;
+    }
+    .passion-row input.passion-name {
+      height: 13px;
+      min-height: 0;
+      padding: 0;
+      line-height: 11px;
     }
     .quick-row input[type="text"] {
       min-width: 0;
@@ -1054,12 +1067,37 @@
       font-size: 11px;
       font-weight: 650;
     }
+    .passion-row .passion-score {
+      grid-column: 1;
+      grid-row: 2;
+      align-self: start;
+      justify-self: start;
+      width: 76px;
+      height: 11px;
+      line-height: 1;
+    }
+    .passion-row .passion-score .success-values { height: 11px; }
+    .passion-row .passion-score .success-source {
+      height: 11px;
+      min-height: 0;
+      border: 0;
+      padding: 0;
+      line-height: 10px;
+    }
+    .passion-row .passion-score > span:last-child { line-height: 1; }
     .passion-row .percent input { width: 100%; }
     .passion-row .success-standard { font-size: 10px; }
     .passion-row .success-special { font-size: 7.5px; }
     .passion-row .success-critical { font-size: 6px; }
     .passion-row .success-separator { font-size: 6px; }
-    .passion-row > input[type="checkbox"] {
+    .passion-row .success-values.is-empty .success-separator {
+      visibility: visible;
+      opacity: .55;
+    }
+    .passion-row > .passion-growth {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      align-self: center;
       justify-self: end;
       margin-left: 0;
     }
@@ -1582,7 +1620,7 @@
     #page-1 #passion-rows {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      column-gap: 8px;
+      column-gap: 6px;
     }
     #page-1 #passion-rows .passion-row:nth-last-child(-n + 2) { border-bottom: 0; }
     .spell-table td { height: 29px; }
@@ -2891,10 +2929,41 @@
       #page-1 #passion-rows { grid-template-columns: 1fr; gap: 0; }
       #page-1 #passion-rows .passion-row { min-height: 38px; border-bottom: 1px solid var(--write-line); }
       #page-1 #passion-rows .passion-row:last-child { border-bottom: 0; }
-      .passion-row { grid-template-columns: minmax(0, 1fr) 104px 24px; gap: 7px; }
+      .passion-row {
+        grid-template-columns: minmax(0, 1fr) 104px 24px;
+        grid-template-rows: 1fr;
+        gap: 7px;
+      }
+      .passion-row .passion-name {
+        grid-column: 1;
+        grid-row: 1;
+        align-self: center;
+      }
+      .passion-row .passion-score {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: center;
+        justify-self: stretch;
+        width: 100%;
+      }
+      .passion-row > .passion-growth {
+        grid-column: 3;
+        grid-row: 1;
+      }
       .passion-row input[type="text"],
       .passion-fixed-name { font-size: 15px; }
-      .passion-row .percent input { width: 100%; height: 32px; font-size: 16px; }
+      .passion-row input.passion-name {
+        height: 32px;
+        line-height: normal;
+      }
+      .passion-row .passion-score,
+      .passion-row .passion-score .success-values,
+      .passion-row .passion-score .success-source { height: 32px; }
+      .passion-row .passion-score .success-source {
+        padding: 1px 2px;
+        line-height: normal;
+      }
+      .passion-row .percent input { width: 100%; font-size: 16px; }
       .hp-total-fields {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3817,13 +3886,13 @@
       makeRows("passion-rows", 12, function (i) {
         var row = el("div", { class: "passion-row" });
         if (i === 0) {
-          row.appendChild(el("span", { class: "passion-fixed-name", text: "榮譽" }));
-          row.appendChild(el("span", { class: "percent" }, [percentInput("honor"), el("span", { text: "%" })]));
-          row.appendChild(input("honor_xp", "", "checkbox"));
+          row.appendChild(el("span", { class: "passion-name passion-fixed-name", text: "榮譽" }));
+          row.appendChild(el("span", { class: "passion-score percent" }, [percentInput("honor"), el("span", { text: "%" })]));
+          row.appendChild(input("honor_xp", "passion-growth", "checkbox"));
         } else {
-          row.appendChild(input("passion_" + i + "_name"));
-          row.appendChild(el("span", { class: "percent" }, [percentInput("passion_" + i + "_value"), el("span", { text: "%" })]));
-          row.appendChild(input("passion_" + i + "_xp", "", "checkbox"));
+          row.appendChild(input("passion_" + i + "_name", "passion-name"));
+          row.appendChild(el("span", { class: "passion-score percent" }, [percentInput("passion_" + i + "_value"), el("span", { text: "%" })]));
+          row.appendChild(input("passion_" + i + "_xp", "passion-growth", "checkbox"));
         }
         return row;
       });
