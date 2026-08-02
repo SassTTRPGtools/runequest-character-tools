@@ -3548,25 +3548,13 @@
             </section>
 
             <section class="card tight weapon-card">
-              <div class="card-head"><h3>近戰武器</h3></div>
+              <div class="card-head"><h3>武器</h3></div>
               <div class="card-body">
-                <table class="melee-weapon-table">
+                <table class="weapon-table">
                   <thead>
                     <tr><th>武器</th><th style="width:20%">%</th><th style="width:11%">SR</th><th style="width:23%">傷害</th><th style="width:10%">耐久</th><th style="width:13px" aria-label="成長"></th></tr>
                   </thead>
-                  <tbody id="melee-weapon-rows"></tbody>
-                </table>
-              </div>
-            </section>
-
-            <section class="card tight weapon-card">
-              <div class="card-head"><h3>遠程武器</h3></div>
-              <div class="card-body">
-                <table class="ranged-weapon-table">
-                  <thead>
-                    <tr><th>武器/射程</th><th style="width:20%">%</th><th style="width:11%">射速</th><th style="width:23%">傷害</th><th style="width:10%">耐久</th><th style="width:13px" aria-label="成長"></th></tr>
-                  </thead>
-                  <tbody id="ranged-weapon-rows"></tbody>
+                  <tbody id="weapon-rows"></tbody>
                 </table>
               </div>
             </section>
@@ -3787,7 +3775,7 @@
         for (var i = 0; i < count; i += 1) target.appendChild(factory(i));
       }
 
-      var characteristics = ["STR", "CON", "SIZ", "INT", "POW", "DEX", "CHA"];
+      var characteristics = ["STR", "CON", "SIZ", "DEX", "INT", "POW", "CHA"];
       characteristics.forEach(function (name) {
         var wrap = el("div", { class: "stat" });
         wrap.appendChild(el("label", { text: name }));
@@ -4232,11 +4220,12 @@
         document.getElementById("skill-layout").appendChild(column);
       });
 
-      makeRows("melee-weapon-rows", 4, function (i) {
+      var sheetWeaponIndexes = [0, 1, 2, 4, 5, 6, 7, null];
+      sheetWeaponIndexes.forEach(function (weaponIndex, rowIndex) {
         var tr = el("tr");
+        var isSpiritCombat = weaponIndex === null;
         ["name", "skill", "sr", "damage", "hp"].forEach(function (key) {
-          var isSpiritCombat = i === 3;
-          var fieldName = isSpiritCombat ? "spirit_combat_weapon_" + key : "weapon_" + i + "_" + key;
+          var fieldName = isSpiritCombat ? "spirit_combat_weapon_" + key : "weapon_" + weaponIndex + "_" + key;
           var field = input(fieldName);
           if (isSpiritCombat && (key === "name" || key === "sr")) {
             field.value = key === "name" ? "靈體戰鬥" : "12";
@@ -4252,29 +4241,13 @@
           if (key === "hp") {
             field.classList.add("preview-editable-weapon-hp");
             field.setAttribute("inputmode", "numeric");
-            field.setAttribute("aria-label", (isSpiritCombat ? "靈體戰鬥" : "近戰武器 " + (i + 1)) + "耐久");
+            field.setAttribute("aria-label", (isSpiritCombat ? "靈體戰鬥" : "武器 " + (rowIndex + 1)) + "耐久");
           }
           tr.appendChild(el("td", {}, [field]));
         });
-        var xpName = i === 3 ? "spirit_combat_weapon_xp" : "weapon_" + i + "_xp";
+        var xpName = isSpiritCombat ? "spirit_combat_weapon_xp" : "weapon_" + weaponIndex + "_xp";
         tr.appendChild(el("td", { class: "check-cell" }, [input(xpName, "", "checkbox")]));
-        return tr;
-      });
-
-      makeRows("ranged-weapon-rows", 4, function (i) {
-        var weaponIndex = i + 4;
-        var tr = el("tr");
-        ["name", "skill", "sr", "damage", "hp"].forEach(function (key) {
-          var field = input("weapon_" + weaponIndex + "_" + key);
-          if (key === "hp") {
-            field.classList.add("preview-editable-weapon-hp");
-            field.setAttribute("inputmode", "numeric");
-            field.setAttribute("aria-label", "遠程武器 " + (i + 1) + "耐久");
-          }
-          tr.appendChild(el("td", {}, [field]));
-        });
-        tr.appendChild(el("td", { class: "check-cell" }, [input("weapon_" + weaponIndex + "_xp", "", "checkbox")]));
-        return tr;
+        document.getElementById("weapon-rows").appendChild(tr);
       });
 
       var humanLocations = [
@@ -5608,7 +5581,7 @@
         darkness: ["siz", "cha"], water: ["dex", "cha"], earth: ["con", "cha"],
         air: ["str", "cha"], fire: ["int", "cha"], moon: ["pow", "cha"]
       };
-      var ATTRIBUTE_LABELS = { str: "STR", con: "CON", siz: "SIZ", int: "INT", pow: "POW", dex: "DEX", cha: "CHA" };
+      var ATTRIBUTE_LABELS = { str: "STR", con: "CON", siz: "SIZ", dex: "DEX", int: "INT", pow: "POW", cha: "CHA" };
       var builderModal = document.getElementById("character-builder");
       var builderContent = document.getElementById("builder-content");
       var builderProgress = document.getElementById("builder-progress");
@@ -5631,8 +5604,8 @@
           runeAllocations: ALL_RUNE_OPTIONS.map(function (entry) { return { rune: entry[0], points: "" }; }),
           attributeRolls: [null, null],
           selectedAttributeRoll: "",
-          rawAttributes: { str: "", con: "", siz: "", int: "", pow: "", dex: "", cha: "" },
-          freeAttributes: { str: "", con: "", siz: "", int: "", pow: "", dex: "", cha: "" },
+          rawAttributes: { str: "", con: "", siz: "", dex: "", int: "", pow: "", cha: "" },
+          freeAttributes: { str: "", con: "", siz: "", dex: "", int: "", pow: "", cha: "" },
           runeAttributes: { primary: "", secondary: "" },
           occupation: "",
           warriorType: "",
@@ -6322,7 +6295,7 @@
         ensureAttributeRollState();
         builderContent.appendChild(el("p", { class: "builder-intro", text: "你可以擲出兩組完整屬性並比較結果，再決定採用其中一組。任何骰子第一次擲出 1 時，該顆骰子會自動重擲一次；第二次結果即使仍是 1 也會保留。" }));
         builderContent.appendChild(el("div", { class: "builder-attribute-rule" }, [
-          el("strong", { text: "3D6" }), el("span", { text: "STR、CON、POW、DEX、CHA" }),
+          el("strong", { text: "3D6" }), el("span", { text: "STR、CON、DEX、POW、CHA" }),
           el("strong", { text: "2D6+6" }), el("span", { text: "SIZ、INT" }),
           el("strong", { text: "額外點數" }), el("span", { text: "採用結果的總和為 92 或更低時，必須額外分配 3 點；分配後單項屬性不得高於 18。" })
         ]));
