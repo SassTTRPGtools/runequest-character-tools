@@ -5724,6 +5724,14 @@
         return el("div", { class: "builder-info", text: textValue || "", id: id || "" });
       }
 
+      function builderChoicesMentionLanguage(specs) {
+        return (specs || []).some(function (spec) { return spec.category === "language" || spec.category === "readwrite"; });
+      }
+
+      function builderLanguageReference() {
+        return el("p", { class: "builder-help builder-language-reference", text: "選擇語言時，請參考核心規則書的「技能」章節。" });
+      }
+
       function homelandGroup(homeland) {
         return String(homeland || "").indexOf("破嵐刻司") === 0 ? "破嵐刻司" : String(homeland || "");
       }
@@ -6424,6 +6432,21 @@
         return group.items.filter(function (item) { return item.name; }).map(function (item) { return item.name; });
       }
 
+      function loreSkillOptions(cultName) {
+        var options = [];
+        var seen = new Set();
+        skills.forEach(function (group) {
+          group.items.forEach(function (item) {
+            var name = String(item.name || "").trim();
+            if (!name && item.type === "label" && item.text === "教團知識" && cultName) name = "教團知識（" + cultName + "）";
+            if (!/知識(?:\s*[（(][^）)]+[）)])?$/.test(name) || seen.has(name)) return;
+            seen.add(name);
+            options.push([name, name.replace(/\s*\(([^)]+)\)\s*$/, "（$1）")]);
+          });
+        });
+        return options;
+      }
+
       function weaponFieldCategory(fieldName) {
         var match = String(fieldName || "").match(/skill_weapon_(\d+)/);
         var index = match ? Number(match[1]) : -1;
@@ -6705,6 +6728,7 @@
             choicesGrid.appendChild(field);
           });
           choicesSection.appendChild(choicesGrid);
+          if (builderChoicesMentionLanguage(specs)) choicesSection.appendChild(builderLanguageReference());
           choicesSection.appendChild(el("p", { class: "builder-occupation-choice-note", text: "下拉選單只列出適用技能；必須手填的欄位會顯示參考範例。這些選擇會在完成角色時直接加到對應技能。" }));
           builderContent.appendChild(choicesSection);
         }
@@ -6762,7 +6786,7 @@
           } else if (/^讀寫（任意/.test(subject)) {
             spec = { label: subject, type: "text", bonus: bonus, category: "readwrite", example: "例如：赫爾特語、商語" };
           } else if (/^知識（任意）/.test(subject)) {
-            spec = { label: subject, type: "select", options: skillNamesForGroup("knowledge").map(function (entry) { return [entry, entry]; }), bonus: bonus, category: "skill" };
+            spec = { label: subject, type: "select", options: loreSkillOptions(name), bonus: bonus, category: "skill" };
           }
           if (spec) {
             spec.id = "cult_part_" + partIndex;
@@ -6850,6 +6874,7 @@
             choiceGrid.appendChild(field);
           });
           initiation.appendChild(choiceGrid);
+          if (builderChoicesMentionLanguage(cultSpecs)) initiation.appendChild(builderLanguageReference());
         }
         builderContent.appendChild(initiation);
 
