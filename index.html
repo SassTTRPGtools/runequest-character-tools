@@ -681,6 +681,8 @@
       margin-top: 7px;
     }
     .derived label { font-size: 9px; }
+    .derived .current-value-field { position: relative; }
+    .derived .current-value-penalty { position: absolute; top: 0; right: 0; color: #555; font-size: 7px; font-weight: 800; letter-spacing: 0; }
 
     .circle-resource {
       padding: 7px;
@@ -1634,8 +1636,35 @@
     .spell-table td { height: 29px; }
 
     .gear-table th:nth-child(1) { width: auto; }
-    .gear-table th:nth-child(2), .gear-table th:nth-child(3) { width: 52px; text-align: center; }
+    .gear-table th:nth-child(2), .gear-table th:nth-child(3) { width: 48px; text-align: center; }
+    .gear-table th:nth-child(4) { width: 38px; padding-right: 0; padding-left: 0; text-align: center; }
     .gear-table td { height: 26px; }
+    .gear-item-entry {
+      display: grid;
+      grid-template-rows: 12px 9px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .gear-item-entry > input {
+      height: 12px;
+      min-height: 0;
+      padding: 0;
+      font-size: 9.5px;
+      line-height: 11px;
+    }
+    .gear-item-detail {
+      min-width: 0;
+      overflow: hidden;
+      color: #555;
+      font-size: 7px;
+      font-weight: 650;
+      line-height: 9px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .gear-item-detail:empty { display: none; }
+    .gear-table td.gear-equip-cell { padding: 0; text-align: center; }
+    .gear-table td.gear-equip-cell input { width: 13px; height: 13px; margin: 0; accent-color: #111; }
     .coin-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
     .coin-legend {
       margin: 8px 0 0;
@@ -2272,6 +2301,24 @@
     .builder-inline-total.is-invalid { color: #8a0000; }
     .builder-summary-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
     .builder-summary-list li { padding-bottom: 8px; border-bottom: 1px solid #bbb; font-size: 12px; line-height: 1.55; }
+    .builder-equipment-status { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+    .builder-equipment-status span { border: 1px solid #999; border-radius: 999px; padding: 4px 8px; font-size: 11px; font-weight: 800; }
+    .builder-equipment-group { margin-top: 13px; border: 1px solid #aaa; border-radius: 9px; background: #fff; }
+    .builder-equipment-group > summary { cursor: pointer; padding: 10px 12px; font-size: 13px; font-weight: 900; }
+    .builder-equipment-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 10px 10px; }
+    .builder-equipment-item { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; min-width: 0; border: 1px solid #aaa; border-radius: 8px; padding: 9px 10px; background: #fff; }
+    .builder-equipment-item input { margin-top: 3px; accent-color: #111; }
+    .builder-equipment-copy { min-width: 0; }
+    .builder-equipment-copy strong { display: block; font-size: 12px; line-height: 1.35; }
+    .builder-equipment-copy small { display: block; margin-top: 3px; color: #555; font-size: 10px; line-height: 1.45; }
+    .builder-equipment-item.is-recommended { box-shadow: inset 3px 0 0 var(--builder-accent, #111); }
+    .builder-equipment-item.is-unusable { border-color: #b3261e; color: #8a1711; background: #fff4f3; }
+    .builder-equipment-item.is-unusable small { color: #8a1711; }
+    .builder-equipment-badge { display: inline-block; margin-left: 5px; border-radius: 999px; padding: 1px 5px; color: #fff; background: var(--builder-accent, #111); font-size: 8px; vertical-align: 1px; }
+    .builder-equipment-item.is-unusable .builder-equipment-badge { background: #b3261e; }
+    .equipment-manager-dialog { grid-template-rows: auto minmax(0, 1fr) auto auto; }
+    .equipment-manager-content { padding-top: 16px; }
+    .equipment-manager-footer-note { color: #555; font-size: 10px; line-height: 1.45; }
     .builder-error {
       margin: 0 22px -2px;
       padding: 8px 10px;
@@ -2715,7 +2762,7 @@
       .builder-kicker { font-size: 10px; }
       .builder-head h2 { font-size: 23px; }
       .builder-source { font-size: 10.5px; }
-      .builder-progress { grid-template-columns: repeat(6, minmax(104px, 1fr)); padding: 0 11px; }
+      .builder-progress { grid-template-columns: repeat(7, minmax(104px, 1fr)); padding: 0 11px; }
       .builder-content { padding: 22px 18px 28px; }
       .builder-intro { font-size: 13px; line-height: 1.75; }
       .builder-section h3 { font-size: 16px; }
@@ -2728,6 +2775,7 @@
       .builder-rune-slider { grid-template-columns: 22px minmax(58px, auto) minmax(72px, 1fr) 32px 40px; }
       .builder-cult-options, .builder-cult-magic { grid-template-columns: 1fr; }
       .builder-skill-sheet { grid-template-columns: 1fr; }
+      .builder-equipment-grid { grid-template-columns: 1fr; }
       .builder-free-point-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       .builder-error { margin-right: 18px; margin-left: 18px; }
       .builder-footer { padding: 12px 18px; }
@@ -3081,6 +3129,16 @@
         font-size: 16px;
         text-align: left !important;
       }
+      .gear-item-entry { display: block; overflow: visible; }
+      .gear-item-entry > input { height: auto; min-height: 32px; font-size: 16px; line-height: normal; }
+      .gear-item-detail {
+        margin-top: 5px;
+        overflow: visible;
+        font-size: 11px;
+        line-height: 1.45;
+        text-overflow: initial;
+        white-space: normal;
+      }
       .weapon-card td.check-cell { align-items: flex-start; }
       .weapon-card td.check-cell input { width: 22px; border: 0; }
       .passion-row .success-values,
@@ -3330,6 +3388,7 @@
     </div>
     <nav class="toolbar" aria-label="角色表頁面">
       <button type="button" class="builder-launch" id="create-character-button" data-edit-only>建立角色</button>
+      <button type="button" id="manage-equipment-button" data-edit-only>管理裝備</button>
       <div class="mode-switch interaction-switch" role="group" aria-label="操作模式">
         <button type="button" data-interaction-mode="edit" aria-pressed="true">編輯</button>
         <button type="button" data-interaction-mode="preview" aria-pressed="false">預覽</button>
@@ -3378,7 +3437,7 @@
     <section class="builder-dialog" role="dialog" aria-modal="true" aria-labelledby="builder-title">
       <header class="builder-head">
         <div>
-          <p class="builder-kicker">六步驟創角引導</p>
+          <p class="builder-kicker">七步驟創角引導</p>
           <h2 id="builder-title">建立角色</h2>
           <p class="builder-source">參考 <a href="https://www.drivethrurpg.com/en/product/243427/runequest-roleplaying-in-glorantha?src=hottest_filtered" target="_blank" rel="noreferrer">《RuneQuest - Roleplaying in Glorantha》</a>；完成前不會更動角色表。</p>
         </div>
@@ -3393,6 +3452,28 @@
           <button type="button" id="builder-back">上一步</button>
           <button type="button" class="builder-primary" id="builder-next">下一步</button>
           <button type="button" class="builder-primary" id="builder-apply" hidden>完成並套用</button>
+        </div>
+      </footer>
+    </section>
+  </div>
+
+  <div class="character-builder screen-only" id="equipment-manager" hidden aria-hidden="true">
+    <section class="builder-dialog equipment-manager-dialog" role="dialog" aria-modal="true" aria-labelledby="equipment-manager-title">
+      <header class="builder-head">
+        <div>
+          <p class="builder-kicker">獨立裝備導入</p>
+          <h2 id="equipment-manager-title">管理裝備</h2>
+          <p class="builder-source">使用與建立角色步驟 7 相同的裝備清單；只會更新行囊，不會重新啟動建立角色。</p>
+        </div>
+        <button type="button" class="builder-close" id="equipment-manager-close" aria-label="關閉管理裝備">×</button>
+      </header>
+      <div class="builder-content equipment-manager-content" id="equipment-manager-content"></div>
+      <p class="builder-error" id="equipment-manager-error" role="alert" hidden></p>
+      <footer class="builder-footer">
+        <span class="equipment-manager-footer-note">手動填寫的非目錄物品與既有穿戴狀態會保留。</span>
+        <div class="builder-footer-actions">
+          <button type="button" id="equipment-manager-cancel">取消</button>
+          <button type="button" class="builder-primary" id="equipment-manager-apply">套用至行囊</button>
         </div>
       </footer>
     </section>
@@ -3488,14 +3569,14 @@
             </div>
             <div class="card-body">
               <table class="gear-table">
-                <thead><tr><th>物品</th><th>數量</th><th>負重值</th></tr></thead>
+                <thead><tr><th>物品</th><th>數量</th><th>負重值</th><th aria-label="穿戴">穿戴</th></tr></thead>
                 <tbody id="gear-rows"></tbody>
               </table>
               <div class="grid four fold-enc-grid">
-                <label class="field">目前負重值<input type="text" class="line persist" name="enc_current"></label>
+                <label class="field">目前負重值<input type="text" class="line persist calculated-field" name="enc_current" readonly aria-label="依行囊物品自動計算目前負重值"></label>
                 <label class="field">最大負重值<input type="text" class="line persist calculated-field" name="enc_max" readonly aria-label="自動計算最大負重值"></label>
-                <label class="field">閃避減值<input type="text" class="line persist" name="dodge_penalty"></label>
-                <label class="field">移動<input type="text" class="line persist" name="movement_gear"></label>
+                <label class="field">閃避減值<input type="text" class="line persist calculated-field" name="dodge_penalty" readonly aria-label="依目前負重值與最大負重值自動計算閃避減值"></label>
+                <label class="field">潛行減值<input type="text" class="line persist calculated-field" name="movement_gear" readonly aria-label="依穿戴防具自動計算潛行減值"></label>
               </div>
             </div>
           </div>
@@ -3538,11 +3619,11 @@
                   <label class="field">傷害加值<input type="text" class="line persist calculated-field" name="damage_bonus" readonly aria-label="自動計算傷害加值"></label>
                   <label class="field">恢復率／週<input type="text" class="line persist calculated-field" name="healing_rate" readonly aria-label="自動計算恢復率"></label>
                   <label class="field">移動 MOV<input type="text" class="line persist" name="movement"></label>
-                  <label class="field">閃避<input type="text" class="line persist" name="dodge_core"></label>
+                  <label class="field current-value-field">目前閃避值<span class="current-value-penalty" id="current-dodge-penalty"></span><input type="text" class="line persist calculated-field" name="dodge_core" readonly aria-label="依閃避技能與減值自動計算目前閃避值"></label>
                   <label class="field">SIZ SR<input type="text" class="line persist calculated-field" name="siz_sr" readonly aria-label="自動計算 SIZ SR"></label>
                   <label class="field">DEX SR<input type="text" class="line persist calculated-field" name="dex_sr" readonly aria-label="自動計算 DEX SR"></label>
                   <label class="field">出擊順序 SR<input type="text" class="line persist calculated-field" name="base_sr" readonly aria-label="自動計算出擊順序 SR"></label>
-                  <label class="field">最大負重值<input type="text" class="line persist calculated-field" name="max_enc_core" readonly aria-label="自動計算最大負重值"></label>
+                  <label class="field current-value-field">目前潛行值<span class="current-value-penalty" id="current-stealth-penalty"></span><input type="text" class="line persist calculated-field" name="current_stealth" readonly aria-label="依潛行技能與防具減值自動計算目前潛行值"></label>
                 </div>
               </div>
             </section>
@@ -3753,6 +3834,71 @@
       var STORAGE_KEY = "rq-modern-character-sheet-v1";
       var MODE_KEY = STORAGE_KEY + "-layout-mode";
       var RUNE_BLANK_MIGRATION_KEY = STORAGE_KEY + "-blank-opposed-runes-v1";
+      var GEAR_ROW_COUNT = 12;
+      var HIT_LOCATION_COUNT = 10;
+      var RESOURCE_TRACKS = { mp: 24, rp: 10, rp2: 10 };
+      var DERIVED_ROLL_COPY_FIELDS = { dodge_core: "閃避", current_stealth: "潛行" };
+      var ARMOR_MATERIAL_KEYWORDS = ["皮革", "厚皮革", "煮蠟硬革", "鉚釘皮革", "亞麻", "青銅", "板甲", "鱗甲", "環甲", "龜殼", "絎縫布"];
+
+      function byId(id) {
+        return document.getElementById(id);
+      }
+
+      function all(selector, root) {
+        return Array.from((root || document).querySelectorAll(selector));
+      }
+
+      var namedFieldCache = Object.create(null);
+      function fieldsByName(name, root) {
+        if (root) return all('[name="' + name + '"]', root);
+        if (!namedFieldCache[name]) namedFieldCache[name] = all('[name="' + name + '"]');
+        return namedFieldCache[name];
+      }
+
+      function fieldByName(name, root) {
+        var fields = fieldsByName(name, root);
+        return fields.length ? fields[0] : null;
+      }
+
+      var persistFieldCache;
+      function persistFields() {
+        if (!persistFieldCache) persistFieldCache = all(".persist");
+        return persistFieldCache;
+      }
+
+      function cleanText(value) {
+        return String(value === undefined || value === null ? "" : value).trim();
+      }
+
+      function normalizedText(value) {
+        return cleanText(value).replace(/\s+/g, " ");
+      }
+
+      function finiteNumber(value) {
+        var number = Number(value);
+        return Number.isFinite(number) ? number : null;
+      }
+
+      function namedFieldText(name) {
+        var field = fieldByName(name);
+        return field ? cleanText(field.value) : "";
+      }
+
+      function assignFieldValue(field, value) {
+        if (!field) return;
+        if (field.type === "checkbox" || field.type === "radio") field.checked = Boolean(value);
+        else field.value = value === undefined || value === null ? "" : String(value);
+      }
+
+      function setSheetValue(name, value) {
+        fieldsByName(name).forEach(function (field) { assignFieldValue(field, value); });
+      }
+
+      function setModalVisibility(modal, visible) {
+        if (!modal) return;
+        modal.hidden = !visible;
+        modal.setAttribute("aria-hidden", String(!visible));
+      }
 
       function el(tag, attrs, children) {
         var node = document.createElement(tag);
@@ -3778,7 +3924,7 @@
       }
 
       function makeRows(targetId, count, factory) {
-        var target = document.getElementById(targetId);
+        var target = byId(targetId);
         for (var i = 0; i < count; i += 1) target.appendChild(factory(i));
       }
 
@@ -4099,6 +4245,157 @@
         }
       ];
 
+      function equipmentWeapon(id, mode, category, name, base, str, dex, damage, hp, enc, reach, sr, damageType, skill) {
+        return { id: id, kind: "weapon", mode: mode, category: category, name: name, base: base, str: str, dex: dex, damage: damage, hp: hp, enc: String(enc), reach: String(reach), sr: String(sr), damageType: damageType, skill: skill || name };
+      }
+
+      function equipmentArmor(id, coverage, locations, type, material, ap, enc, stealth, price) {
+        return { id: id, kind: "armor", category: coverage, name: type, material: material, locations: locations, ap: ap, enc: String(enc), stealth: stealth, price: price };
+      }
+
+      function equipmentShield(id, size, material, base, str, hp, damage, enc, sr) {
+        return { id: id, kind: "shield", mode: "melee", category: "盾牌", name: size + "盾", material: material, base: base, str: str, dex: null, damage: damage, hp: hp, enc: String(enc), reach: "", sr: String(sr), damageType: "", skill: size + "盾" };
+      }
+
+      var EQUIPMENT_CATALOG = [
+        equipmentWeapon("melee-small-axe", "melee", "單手斧（1H）", "小斧", 10, 7, 7, "1D6+1", "6", "1", "0.4", "4", "劈砍", "單手斧"),
+        equipmentWeapon("melee-battle-axe", "melee", "單手斧（1H）", "戰斧", 10, 13, 7, "1D8+2", "8", "2", "0.8", "3", "劈砍", "單手斧"),
+        equipmentWeapon("melee-battle-axe-2h", "melee", "雙手斧（2H）", "戰斧 (2H)", 5, 9, 7, "1D8+2", "8", "2", "0.8", "3", "劈砍", "雙手斧"),
+        equipmentWeapon("melee-great-axe", "melee", "雙手斧（2H）", "巨斧", 5, 11, 7, "2D6+2", "10", "2", "1.2", "2", "劈砍", "雙手斧"),
+        equipmentWeapon("melee-dagger-axe", "melee", "雙手斧（2H）", "戈", 5, 13, 9, "3D6", "10", "3", "1.5–2", "1", "劈砍", "雙手斧"),
+        equipmentWeapon("melee-dagger", "melee", "匕首", "匕首", 15, null, null, "1D4+2", "6", "(4)", "0.4–0.3", "4", "劈刺", "匕首"),
+        equipmentWeapon("melee-parrying-dagger", "melee", "匕首", "格擋匕首", 15, null, null, "1D4+2", "8", "(3)", "0.2–0.3", "4", "劈刺", "匕首"),
+        equipmentWeapon("melee-throwing-dagger", "melee", "匕首", "投擲匕首", 5, null, 9, "1D4", "6", "(6)", "0.2", "4", "劈刺", "匕首"),
+        equipmentWeapon("melee-sickle", "melee", "匕首", "鐮刀", 5, null, null, "1D6+1", "6", "1", "0.5", "3", "劈砍", "匕首"),
+        equipmentWeapon("melee-broadsword", "melee", "單手劍（1H）", "闊劍", 10, 9, 7, "1D8+1", "12", "1", "1", "2", "劈刺", "闊劍"),
+        equipmentWeapon("melee-kopis", "melee", "單手劍（1H）", "反曲刀", 10, 9, 9, "1D8+1", "12", "1", "1", "2", "劈砍", "反曲刀"),
+        equipmentWeapon("melee-rapier", "melee", "單手劍（1H）", "刺劍", 10, 7, 13, "1D6+1", "8", "1", "1.2", "2", "劈刺", "刺劍"),
+        equipmentWeapon("melee-shortsword", "melee", "單手劍（1H）", "短劍", 10, null, null, "1D6+1", "12", "1", "0.6", "3", "劈刺", "短劍"),
+        equipmentWeapon("melee-greatsword", "melee", "雙手劍（2H）", "巨劍", 5, 11, 13, "2D8", "12", "2", "1.5", "1", "劈砍", "雙手劍"),
+        equipmentWeapon("melee-rhomphaia", "melee", "雙手劍（2H）", "長柄逆刃刀", 5, 11, 9, "2D6+2", "10", "2", "1.2", "2", "劈砍", "雙手劍"),
+        equipmentWeapon("melee-sickle-sword", "melee", "雙手劍（2H）", "鐮劍", 5, 9, 9, "1D10+1", "12", "1", "1.2", "2", "劈砍", "雙手劍"),
+        equipmentWeapon("melee-heavy-cestus", "melee", "拳擊", "重型拳套", 25, 11, null, "1D3+2", "8", "1", "0", "4", "徒手", "拳擊"),
+        equipmentWeapon("melee-light-cestus", "melee", "拳擊", "輕型拳套", 25, 7, null, "1D3+1", "4", "(2)", "0", "4", "徒手", "拳擊"),
+        equipmentWeapon("melee-claw", "melee", "拳擊", "爪刃", 25, 7, 9, "1D4+1", "手臂", "1", "0", "4", "劈刺", "拳擊"),
+        equipmentWeapon("melee-fist", "melee", "拳擊", "拳擊", 25, null, null, "1D3", "手臂", "0", "0", "4", "徒手", "拳擊"),
+        equipmentWeapon("melee-grapple", "melee", "擒抱", "擒抱", 25, null, null, "特殊", "手臂", "0", "0", "4", "徒手", "擒抱"),
+        equipmentWeapon("melee-kick", "melee", "踢擊", "踢擊", 15, null, null, "1D6", "腿部", "0", "0", "4", "徒手", "踢擊"),
+        equipmentWeapon("melee-war-hammer", "melee", "單手鎚（1H）", "戰鎚", 10, 11, 9, "1D6+2", "10", "1", "0.8", "3", "鈍擊", "單手錘矛"),
+        equipmentWeapon("melee-great-hammer", "melee", "雙手鎚（2H）", "巨鎚", 5, 9, 9, "2D6+2", "5", "3", "1.5", "1", "鈍擊", "雙手錘矛"),
+        equipmentWeapon("melee-maul", "melee", "雙手鎚（2H）", "大槌", 10, 17, 7, "2D8", "12", "5", "1.5", "1", "鈍擊", "雙手錘矛"),
+        equipmentWeapon("melee-heavy-mace", "melee", "單手錘矛（1H）", "重型錘矛", 15, 13, 7, "1D8+2", "10", "2", "0.8", "3", "鈍擊", "單手錘矛"),
+        equipmentWeapon("melee-light-mace", "melee", "單手錘矛（1H）", "輕型錘矛", 15, 7, 7, "1D6+2", "6", "1", "0.6", "3", "鈍擊", "單手錘矛"),
+        equipmentWeapon("melee-singlestick", "melee", "單手錘矛（1H）", "單棍", 15, null, 9, "1D6", "5", "(2)", "0.9", "4", "鈍擊", "單手錘矛"),
+        equipmentWeapon("melee-wooden-club", "melee", "單手錘矛（1H）", "木棍", 15, 7, 7, "1D6", "4", "(2)", "0.4", "4", "鈍擊", "單手錘矛"),
+        equipmentWeapon("melee-two-handed-mace", "melee", "雙手錘矛（2H）", "雙手錘矛", 10, 9, 7, "1D8+2", "10", "2", "0.8", "3", "鈍擊", "雙手錘矛"),
+        equipmentWeapon("melee-quarterstaff", "melee", "長棍", "長棍", 15, 9, 9, "1D8", "8", "2", "2", "0", "鈍擊", "長棍"),
+        equipmentWeapon("melee-javelin", "melee", "單手矛（1H）", "標槍", 10, 9, 9, "1D6", "8", "1", "1.5", "2", "穿刺", "單手矛 (含騎槍)"),
+        equipmentWeapon("melee-short-spear-1h", "melee", "單手矛（1H）", "短矛", 5, 9, 7, "1D6+1", "10", "2", "1.5", "2", "穿刺", "單手矛 (含騎槍)"),
+        equipmentWeapon("melee-lance", "melee", "單手矛（1H）", "騎槍", 5, 9, 7, "1D10+1", "10", "3", "3.5+", "0", "穿刺", "單手矛 (含騎槍)"),
+        equipmentWeapon("melee-pike", "melee", "雙手矛（2H）", "長柄槍", 15, 11, 7, "2D6+1", "12", "3", "3.5+", "0", "穿刺", "長柄槍"),
+        equipmentWeapon("melee-long-spear", "melee", "雙手矛（2H）", "長矛", 15, 9, 7, "1D10+1", "10", "3", "3", "0", "穿刺", "雙手矛"),
+        equipmentWeapon("melee-short-spear-2h", "melee", "雙手矛（2H）", "短矛 (2H)", 15, 7, 7, "1D8+1", "10", "2", "1.5", "1", "穿刺", "雙手矛"),
+        equipmentWeapon("melee-pole-lasso", "melee", "套索竿", "套索竿", 5, 9, 13, "—*", "4", "3", "3", "1/MR", "—", "套索竿"),
+
+        equipmentWeapon("ranged-composite-bow", "ranged", "弓", "複合弓", 5, 13, 9, "1D8+1", "7", "2", "100", "S/MR", "穿刺", "複合弓"),
+        equipmentWeapon("ranged-elf-bow", "ranged", "弓", "精靈弓", 5, 9, 9, "1D8+1", "6", "2", "80", "S/MR", "穿刺", "精靈弓"),
+        equipmentWeapon("ranged-self-bow", "ranged", "弓", "單木弓", 5, 9, 9, "1D6+1", "5", "2", "80", "S/MR", "穿刺", "單木弓"),
+        equipmentWeapon("ranged-arbalest", "ranged", "十字弩", "鋼弩", 10, 13, 7, "3D6+1", "10", "3", "150", "1/5R", "穿刺", "十字弩"),
+        equipmentWeapon("ranged-heavy-crossbow", "ranged", "十字弩", "重弩", 25, 11, 7, "2D6+2", "10", "2", "120", "1/3R", "穿刺", "十字弩"),
+        equipmentWeapon("ranged-light-crossbow", "ranged", "十字弩", "輕弩", 25, 7, 7, "2D4+2", "6", "2", "100", "1/2R", "穿刺", "十字弩"),
+        equipmentWeapon("ranged-repeating-crossbow", "ranged", "十字弩", "連發弩", 25, 7, 7, "2D4+2", "6", "2", "100", "1/MR", "穿刺", "十字弩"),
+        equipmentWeapon("ranged-atlatl", "ranged", "擲矛器", "擲矛器", 5, 7, 9, "+1D6*", "6", "(2)", "10", "1/MR", "穿刺", "擲矛器"),
+        equipmentWeapon("ranged-dart", "ranged", "標槍", "飛鏢", 10, null, 9, "1D6", "4", "(2)", "20", "S/MR", "穿刺", "標槍"),
+        equipmentWeapon("ranged-javelin", "ranged", "標槍", "標槍", 10, 9, 9, "1D10", "8", "1", "20", "1/MR", "穿刺", "標槍"),
+        equipmentWeapon("ranged-short-spear", "ranged", "標槍", "短矛", 15, 9, 7, "1D6+1", "10", "2", "20", "1/MR", "穿刺", "標槍"),
+        equipmentWeapon("ranged-throwing-axe", "ranged", "投擲斧", "投擲斧", 10, 9, 9, "1D6", "6", "1", "20", "S/MR", "穿刺", "投擲斧"),
+        equipmentWeapon("ranged-throwing-dagger", "ranged", "投擲匕首", "投擲匕首", 5, null, 9, "1D4", "6", "(4)", "20", "S/MR", "穿刺", "投擲匕首"),
+        equipmentWeapon("ranged-thrown-rock", "ranged", "投石", "投石", 15, null, null, "1D4", "—", "(4)", "20", "S/MR", "鈍擊", "投石"),
+        equipmentWeapon("ranged-sling", "ranged", "投石索", "投石索", 5, null, 9, "1D8", "—", "1", "80", "S/MR", "鈍擊", "投石索"),
+        equipmentWeapon("ranged-staff-sling", "ranged", "投石杖", "投石杖", 10, 9, 9, "1D10", "8", "2", "100", "1/MR", "鈍擊", "投石杖"),
+
+        equipmentArmor("armor-leather-hood", "頭部", [0], "頭罩", "皮革", 1, "(2)", 0, 3),
+        equipmentArmor("armor-leather-broad-hat", "頭部", [0], "寬邊帽", "皮革", 1, "(2)", 0, 4),
+        equipmentArmor("armor-leather-cap", "頭部", [0], "帽盔", "皮革", 2, "(2)", 0, 5),
+        equipmentArmor("armor-composite-helm", "頭部", [0], "複合頭盔", "板甲", 3, "(2)", 0, 10),
+        equipmentArmor("armor-open-helm", "頭部", [0], "開放式頭盔", "板甲", 4, "1", 0, 20),
+        equipmentArmor("armor-closed-helm", "頭部", [0], "封閉式頭盔", "板甲", 5, "1", 0, 30),
+        equipmentArmor("armor-full-helm", "頭部", [0], "全覆式頭盔", "板甲", 6, "2", 0, 50),
+        equipmentArmor("armor-light-scale-sleeves", "手臂", [1, 2], "袖甲", "輕型鱗甲", 4, "2", -15, 25),
+        equipmentArmor("armor-heavy-scale-sleeves", "手臂", [1, 2], "袖甲", "重型鱗甲", 5, "3", -15, 50),
+        equipmentArmor("armor-leather-vambraces", "手臂", [1, 2], "臂甲†", "皮革**", 1, "0", 0, 10),
+        equipmentArmor("armor-cuirboilli-vambraces", "手臂", [1, 2], "臂甲†", "煮蠟硬革", 3, "1", 0, 30),
+        equipmentArmor("armor-bronze-vambraces", "手臂", [1, 2], "臂甲†", "青銅板甲", 6, "2", -10, 100),
+        equipmentArmor("armor-leather-cuirass", "胸部", [3], "胸甲", "皮革**", 1, "1", 0, 10),
+        equipmentArmor("armor-heavy-leather-cuirass", "胸部", [3], "胸甲", "厚皮革", 2, "1", 0, 20),
+        equipmentArmor("armor-ring-mail-cuirass", "胸部", [3], "胸甲", "環甲", 4, "1", -5, 50),
+        equipmentArmor("armor-turtleshell-cuirass", "胸部", [3], "胸甲", "龜殼", 4, "1", 0, 15),
+        equipmentArmor("armor-light-scale-cuirass", "胸部", [3], "胸甲", "輕型鱗甲", 4, "1", -10, 25),
+        equipmentArmor("armor-heavy-scale-cuirass", "胸部", [3], "胸甲", "重型鱗甲", 5, "3", -25, 40),
+        equipmentArmor("armor-disk-plate-cuirass", "胸部", [3], "胸甲", "圓盤板甲", 5, "2", -15, 100),
+        equipmentArmor("armor-bronze-cuirass", "胸部", [3], "胸甲", "青銅板甲", 6, "3", -15, 175),
+        equipmentArmor("armor-quilted-linothorax", "腹部與胸部", [3, 4], "亞麻胸甲", "絎縫布", 2, "1", 0, 20),
+        equipmentArmor("armor-linen-linothorax", "腹部與胸部", [3, 4], "亞麻胸甲", "亞麻", 3, "1", -5, 30),
+        equipmentArmor("armor-leather-hauberk", "腹部與胸部", [3, 4], "鎖子甲", "皮革**", 1, "(2)", 0, 20),
+        equipmentArmor("armor-heavy-leather-hauberk", "腹部與胸部", [3, 4], "鎖子甲", "厚皮革", 2, "1", 0, 40),
+        equipmentArmor("armor-ring-mail-hauberk", "腹部與胸部", [3, 4], "鎖子甲", "環甲", 4, "2", -15, 80),
+        equipmentArmor("armor-light-scale-hauberk", "腹部與胸部", [3, 4], "鎖子甲", "輕型鱗甲", 4, "2", -20, 40),
+        equipmentArmor("armor-heavy-scale-hauberk", "腹部與胸部", [3, 4], "鎖子甲", "重型鱗甲", 5, "3", -25, 65),
+        equipmentArmor("armor-segmented-bronze", "腹部與胸部", [3, 4], "分節青銅甲", "青銅板甲", 6, "5", -50, 300),
+        equipmentArmor("armor-leather-skirts", "腹部", [4], "裙甲", "皮革**", 1, "(2)", 0, 10),
+        equipmentArmor("armor-linen-skirts", "腹部", [4], "裙甲", "亞麻", 3, "1", 0, 20),
+        equipmentArmor("armor-studded-skirts", "腹部", [4], "裙甲", "鉚釘皮革", 3, "1", -5, 20),
+        equipmentArmor("armor-light-scale-skirts", "腹部", [4], "裙甲", "輕型鱗甲", 4, "2", -15, 30),
+        equipmentArmor("armor-heavy-scale-skirts", "腹部", [4], "裙甲", "重型鱗甲", 5, "3", -30, 60),
+        equipmentArmor("armor-leather-pants", "腹部與腿部", [4, 5, 6], "長褲／護腿褲", "皮革**", 1, "(2)", 0, 10),
+        equipmentArmor("armor-heavy-leather-pants", "腹部與腿部", [4, 5, 6], "長褲／護腿褲", "厚皮革", 2, "1", 0, 20),
+        equipmentArmor("armor-leather-greaves", "腿部", [5, 6], "護脛甲†", "皮革**", 1, "(2)", 0, 15),
+        equipmentArmor("armor-cuirboilli-greaves", "腿部", [5, 6], "護脛甲†", "煮蠟硬革", 3, "1", 0, 40),
+        equipmentArmor("armor-bronze-greaves", "腿部", [5, 6], "護脛甲†", "青銅板甲", 6, "2", -15, 120),
+
+        equipmentShield("shield-small", "小型", "獸皮或木製", 15, 5, "8", "1D3", "1", "3"),
+        equipmentShield("shield-medium", "中型", "獸皮、柳條或木製", 15, 9, "12", "1D4", "2", "3"),
+        equipmentShield("shield-large", "大型", "獸皮、柳條或木製", 15, 12, "16", "1D6", "3", "3")
+      ];
+
+      var EQUIPMENT_BY_ID = {};
+      EQUIPMENT_CATALOG.forEach(function (item) { EQUIPMENT_BY_ID[item.id] = item; });
+      var EQUIPMENT_BY_INVENTORY_NAME = {};
+      var ARMOR_GROUPS = [
+        ["頭部", "頭部"],
+        ["手臂", "手臂"],
+        ["胸部", "胸部"],
+        ["腹部與胸部", "胸部與腹部"],
+        ["腹部", "腹部"],
+        ["腹部與腿部", "腹部與腿部"],
+        ["腿部", "腿部"]
+      ];
+      var EQUIPMENT_GROUPS = {
+        melee: EQUIPMENT_CATALOG.filter(function (item) { return item.kind === "shield" || (item.kind === "weapon" && item.mode === "melee"); }),
+        ranged: EQUIPMENT_CATALOG.filter(function (item) { return item.kind === "weapon" && item.mode === "ranged"; }),
+        armor: {}
+      };
+      ARMOR_GROUPS.forEach(function (group) {
+        EQUIPMENT_GROUPS.armor[group[0]] = EQUIPMENT_CATALOG.filter(function (item) {
+          return item.kind === "armor" && item.category === group[0];
+        });
+      });
+
+      function indexEquipmentInventoryName(item, candidate) {
+        var key = normalizedText(candidate);
+        if (!key) return;
+        if (Object.prototype.hasOwnProperty.call(EQUIPMENT_BY_INVENTORY_NAME, key) && EQUIPMENT_BY_INVENTORY_NAME[key] !== item) {
+          EQUIPMENT_BY_INVENTORY_NAME[key] = null;
+          return;
+        }
+        EQUIPMENT_BY_INVENTORY_NAME[key] = item;
+      }
+
+      EQUIPMENT_CATALOG.forEach(function (item) {
+        indexEquipmentInventoryName(item, equipmentInventoryName(item));
+        indexEquipmentInventoryName(item, equipmentLegacyInventoryName(item));
+      });
+
       var groupByKey = {};
       skills.forEach(function (group) { groupByKey[group.key] = group; });
       var knowledgeContinuationItems = groupByKey.knowledge.items.slice(-2);
@@ -4244,6 +4541,7 @@
           var fieldName = isSpiritCombat ? "spirit_combat_weapon_" + key : "weapon_" + weaponIndex + "_" + key;
           var field = input(fieldName);
           var cellChildren = [field];
+          if (!isSpiritCombat && key === "name") cellChildren.push(input("weapon_" + weaponIndex + "_equipment_id", "", "hidden"));
           if (isSpiritCombat && (key === "name" || key === "sr")) {
             field.value = key === "name" ? "靈體戰鬥" : "12";
             field.classList.add("calculated-field");
@@ -4281,7 +4579,7 @@
           locationName.setAttribute("placeholder", loc[0]);
           locationRoll.setAttribute("placeholder", loc[1]);
         }
-        tr.appendChild(el("td", {}, [locationName]));
+        tr.appendChild(el("td", {}, [locationName, input("location_" + locationIndex + "_equipment_ap", "", "hidden")]));
         tr.appendChild(el("td", {}, [locationRoll]));
         ["ap", "hp", "current_hp"].forEach(function (key) {
           var locationField = input("location_" + locationIndex + "_" + key);
@@ -4300,10 +4598,9 @@
       }
 
       function numericFieldValue(name) {
-        var field = document.querySelector('[name="' + name + '"]');
-        if (!field || String(field.value).trim() === "") return null;
-        var value = Number(field.value);
-        return Number.isFinite(value) ? Math.floor(value) : null;
+        var value = namedFieldText(name);
+        var number = value === "" ? null : finiteNumber(value);
+        return number === null ? null : Math.floor(number);
       }
 
       function skillAttributeModifier(value, bands, perFour) {
@@ -4316,13 +4613,14 @@
         return bands[4] + Math.ceil((value - 20) / 4) * perFour;
       }
 
-      function skillCategoryModifier(key) {
+      function skillCategoryModifier(key, attributes) {
         var rules = SKILL_MODIFIER_RULES[key];
         if (!rules) return null;
         var total = 0;
         for (var i = 0; i < rules.length; i += 1) {
           var rule = rules[i];
-          var contribution = skillAttributeModifier(numericFieldValue("char_" + rule[0]), rule[1], rule[2]);
+          var attributeValue = attributes ? attributes[rule[0]] : numericFieldValue("char_" + rule[0]);
+          var contribution = skillAttributeModifier(attributeValue, rule[1], rule[2]);
           if (contribution === null) return null;
           total += contribution;
         }
@@ -4405,7 +4703,7 @@
       function currentTotalHitPoints(maximum) {
         if (maximum === null) return null;
         var damage = 0;
-        for (var i = 0; i < 10; i += 1) {
+        for (var i = 0; i < HIT_LOCATION_COUNT; i += 1) {
           var locationMaximum = numericFieldValue("location_" + i + "_hp");
           var locationCurrent = numericFieldValue("location_" + i + "_current_hp");
           if (locationMaximum === null || locationCurrent === null) continue;
@@ -4415,9 +4713,7 @@
       }
 
       function setCalculatedValue(name, value) {
-        document.querySelectorAll('[name="' + name + '"]').forEach(function (field) {
-          field.value = value === null ? "" : String(value);
-        });
+        setSheetValue(name, value);
       }
 
       function initializeFixedSheetValues() {
@@ -4435,8 +4731,8 @@
       }
 
       function syncSpiritCombatDamage(value) {
-        var field = document.querySelector('[name="spirit_combat_weapon_damage"]');
-        var overrideField = document.querySelector('[name="spirit_combat_weapon_damage_override"]');
+        var field = fieldByName("spirit_combat_weapon_damage");
+        var overrideField = fieldByName("spirit_combat_weapon_damage_override");
         if (!field || !overrideField) return;
         var next = value === null ? "" : String(value);
         var current = String(field.value || "").trim();
@@ -4457,8 +4753,206 @@
 
       function updateSpiritCombatDamageOverride(source) {
         if (!source || source.name !== "spirit_combat_weapon_damage") return;
-        var overrideField = document.querySelector('[name="spirit_combat_weapon_damage_override"]');
+        var overrideField = fieldByName("spirit_combat_weapon_damage_override");
         if (overrideField) overrideField.value = String(source.value || "").trim() === "" ? "" : "1";
+      }
+
+      function equipmentRequirement(item, str, dex) {
+        if (!item || (item.kind !== "weapon" && item.kind !== "shield")) return { meets: true, convertedDex: 0, missingDex: 0 };
+        var requiredStr = item.str === null ? null : Number(item.str);
+        var requiredDex = item.dex === null ? null : Number(item.dex);
+        var actualStr = Number(str);
+        var actualDex = Number(dex);
+        if (!Number.isFinite(actualStr)) actualStr = 0;
+        if (!Number.isFinite(actualDex)) actualDex = 0;
+        var strengthMet = requiredStr === null || actualStr >= requiredStr;
+        var surplusStr = requiredStr === null ? 0 : Math.max(0, actualStr - requiredStr);
+        var convertedDex = Math.floor(surplusStr / 2);
+        var missingDex = requiredDex === null ? 0 : Math.max(0, requiredDex - actualDex);
+        return {
+          meets: strengthMet && (requiredDex === null || actualDex + convertedDex >= requiredDex),
+          convertedDex: convertedDex,
+          missingDex: missingDex,
+          strengthMet: strengthMet
+        };
+      }
+
+      function equipmentRequirementText(item, str, dex) {
+        var requiredStr = item.str === null ? "—" : item.str;
+        var requiredDex = item.dex === null ? "—" : item.dex;
+        var result = equipmentRequirement(item, str, dex);
+        var text = "STR " + requiredStr + "／DEX " + requiredDex;
+        if (result.missingDex > 0 && result.convertedDex > 0) text += "；多餘 STR 可補 " + Math.min(result.missingDex, result.convertedDex) + " DEX";
+        return text;
+      }
+
+      function parseEquipmentEncumbrance(value) {
+        var textValue = String(value === undefined || value === null ? "" : value).trim();
+        var fractional = textValue.match(/^\((\d+)\)$/);
+        if (fractional && Number(fractional[1]) > 0) return 1 / Number(fractional[1]);
+        var legacyFractional = textValue.match(/^-(\d+)$/);
+        if (legacyFractional && Number(legacyFractional[1]) > 0) return 1 / Number(legacyFractional[1]);
+        var numeric = Number(textValue);
+        return Number.isFinite(numeric) ? numeric : 0;
+      }
+
+      function formatEquipmentNumber(value) {
+        if (!Number.isFinite(value)) return "";
+        var rounded = Math.round(value * 100) / 100;
+        return String(rounded);
+      }
+
+      function gearRecords() {
+        return Array.from({ length: GEAR_ROW_COUNT }, function (_, index) { return gearRowRecord(index); });
+      }
+
+      function resolveGearItem(record) {
+        var item = EQUIPMENT_BY_ID[cleanText(record.id)] || null;
+        if (!item) item = EQUIPMENT_BY_INVENTORY_NAME[normalizedText(record.name)] || null;
+        if (item) {
+          record.id = item.id;
+          if (record.idField && record.idField.value !== item.id) record.idField.value = item.id;
+        }
+        return item;
+      }
+
+      function gearCatalogEntries(onlyEquipped, records) {
+        return (records || gearRecords()).reduce(function (entries, record) {
+          if (onlyEquipped && !record.equipped) return entries;
+          var item = resolveGearItem(record);
+          if (item) entries.push({ item: item, row: record.index, record: record });
+          return entries;
+        }, []);
+      }
+
+      function currentGearEncumbrance(records) {
+        return (records || gearRecords()).reduce(function (total, record) {
+          if (!cleanText(record.name)) return total;
+          var quantity = finiteNumber(record.qty);
+          if (quantity === null || cleanText(record.qty) === "") quantity = 1;
+          return total + Math.max(0, quantity) * parseEquipmentEncumbrance(record.enc);
+        }, 0);
+      }
+
+      function equipmentStealthPenalty(entries) {
+        return (entries || gearCatalogEntries(true)).reduce(function (total, entry) {
+          return entry.item.kind === "armor" ? total + Number(entry.item.stealth || 0) : total;
+        }, 0);
+      }
+
+      function createGearState() {
+        var records = gearRecords();
+        var entries = gearCatalogEntries(false, records);
+        var equippedEntries = entries.filter(function (entry) { return entry.record.equipped; });
+        return {
+          records: records,
+          entries: entries,
+          equippedEntries: equippedEntries,
+          encumbrance: currentGearEncumbrance(records),
+          stealthPenalty: equipmentStealthPenalty(equippedEntries)
+        };
+      }
+
+      function skillCurrentTotal(name, fallbackBase) {
+        var row = findSkillRow(name);
+        if (row) {
+          var field = Array.prototype.find.call(row.querySelectorAll('input.persist[type="text"]'), function (inputField) {
+            return !/_name$/.test(inputField.name || "");
+          });
+          var total = successStandardValue(field);
+          if (total !== null && Number.isFinite(total)) return total;
+        }
+        var fallback = Number(fallbackBase);
+        var modifier = parseRollNumber((fieldByName("modifier_manipulation") || {}).value);
+        return (Number.isFinite(fallback) ? fallback : 0) + (modifier === null ? 0 : modifier);
+      }
+
+      function currentSkillWithPenalty(name, fallbackBase, penalty) {
+        var adjustment = Number(penalty || 0);
+        return Math.max(0, skillCurrentTotal(name, fallbackBase) + adjustment);
+      }
+
+      function encumbranceDodgeBreakdown(currentEncumbrance, maximumEncumbrance) {
+        var carried = Math.max(0, Math.floor(Number(currentEncumbrance) || 0));
+        var maximum = Number(maximumEncumbrance);
+        if (!Number.isFinite(maximum) || maximum <= 0) return { carried: carried, within: 0, excess: 0, penalty: 0 };
+        maximum = Math.floor(maximum);
+        var within = Math.min(carried, maximum);
+        var excess = Math.max(0, carried - maximum);
+        return { carried: carried, within: within, excess: excess, penalty: -(within + excess * 5) };
+      }
+
+      function clearManagedWeaponRow(index) {
+        var idField = fieldByName("weapon_" + index + "_equipment_id");
+        if (!idField || !cleanText(idField.value)) return;
+        ["name", "skill", "sr", "damage", "hp"].forEach(function (key) { setSheetValue("weapon_" + index + "_" + key, ""); });
+        setSheetValue("weapon_" + index + "_xp", false);
+        idField.value = "";
+      }
+
+      function weaponDisplayStrikeRank(item) {
+        if (!item || item.mode === "ranged" || !/^\d+$/.test(String(item.sr))) return item ? item.sr : "";
+        var base = numericFieldValue("base_sr");
+        return base === null ? item.sr : String(base + Number(item.sr));
+      }
+
+      function syncEquippedWeapons(equippedEntries) {
+        var indexes = sheetWeaponIndexes.filter(function (index) { return index !== null; });
+        var growthByEquipment = {};
+        indexes.forEach(function (index) {
+          var idField = fieldByName("weapon_" + index + "_equipment_id");
+          var growthField = fieldByName("weapon_" + index + "_xp");
+          var equipmentId = cleanText(idField && idField.value);
+          if (equipmentId && growthField && growthField.checked) growthByEquipment[equipmentId] = true;
+        });
+        indexes.forEach(clearManagedWeaponRow);
+        var selected = (equippedEntries || gearCatalogEntries(true)).filter(function (entry) {
+          return entry.item.kind === "weapon" || entry.item.kind === "shield";
+        });
+        selected.slice(0, indexes.length).forEach(function (entry) {
+          var targetIndex = indexes.find(function (index) {
+            var nameField = fieldByName("weapon_" + index + "_name");
+            var idField = fieldByName("weapon_" + index + "_equipment_id");
+            return nameField && idField && !cleanText(nameField.value) && !cleanText(idField.value);
+          });
+          if (targetIndex === undefined) return;
+          var item = entry.item;
+          setSheetValue("weapon_" + targetIndex + "_name", item.mode === "ranged" ? item.name + "/" + item.reach : item.name);
+          setSheetValue("weapon_" + targetIndex + "_skill", formatEquipmentNumber(skillCurrentTotal(item.skill, item.base)));
+          setSheetValue("weapon_" + targetIndex + "_sr", weaponDisplayStrikeRank(item));
+          setSheetValue("weapon_" + targetIndex + "_damage", item.damage);
+          setSheetValue("weapon_" + targetIndex + "_hp", item.hp);
+          setSheetValue("weapon_" + targetIndex + "_equipment_id", item.id);
+          setSheetValue("weapon_" + targetIndex + "_xp", Boolean(growthByEquipment[item.id]));
+        });
+      }
+
+      function syncEquippedArmor(equippedEntries) {
+        var totals = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        (equippedEntries || gearCatalogEntries(true)).forEach(function (entry) {
+          if (entry.item.kind !== "armor") return;
+          (entry.item.locations || []).forEach(function (index) { totals[index] += Number(entry.item.ap || 0); });
+        });
+        for (var i = 0; i < HIT_LOCATION_COUNT; i += 1) {
+          var apField = fieldByName("location_" + i + "_ap");
+          var previousField = fieldByName("location_" + i + "_equipment_ap");
+          if (!apField || !previousField) continue;
+          var previous = cleanText(previousField.value);
+          var current = cleanText(apField.value);
+          var next = totals[i] > 0 ? String(totals[i]) : "";
+          if (current === "" || current === previous) apField.value = next;
+          previousField.value = next;
+        }
+      }
+
+      function syncEquippedEquipment(state) {
+        var gearState = state || createGearState();
+        setCalculatedValue("enc_current", formatEquipmentNumber(gearState.encumbrance));
+        setCalculatedValue("movement_gear", gearState.stealthPenalty);
+        syncGearInventoryDetails(gearState);
+        syncEquippedWeapons(gearState.equippedEntries);
+        syncEquippedArmor(gearState.equippedEntries);
+        return gearState;
       }
 
       function checkedCircleValue(prefix, maximum) {
@@ -4501,9 +4995,9 @@
         return Math.max(0, Math.min(100, Math.round(value)));
       }
 
-      function syncOpposedRune(source, finalize) {
+      function syncOpposedRune(source) {
         if (!source || !OPPOSED_RUNE_MAP[source.name]) return;
-        var opposing = document.querySelector('[name="' + OPPOSED_RUNE_MAP[source.name] + '"]');
+        var opposing = fieldByName(OPPOSED_RUNE_MAP[source.name]);
         if (!opposing) return;
         var value = runeAffinityValue(source);
         if (value === null) {
@@ -4517,8 +5011,8 @@
 
       function initializeOpposedRunes() {
         OPPOSED_RUNE_PAIRS.forEach(function (pair) {
-          var left = document.querySelector('[name="rune_' + pair[0] + '"]');
-          var right = document.querySelector('[name="rune_' + pair[1] + '"]');
+          var left = fieldByName("rune_" + pair[0]);
+          var right = fieldByName("rune_" + pair[1]);
           var leftValue = runeAffinityValue(left);
           var rightValue = runeAffinityValue(right);
           if (leftValue !== null) {
@@ -4535,39 +5029,47 @@
       }
 
       function recalculateDerived() {
-        var str = numericFieldValue("char_str");
-        var con = numericFieldValue("char_con");
-        var siz = numericFieldValue("char_siz");
-        var pow = numericFieldValue("char_pow");
-        var dex = numericFieldValue("char_dex");
-        var cha = numericFieldValue("char_cha");
-        var hp = totalHitPoints(con, siz, pow);
-        var dexSr = dexStrikeRank(dex);
-        var sizSr = sizStrikeRank(siz);
-        var maxEnc = maximumEncumbrance(str, con);
+        var attributes = {};
+        ["str", "con", "siz", "dex", "int", "pow", "cha"].forEach(function (key) {
+          attributes[key] = numericFieldValue("char_" + key);
+        });
+        var hp = totalHitPoints(attributes.con, attributes.siz, attributes.pow);
+        var dexSr = dexStrikeRank(attributes.dex);
+        var sizSr = sizStrikeRank(attributes.siz);
+        var maxEnc = maximumEncumbrance(attributes.str, attributes.con);
 
         initializeFixedSheetValues();
         setCalculatedValue("total_hp", hp);
-        setCalculatedValue("damage_bonus", damageBonus(str, siz));
-        syncSpiritCombatDamage(spiritCombatDamage(pow, cha));
-        setCalculatedValue("spirit_cast", pow === null || pow <= 0 ? null : pow * 5);
-        setCalculatedValue("cha_limit", cha === null || cha <= 0 ? null : cha);
-        setCalculatedValue("healing_rate", healingRate(con));
+        setCalculatedValue("damage_bonus", damageBonus(attributes.str, attributes.siz));
+        syncSpiritCombatDamage(spiritCombatDamage(attributes.pow, attributes.cha));
+        setCalculatedValue("spirit_cast", attributes.pow === null || attributes.pow <= 0 ? null : attributes.pow * 5);
+        setCalculatedValue("cha_limit", attributes.cha === null || attributes.cha <= 0 ? null : attributes.cha);
+        setCalculatedValue("healing_rate", healingRate(attributes.con));
         setCalculatedValue("dex_sr", dexSr);
         setCalculatedValue("siz_sr", sizSr);
         setCalculatedValue("base_sr", dexSr === null || sizSr === null ? null : dexSr + sizSr);
-        setCalculatedValue("max_enc_core", maxEnc);
         setCalculatedValue("enc_max", maxEnc);
         Object.keys(SKILL_MODIFIER_RULES).forEach(function (key) {
-          setCalculatedValue("modifier_" + key, skillCategoryModifier(key));
+          setCalculatedValue("modifier_" + key, skillCategoryModifier(key, attributes));
         });
+        var gearState = syncEquippedEquipment();
+        var stealthAdjustment = gearState.stealthPenalty;
+        var dodgeBreakdown = encumbranceDodgeBreakdown(gearState.encumbrance, maxEnc);
+        var dodgeAdjustment = dodgeBreakdown.penalty;
+        setCalculatedValue("dodge_penalty", dodgeAdjustment);
+        setCalculatedValue("current_stealth", formatEquipmentNumber(currentSkillWithPenalty("潛行", 10, stealthAdjustment)));
+        setCalculatedValue("dodge_core", formatEquipmentNumber(currentSkillWithPenalty("閃避", attributes.dex === null ? 0 : attributes.dex * 2, dodgeAdjustment)));
+        var stealthPenaltyNote = byId("current-stealth-penalty");
+        var dodgePenaltyNote = byId("current-dodge-penalty");
+        if (stealthPenaltyNote) stealthPenaltyNote.textContent = stealthAdjustment ? "減值 " + stealthAdjustment : "";
+        if (dodgePenaltyNote) dodgePenaltyNote.textContent = dodgeAdjustment ? "減值 " + dodgeAdjustment : "";
 
-        for (var locationIndex = 0; locationIndex < 10; locationIndex += 1) {
+        for (var locationIndex = 0; locationIndex < HIT_LOCATION_COUNT; locationIndex += 1) {
           var location = humanLocations[locationIndex];
           var index = locationIndex;
-          var nameField = document.querySelector('[name="location_' + index + '_name"]');
-          var hpField = document.querySelector('[name="location_' + index + '_hp"]');
-          var currentHpField = document.querySelector('[name="location_' + index + '_current_hp"]');
+          var nameField = fieldByName("location_" + index + "_name");
+          var hpField = fieldByName("location_" + index + "_hp");
+          var currentHpField = fieldByName("location_" + index + "_current_hp");
           if (!nameField || !hpField) continue;
           var currentName = String(nameField.value || "").trim();
           var usesHumanDefault = Boolean(location) && (currentName === "" || currentName === location[0]);
@@ -4582,16 +5084,16 @@
         var currentHp = currentTotalHitPoints(hp);
         setCalculatedValue("current_hp_total", currentHp);
         syncCircleTrack("hp", 50, hp, currentHp);
-        var mpMaximumField = document.querySelector('[name="mp_max"]');
-        syncCalculatedDefault(mpMaximumField, pow, "data-resource-default");
+        var mpMaximumField = fieldByName("mp_max");
+        syncCalculatedDefault(mpMaximumField, attributes.pow, "data-resource-default");
         var mpMaximum = numericFieldValue("mp_max");
-        var mpCurrentField = document.querySelector('[name="mp_current"]');
+        var mpCurrentField = fieldByName("mp_current");
         syncCalculatedDefault(mpCurrentField, mpMaximum, "data-resource-default");
-        syncCalculatedDefault(document.querySelector('[name="rp_max"]'), 10, "data-resource-default");
-        syncCalculatedDefault(document.querySelector('[name="rp2_max"]'), 10, "data-resource-default");
-        syncResourceTrack("mp", 24);
-        syncResourceTrack("rp", 10);
-        syncResourceTrack("rp2", 10);
+        syncCalculatedDefault(fieldByName("rp_max"), 10, "data-resource-default");
+        syncCalculatedDefault(fieldByName("rp2_max"), 10, "data-resource-default");
+        Object.keys(RESOURCE_TRACKS).forEach(function (prefix) {
+          syncResourceTrack(prefix, RESOURCE_TRACKS[prefix]);
+        });
         updateAllSuccessDisplays();
       }
 
@@ -4727,9 +5229,20 @@
         document.getElementById("spirit-records").appendChild(record);
       });
 
-      makeRows("gear-rows", 12, function (i) {
+      makeRows("gear-rows", GEAR_ROW_COUNT, function (i) {
         var tr = el("tr");
-        ["name", "qty", "enc"].forEach(function (key) { tr.appendChild(el("td", {}, [input("gear_" + i + "_" + key)])); });
+        tr.appendChild(el("td", {}, [
+          el("div", { class: "gear-item-entry" }, [
+            input("gear_" + i + "_name"),
+            el("small", { class: "gear-item-detail", "data-gear-detail-row": String(i) })
+          ]),
+          input("gear_" + i + "_equipment_id", "", "hidden")
+        ]));
+        tr.appendChild(el("td", {}, [input("gear_" + i + "_qty")]));
+        tr.appendChild(el("td", {}, [input("gear_" + i + "_enc")]));
+        var equipped = input("gear_" + i + "_equipped", "", "checkbox");
+        equipped.setAttribute("aria-label", "穿戴行囊第 " + (i + 1) + " 項裝備");
+        tr.appendChild(el("td", { class: "gear-equip-cell" }, [equipped]));
         return tr;
       });
 
@@ -4776,6 +5289,7 @@
           enhanceSuccessField(field, "spirit-combat");
         });
         enhanceSuccessField(document.querySelector('[name="dodge_core"]'), "dodge");
+        enhanceSuccessField(document.querySelector('[name="current_stealth"]'), "current-stealth");
       }
 
       function successStandardValue(field) {
@@ -4794,9 +5308,7 @@
       }
 
       function formatSuccessNumber(value) {
-        if (value === null || !Number.isFinite(value)) return "";
-        var rounded = Math.round(value * 100) / 100;
-        return String(rounded);
+        return value === null ? "" : formatEquipmentNumber(value);
       }
 
       function successThreshold(value, divisor) {
@@ -4872,10 +5384,12 @@
           mark(successTarget(field), "預覽模式：點一下複製標準靈體戰鬥值");
           mark(field.closest("label").querySelector("span"));
         });
-        var spiritCast = document.querySelector('[name="spirit_cast"]');
+        var spiritCast = fieldByName("spirit_cast");
         mark(spiritCast);
         if (spiritCast) mark(spiritCast.closest("label").querySelector("span"));
-        mark(successTarget(document.querySelector('[name="dodge_core"]')), "預覽模式：點一下複製標準閃避值");
+        Object.keys(DERIVED_ROLL_COPY_FIELDS).forEach(function (name) {
+          mark(successTarget(fieldByName(name)), "預覽模式：點一下複製標準" + DERIVED_ROLL_COPY_FIELDS[name] + "值");
+        });
         document.querySelectorAll("#characteristics .stat").forEach(function (stat) {
           mark(stat.querySelector("label"));
           mark(stat.querySelector("input"));
@@ -4957,7 +5471,7 @@
         }
 
         if (trigger.matches('[name="spirit_cast"]') || trigger.closest("label") && trigger.closest("label").querySelector('[name="spirit_cast"]')) {
-          var castField = document.querySelector('[name="spirit_cast"]');
+          var castField = fieldByName("spirit_cast");
           var castValue = castField ? parseRollNumber(castField.value) : null;
           return castValue !== null ? { value: castValue, name: "靈體魔法施法" } : null;
         }
@@ -4974,12 +5488,14 @@
           } : null;
         }
 
-        var dodgeField = trigger.matches('[name="dodge_core"]')
-          ? trigger
-          : (trigger.closest(".success-values") ? trigger.closest(".success-values").querySelector('[name="dodge_core"]') : null);
-        if (dodgeField) {
-          var dodgeValue = parseRollNumber(dodgeField.value);
-          return dodgeValue !== null ? { value: dodgeValue, name: "閃避" } : null;
+        var successWrapper = trigger.closest(".success-values");
+        var derivedFieldName = Object.keys(DERIVED_ROLL_COPY_FIELDS).find(function (name) {
+          return trigger.matches('[name="' + name + '"]') || Boolean(successWrapper && successWrapper.querySelector('[name="' + name + '"]'));
+        });
+        if (derivedFieldName) {
+          var derivedField = trigger.matches('[name="' + derivedFieldName + '"]') ? trigger : successWrapper.querySelector('[name="' + derivedFieldName + '"]');
+          var derivedValue = parseRollNumber(derivedField.value);
+          return derivedValue !== null ? { value: derivedValue, name: DERIVED_ROLL_COPY_FIELDS[derivedFieldName] } : null;
         }
         return null;
       }
@@ -5601,7 +6117,7 @@
       var FAMILY_HISTORY_DATA = {"tables":[{"id":"fh_59","title":"隨機死因","order":59,"intro":["下表可用來決定過去家族成員的隨機死因。根據家族成員的死因獲得相應烈情是合適且受到鼓勵的做法。或者，你也可以與遊戲主持人共同決定過去家族成員的死因。"],"entries":[{"range":"1–3","text":"在與其他氏族的私人世仇中遭殺害。獲得憎恨（其他氏族）或忠誠（自身氏族）烈情。你可以稍後再決定具體對象。"},{"range":"4–6","text":"在與鄰近地區的戰爭中陣亡。獲得憎恨（其他故土）烈情。參閱第134–135頁地圖並選擇一個。"},{"range":"7","text":"被混沌所害（布魯、疫病靈體、食人魔、蠍人等）。獲得憎恨（混沌）烈情。"},{"range":"8–10","text":"被古老種族所害（選擇一項：奧德梨宓、獸人、龍裔、矮人、巨魔、獠牙騎士）。獲得憎恨（古老種族）烈情。"},{"range":"11","text":"被靈體所害。"},{"range":"12–13","text":"死於意外事故。"},{"range":"14–17","text":"死於年老或疾病。"},{"range":"18","text":"被怪物殺害。"},{"range":"19","text":"死因不明，僅僅失蹤。"},{"range":"20","text":"在魔法儀式中死亡。"}]},{"id":"fh_83","title":"隨機恩惠","order":83,"intro":["使用此表為你的冒險者創造一項隨機恩惠："],"entries":[{"range":"1–2","text":"與一名古老種族成為朋友（半人馬、黑暗巨魔、龍裔、矮人、鴨人、精靈、狐女、泰莫里狼人或風之子）。自行選擇一種。獲得教團知識（古老種族）+10%，而你結交的生物將持續對你保持友善。"},{"range":"3–4","text":"墜入愛河。獲得深愛（特定人物）烈情。"},{"range":"5–6","text":"你獲得一名追隨者。也許是一名自由民，替你在戰場上攜帶盾牌與其他武器；也許是一名僕役或奴隸，替你搬運物品、準備餐食或從事其他勞務。參見第404頁「隨從」。"},{"range":"7–8","text":"職業成就。任選一項非戰鬥職業技能獲得 +10%（在下文決定冒險者職業技能時選擇），並將一年收入加入你的起始財富（見職業說明）。"},{"range":"9–10","text":"你獲得一件家族傳家寶。決定那是什麼（第83頁）以及你為何獲得它。若它是由某人贈與，獲得對該人物的忠誠，或將既有的忠誠提高 +10%。"},{"range":"11–12","text":"獲得你所屬神殿的眷顧。獲得忠誠（神殿），或將既有忠誠提高 +10%。"},{"range":"13–14","text":"你的氏族在一次與外人的爭端中大力援助你。獲得忠誠（氏族）+10%，或將既有忠誠提高 +10%。"},{"range":"15–16","text":"你的氏族因你的服務而分配給你一塊土地（見第404頁）。獲得忠誠（氏族）+10%，或將既有忠誠提高 +10%。依你的職業而定，你可能需要佃農替你耕作該土地。參見第404頁「隨從」。"},{"range":"17–18","text":"獲得祖先的祝福。深愛（家族）+10%，或靈體戰鬥技能 +10%。"},{"range":"19","text":"獲得你所信奉神祇的祝福。當你決定自己的教團時，該神祇額外給予你 1 點符文點（見第73頁）。獲得虔信（神祇），或將既有烈情提高 +10%。"},{"range":"20","text":"你擁有一個被束縛於動物或物品中的靈體。它具有 3D6 的 POW 與 2D6 的 CHA。參見第249頁〈束縛附魔〉。"}]},{"id":"fh_109","title":"家族傳家寶","order":109,"intro":[],"entries":[{"range":"1","text":"你的某位祖先曾以英雄身分受到崇拜。你的虔信（神祇）或忠誠（神殿）獲得 +10%；若已擁有其中之一，則改為額外增加 +10%。你同時獲得演說 +5% 與名望 +5%。"},{"range":"2","text":"你的祖先中有一位著名英雄。演說技能獲得 +10%，名望獲得 +5%。"},{"range":"3","text":"一罐藍靛草膏（參見符文魔法〈祝福藍靛草〉）。價值 1D6 錢幣。"},{"range":"4","text":"1D3 罐犀牛脂。每罐足以塗抹全部 14 個命中部位，使其能塗抹於衣物之下而不易察覺。雖然氣味相當刺鼻，但塗抹只需數分鐘，效果持續一小時，不過腐敗油脂的氣味仍會殘留。"},{"range":"5","text":"一尊青銅或陶製的神祇小像，使崇拜（神祇）技能獲得 +10%。"},{"range":"6","text":"一枚描繪肥胖咧嘴矮人的胸針或扣飾，內含治療術 2 點靈體魔法矩陣。"},{"range":"7","text":"一尊有冠飾的龍裔小型石雕，正指向某個方向。此石雕內含一點法術矩陣，可施放偵測（物質）法術；玩家選擇特定物質種類。"},{"range":"8–11","text":"魔力 POW 儲存水晶，可儲存最多 2D6+3 點魔力點，或作為縛靈矩陣使用。"},{"range":"12","text":"一隻被馴化的小型動物（SIZ 2 以下，例如貓、蜥蜴、鳥等），具有 3D6 INT 與 3D6 POW。除此之外，其能力皆與一般同類動物相同。該動物擁有 3 點魔力，可施放玩家選擇的一種靈體魔法。牠能夠與冒險者交談，並作為忠誠夥伴存在，但除此之外完全獨立行動。"},{"range":"13","text":"1D6 瓶治療藥水，每瓶可恢復 1D10 點傷害。"},{"range":"14","text":"一條項鍊，價值 2D6×100 錢幣，內含神采術 2 點靈體魔法矩陣。"},{"range":"15","text":"一只古老黃金蛇形臂環，內含 2 點靈體魔法矩陣，價值 2D6×100 錢幣。"},{"range":"16","text":"一件製作精美的樂器，具有魔法力量，使演奏樂器技能獲得 +20%。"},{"range":"17","text":"一件製作精良的武器（正常 AP 與價值加倍），內含 2 點靈體魔法矩陣（施銳術、施鈍術、多重飛彈或增力術；參見第 265 頁）。"},{"range":"18","text":"一塊重量為 1D3 ENC 的金錠，可能是鐵、其他純符文金屬，或鍛造成武器、護甲或其他物品。若為鐵或具有高固定 ENC 的物品，其 AP 數值為一般物品的一半。每點未附魔 ENC 都會使施法機率降低 −5%；對其施放的魔法有機率完全無效。附魔物品則視為正常。"},{"range":"19","text":"一頂華麗金屬頭盔（正常 AP 與 ENC，但價格加倍），內含 2 點靈體魔法矩陣（反魔法、保護術或靈體屏障；參見第 265 頁）。"},{"range":"20","text":"擲骰兩次。若再次擲出此結果，則再擲兩次。"}]},{"id":"fh_156","title":"1582 年事件","order":156,"intro":["修正值","愛若黎亞、破嵐刻司：D20 擲骰結果 −5。","騤銳茲原、舊塔什、薩塔爾：D20 擲骰結果 +5。"],"entries":[{"range":"1–10","text":"你的祖父母未參與灰熊峰戰役。"},{"range":"11–20","text":"你的祖父母參與灰熊峰戰役（見下文）。"}]},{"id":"fh_166","title":"灰熊峰戰役","order":166,"intro":["修正值","貴族、祭司：D20 擲骰結果 +5。"],"entries":[{"range":"1–10","text":"倖存。若為薩塔爾人或露娜塔什人，繼續進行「埃達裘戰役」（見下文）。若屬其他地區，你的祖父母返回家鄉。"},{"range":"11–15","text":"若為露娜塔什人，你的祖父母戰死。獲得忠誠（紅月皇帝或塔什國王）。若為其他身分，你的祖父母被露娜靈體殺害。獲得憎恨（露娜帝國）。"},{"range":"16–20","text":"若為露娜塔什人，你的祖父母在與王室衛隊作戰時陣亡。獲得榮譽烈情與 +1D3% 名望。若非露娜塔什人，你的祖父母在保衛國王與王后時英勇戰死。獲得榮譽烈情與忠誠（薩塔爾或羽馬女王）。你擁有一位著名祖先，獲得演說技能 +5%，以及 +1D3% 名望。"}]},{"id":"fh_177","title":"埃達裘戰役","order":177,"intro":[],"entries":[{"range":"1–18","text":"若為薩塔爾人，你的祖父母見證埃達裘人推舉塔卡洛之子特拉薩林為埃達裘親王。獲得忠誠（薩塔爾）。若為露娜塔什人，你的祖父母撤退返鄉。"},{"range":"19","text":"戰死。"},{"range":"20","text":"光榮戰死。獲得榮譽烈情與 +1D3% 名望。"}]},{"id":"fh_189","title":"1597 年事件","order":189,"intro":["修正值","騤銳茲原、舊塔什、破嵐刻司：D20 擲骰結果 −5。","貴族、祭司：D20 擲骰結果 +5。"],"entries":[{"range":"1–9","text":"平凡的一年。"},{"range":"10","text":"因其他原因死亡，參見隨機死因表（第 35 頁）。"},{"range":"11–17","text":"在神聖國度作戰並倖存。"},{"range":"18–19","text":"在神聖國度作戰，並目睹一名薩塔爾王室成員遭到謀殺。獲得憎恨（露娜帝國）。"},{"range":"20","text":"光榮戰死。若為露娜塔什人，則是在試圖刺殺一名薩塔爾王室成員時陣亡。獲得忠誠（紅月皇帝）。若為其他身分，則是在保護一名薩塔爾王室成員時陣亡。獲得忠誠（薩塔爾）與 +1D3 名望。無論何種情況，你都因這位著名祖先而獲得演說技能 +5%。"}]},{"id":"fh_208","title":"1602 年事件","order":208,"intro":["修正值","露娜塔什：D20 擲骰結果 +5。","薩塔爾：D20 擲骰結果 +10。"],"entries":[{"range":"1–10","text":"平凡的一年。"},{"range":"11–20","text":"博德霍姆戰役（見下文）。"}]},{"id":"fh_218","title":"博德霍姆戰役","order":218,"intro":["修正值","薩塔爾人：D20 擲骰結果 +5。","薩塔爾貴族、祭司或戰士：額外 +5。"],"entries":[{"range":"1–4","text":"劫掠博德霍姆。獲得 1D6×100 L。"},{"range":"5–13","text":"倖存。"},{"range":"14–17","text":"戰死。獲得榮譽烈情。"},{"range":"18–19","text":"被赤紅巨蝠吞噬。你的祖父母靈魂已不復存在。獲得憎恨（混沌）70% 或憎恨（露娜帝國）70%；若已擁有該烈情，則改為提高其中之一 +20%。"},{"range":"20","text":"在博德霍姆戰役中光榮戰死。獲得榮譽烈情、虔信（神祇），以及 +1D3% 名望。若為薩塔爾人，額外獲得憎恨（露娜帝國）。"}]},{"id":"fh_238","title":"過渡年份事件","order":238,"intro":["修正值","愛若黎亞、露娜塔什：D20 擲骰結果 −5。","薩塔爾：D20 擲骰結果 +5。","（整個期間只擲骰一次。）"],"entries":[{"range":"1–8","text":"平凡的一段時期。"},{"range":"9–10","text":"因其他原因死亡，參見隨機死因表（第 35 頁）。"},{"range":"11–15","text":"在廣泛的衝突與世仇中倖存。"},{"range":"16","text":"為逃離巨龍關口而遷居至新帕維斯。你可以選擇保留原本故土的修正值，或改用破嵐刻司修正值。你可自行決定於 2D6 年後返回巨龍關口。"},{"range":"17–18","text":"遭泰莫里人殺害。獲得憎恨（泰莫里）。"},{"range":"19–20","text":"遭敵對部族殺害。獲得憎恨（其他部族）。"}]},{"id":"fh_260","title":"1605 年事件","order":260,"intro":["修正值","舊塔什：D20 擲骰結果 −10。","破嵐刻司、薩塔爾：D20 擲骰結果 −5。","愛若黎亞：D20 擲骰結果 +10。"],"entries":[{"range":"1–5","text":"平凡的一年。"},{"range":"6–10","text":"重新於「過渡年份事件表」擲骰（第 31 頁）。"},{"range":"11–15","text":"參與佯攻海岸戰役（見下文）。"},{"range":"16–20","text":"參與築牆之戰（見下文）。"}]},{"id":"fh_275","title":"佯攻海岸戰役","order":275,"intro":[],"entries":[{"range":"1–17","text":"倖存。"},{"range":"18–19","text":"於卡爾斯圍城戰中陣亡。若為露娜塔什人，獲得忠誠（法茲爾·維德瑞德）。"},{"range":"20","text":"光榮戰死。獲得榮譽烈情與 +1D3% 名望。若為露娜塔什人，獲得忠誠（法茲爾·維德瑞德）。"}]},{"id":"fh_284","title":"築牆之戰","order":284,"intro":["修正值","露娜塔什：D20 擲骰結果 −5。","愛若黎亞：D20 擲骰結果 +5。"],"entries":[{"range":"1–5","text":"戰死。"},{"range":"6–9","text":"倖存。"},{"range":"10–18","text":"倖存。"},{"range":"19","text":"被貝林塔爾的魔法殺死。獲得憎恨（愛若黎亞人）。"},{"range":"20","text":"在貝林塔爾升起高牆時喪命。獲得虔信（神祇）。"},{"range":"21+","text":"受到貝林塔爾祝福。獲得 +1D3% 名望、1D6×100 L，以及忠誠（神聖國度）70%；若已擁有該烈情，則改為提高 +20%。\n註：由於愛若黎亞角色在此表具有 +5 修正，因此原始擲骰結果為 20 時，修正後可達 25，於本表視為 20+ 結果，因此可能獲得「受到貝林塔爾祝福」的結果。"}]},{"id":"fh_311","title":"1608年事件","order":311,"intro":["修正值","愛若黎亞、騤銳茲原、舊塔什：D20 擲骰 –5。","破嵐刻司：D20 擲骰 +10。"],"entries":[{"range":"1–9","text":"平常的一年。"},{"range":"10–11","text":"死於其他原因，參見「隨機死因表」（第35頁）。"},{"range":"12–15","text":"平常的一年。"},{"range":"16–20","text":"參與第一次破嵐刻司入侵戰（見下文）。"}]},{"id":"fh_325","title":"第一次破嵐刻司入侵戰","order":325,"intro":["修正值","露娜塔什：D20 擲骰 –10。","破嵐刻司：D20 擲骰 +10。"],"entries":[{"range":"1–8","text":"在無數伏擊中倖存。獲得憎恨（破嵐刻司人）烈情。"},{"range":"9–11","text":"在平原上的小規模衝突中陣亡。若為露娜塔什人，獲得憎恨（破嵐刻司人）烈情；若為破嵐刻司人，獲得憎恨（露娜）烈情。"},{"range":"12–15","text":"倖存。"},{"range":"16–18","text":"見證露娜軍向帕普斯女祭司屈服。若為破嵐刻司人，獲得忠誠（你的部族）烈情；若為其他文化，獲得虔信（神祇）烈情。"},{"range":"19","text":"戰死。"},{"range":"20","text":"光榮戰死。獲得榮譽烈情與 +1D3% 名望。"}]},{"id":"fh_343","title":"父母的兄弟姊妹","order":343,"intro":["若你想決定冒險者父親與母親各自擁有多少兄弟姊妹，請依照以下步驟：","父親：擲 1D6–1，決定你父親兄弟姊妹的總數。接著為每位兄弟姊妹擲 1D6：偶數代表男性，奇數代表女性。這些是活到成年的父系叔伯姑姨。","母親：以與父親相同的方式決定母親的兄弟姊妹。這些是活到成年的母系叔伯姑姨。","父母兄弟姊妹的命運可透過下表決定："],"entries":[{"range":"1–8","text":"在世且已婚。"},{"range":"9–12","text":"在世且未婚。"},{"range":"13–18","text":"已故（曾經結婚）。"},{"range":"19–20","text":"已故（從未結婚）。\n你現在或之後都可以替他們命名，也可以由遊戲主持人在需要時再決定。\n雖然決定如此多潛在的叔伯姑姨看似是多餘的細節，但家族正是氏族與部族的核心。這些親屬為你的冒險者與其氏族之間建立起豐富的人際網絡，也提供了充滿趣味的社交運作與冒險機會。"}]},{"id":"fh_364","title":"1610年事件","order":364,"intro":["修正值","愛若黎亞、騤銳茲原、舊塔什：D20 擲骰 –10。","薩塔爾：D20 擲骰 –5。","破嵐刻司：D20 擲骰 +10。"],"entries":[{"range":"1–4","text":"平常的一年。若為露娜塔什人，則見證「雅莉爾解放國王」（見下文）。"},{"range":"5–9","text":"平常的一年。"},{"range":"10–11","text":"死於其他原因，參見「隨機死因表」（第35頁）。"},{"range":"12–20","text":"參與第二次破嵐刻司入侵戰（見下文）。"}]},{"id":"fh_379","title":"雅莉爾解放國王","order":379,"intro":[],"entries":[{"range":"1–14","text":"擁戴菲蘭卓司為王。獲得忠誠（菲蘭卓司）烈情。"},{"range":"15–19","text":"見證雅莉爾擁立菲蘭卓司為王。忠誠（紅月皇帝）+10%。"},{"range":"20","text":"受到雅莉爾·剃刀女王的祝福。獲得深愛（雅莉爾·剃刀女王）烈情。"}]},{"id":"fh_388","title":"第二次破嵐刻司入侵戰","order":388,"intro":[],"entries":[{"range":"1–17","text":"倖存。"},{"range":"18–19","text":"在月粥之戰中陣亡。"},{"range":"20","text":"在月粥之戰中光榮戰死。獲得榮譽烈情。若為露娜塔什人或黑馬羚部族成員，獲得忠誠（紅月皇帝）烈情；若為其他人，獲得憎恨（露娜帝國）或憎恨（黑馬羚部族）烈情。若你的冒險者已擁有憎恨（破嵐刻司人）烈情，則該烈情 +10%。"}]},{"id":"fh_401","title":"1613年事件","order":401,"intro":["修正值","愛若黎亞、舊塔什：D20 擲骰 –10。","騤銳茲原、露娜塔什、破嵐刻司：D20 擲骰 –5。","薩塔爾：D20 擲骰 +5。"],"entries":[{"range":"1–9","text":"平常的一年。"},{"range":"10–11","text":"死於其他原因，參見「隨機死因表」。"},{"range":"12–20","text":"參與星眉叛亂（見下文）。"}]},{"id":"fh_414","title":"星眉叛亂","order":414,"intro":["修正值","露娜塔什：D20 擲骰 –5。","薩塔爾：D20 擲骰 +5。"],"entries":[{"range":"1–5","text":"在叛亂中遭到殺害。獲得憎恨（薩塔爾人）烈情。"},{"range":"6–15","text":"倖存。若為露娜塔什人，獲得忠誠（法茲爾將軍）烈情。"},{"range":"16","text":"戰死。獲得榮譽烈情。"},{"range":"17","text":"死於露娜魔法。獲得憎恨（露娜帝國）烈情。"},{"range":"18","text":"協助卡莉爾·星眉逃離薩塔爾。獲得忠誠（薩塔爾）烈情與 +1D3% 名望。"},{"range":"19","text":"叛亂失敗後遷居至新帕維斯。選擇使用薩塔爾人或破嵐刻司人的修正值。"},{"range":"20","text":"被露娜當局放逐 1D6 年。獲得憎恨（露娜帝國）烈情。"}]},{"id":"fh_437","title":"1615年事件表","order":437,"intro":["修正值","破嵐刻司：D20 擲骰 –10。","薩塔爾、愛若黎亞：D20 擲骰 –5。","露娜塔什：D20 擲骰 +5。","騤銳茲原：D20 擲骰 +10。"],"entries":[{"range":"1–9","text":"平常的一年。"},{"range":"10–11","text":"死於其他原因，參見「隨機死因表」（第35頁）。"},{"range":"12–20","text":"參與騤銳茲原戰役（見下文）。"}]},{"id":"fh_451","title":"騤銳茲原戰役","order":451,"intro":["修正值","露娜塔什：D20 擲骰 –5。","騤銳茲原：D20 擲骰 +5。"],"entries":[{"range":"1–5","text":"被野獸人殺害。獲得憎恨（野獸人）烈情。"},{"range":"6–15","text":"倖存。"},{"range":"16–19","text":"戰死。獲得榮譽烈情。"},{"range":"20","text":"在保衛羽馬女王時光榮戰死。獲得忠誠（羽馬女王）烈情與 +1D3% 名望。"}]},{"id":"fh_469","title":"1616年事件","order":469,"intro":["修正值","露娜塔什、破嵐刻司：D20 擲骰 –10。","舊塔什、薩塔爾：D20 擲骰 –3。","騤銳茲原：D20 擲骰 –2。","愛若黎亞：D20 擲骰 +10。"],"entries":[{"range":"1","text":"對所有人而言都是平常的一年，破嵐刻司人除外。若為破嵐刻司人，則轉至「白牛社成立」（見下文）。"},{"range":"2–9","text":"平常的一年。"},{"range":"10–11","text":"死於其他原因，參見「隨機死因表」（第35頁）。"},{"range":"12–15","text":"平常的一年。"},{"range":"16–18","text":"參與獅王盛宴（見下文）。"},{"range":"19–20","text":"對抗狼海盜海軍（見下文）。"}]},{"id":"fh_489","title":"白牛社成立","order":489,"intro":[],"entries":[{"range":"1–5","text":"拒絕加入白牛社。"},{"range":"6–19","text":"加入白牛社。獲得忠誠（白牛）烈情。"},{"range":"20","text":"與白牛並肩馳騁。獲得忠誠（白牛）烈情與虔信（神祇）烈情。"}]},{"id":"fh_498","title":"獅王盛宴","order":498,"intro":[],"entries":[{"range":"1–15","text":"倖存。"},{"range":"16–19","text":"戰死。獲得忠誠（愛若黎亞）烈情。"},{"range":"20","text":"光榮戰死。獲得憎恨（西方野蠻人）烈情與 +1D3% 名望。"}]},{"id":"fh_507","title":"狼海盜海軍","order":507,"intro":[],"entries":[{"range":"1–10","text":"倖存。"},{"range":"11–14","text":"溺死於海上。獲得憎恨（狼海盜）烈情。"},{"range":"15–18","text":"戰死。獲得忠誠（神聖國度）烈情。"},{"range":"19","text":"親眼見到狂戰者哈瑞克並倖存。獲得恐懼（狂戰者哈瑞克）烈情與 +1D3% 名望。"},{"range":"20","text":"被狂戰者哈瑞克殺死。獲得憎恨（狂戰者哈瑞克）烈情。"}]},{"id":"fh_523","title":"1618年事件","order":523,"intro":["修正值","愛若黎亞：D20 擲骰 +10。","其他故土：D20 擲骰 –5。"],"entries":[{"range":"1–9","text":"平常的一年。"},{"range":"10–11","text":"死於其他原因，參見「隨機死因表」（第35頁）。"},{"range":"12–15","text":"留在諾切特，目睹西方野蠻人劫掠鄉間。"},{"range":"16–20","text":"參與灰鬃大掠襲（見下文）。"}]},{"id":"fh_537","title":"灰鬃大掠襲","order":537,"intro":[],"entries":[{"range":"1–15","text":"倖存。"},{"range":"16–19","text":"遭掠襲者殺害。獲得憎恨（西方野蠻人）烈情。"},{"range":"20","text":"光榮戰死。獲得榮譽烈情與 +1D3% 名望。"}]},{"id":"fh_550","title":"1619年事件表","order":550,"intro":["修正值","愛若黎亞、騤銳茲原、舊塔什：D20 擲骰 –10。","破嵐刻司：D20 擲骰 –5。","薩塔爾：D20 擲骰 +5。","露娜塔什：D20 擲骰 +10。"],"entries":[{"range":"1–9","text":"平常的一年。"},{"range":"10–11","text":"死於其他原因，參見「隨機死因表」（第35頁）。"},{"range":"12","text":"被餵食給赤紅蝙蝠。你的父母靈魂徹底消滅，不再存在。獲得憎恨（混沌）或憎恨（露娜帝國）烈情，起始值為 70%；若已同時擁有這兩項烈情，則其中一項增加 +20%。"},{"range":"13–20","text":"參與亨德里金戰役（見下文）。"}]},{"id":"fh_566","title":"亨德里金戰役","order":566,"intro":[],"entries":[{"range":"1–16","text":"倖存。"},{"range":"17–19","text":"戰死。若為露娜塔什人，獲得忠誠（法茲爾將軍）烈情。"},{"range":"20","text":"光榮戰死。獲得榮譽烈情與 +1D3% 名望。若為露娜塔什人，獲得忠誠（法茲爾將軍）烈情。"}]},{"id":"fh_578","title":"1620年事件","order":578,"intro":["修正值","愛若黎亞、騤銳茲原、舊塔什：D20 擲骰 –10。","破嵐刻司：D20 擲骰 –5。","露娜塔什：D20 擲骰 +10。"],"entries":[{"range":"1–9","text":"平常的一年。"},{"range":"10–11","text":"死亡。參見隨機死因表（第35頁）。"},{"range":"12–20","text":"參與赫爾特蘭德戰役（見下文）。"}]},{"id":"fh_591","title":"赫爾特蘭德戰役","order":591,"intro":["修正值","薩塔爾：D20 擲骰 –5。","露娜塔什：D20 擲骰 +5。"],"entries":[{"range":"1","text":"被赤紅蝙蝠吞噬。你的父母之靈魂不復存在。獲得憎恨（混沌）或憎恨（露娜帝國）70%，若已同時擁有這兩項烈情，則擇一增加 +20%。"},{"range":"2","text":"在與露娜軍作戰時陣亡。獲得憎恨（露娜帝國）。"},{"range":"3–9","text":"倖存。"},{"range":"10–11","text":"死亡。參見隨機死因表（第35頁）。"},{"range":"12–16","text":"倖存。"},{"range":"17–18","text":"戰死。"},{"range":"19–20","text":"在布羅揚國王擊退赤紅蝙蝠後被其吞噬。你的父母之靈魂不復存在。獲得憎恨（混沌）或憎恨（露娜）烈情70%，若已同時擁有這兩項烈情，則擇一增加 +20%。"}]},{"id":"fh_615","title":"1621年事件","order":615,"intro":["修正值","薩塔爾、露娜塔什：D20 擲骰 –5。","其他所有故土：D20 擲骰 +5。"],"entries":[{"range":"1–2","text":"白牆城陷落（見下文）。"},{"range":"3–20","text":"大寒冬，第一年（見下文）。"}]},{"id":"fh_625","title":"白牆城陷落","order":625,"intro":["修正值","露娜塔什：D20 擲骰 –5。","薩塔爾：D20 擲骰 +5。"],"entries":[{"range":"1–5","text":"在攻打白牆城時陣亡。"},{"range":"6–15","text":"倖存。"},{"range":"16–19","text":"戰死。獲得虔信（神祇）。"},{"range":"20","text":"與布羅揚國王一同逃脫。獲得虔信（神祇）70%，若已擁有此烈情則增加 +20%。"}]},{"id":"fh_639","title":"大寒冬，第一年","order":639,"intro":["修正值","露娜塔什：D20 擲骰 +10。","愛若黎亞：D20 擲骰 +5。"],"entries":[{"range":"1–4","text":"為了確保他人溫暖而凍死。獲得深愛（家人）+20%。"},{"range":"5–9","text":"為了確保他人有食物而餓死。獲得深愛（家人）+20%。"},{"range":"10–11","text":"死亡。參見隨機死因表（第35頁）。"},{"range":"12–20","text":"倖存。"}]},{"id":"fh_660","title":"兄弟姊妹表","order":660,"intro":[],"entries":[{"range":"1–10","text":"在世且已婚。"},{"range":"11–14","text":"在世且未婚。"},{"range":"15–17","text":"已故（曾經結婚）。"},{"range":"18–20","text":"已故（從未結婚）。\n如同決定冒險者父母的兄弟姊妹一樣，這些兄弟姊妹代表著豐富的人際關係、競爭與同盟，將你的冒險者與家族緊密聯繫在一起。遊戲主持人可以將他們作為戲劇衝突與冒險機會的來源。\n這些兄弟姊妹可由玩家或遊戲主持人在需要時命名。\n若你的冒險者死亡，你甚至可以選擇其中一位兄弟姊妹作為新的冒險者。在建立其家族歷史時，可與遊戲主持人合作，讓背景與原角色盡可能相似，同時保留其獨特性與個人經歷。"}]},{"id":"fh_679","title":"1622年事件","order":679,"intro":["修正值","破嵐刻司：D20 擲骰 –5。","舊塔什：D20 擲骰 –5。","愛若黎亞：D20 擲骰 +3。","薩塔爾：D20 擲骰 +5。"],"entries":[{"range":"1–3","text":"幾乎因其他原因死亡。參見隨機死因表（第35頁），並調整結果，使你的冒險者僅以毫釐之差存活。"},{"range":"4–14","text":"大寒冬，第二年（見下文）。"},{"range":"15–19","text":"參與愛若黎亞內戰（第40頁）。"},{"range":"20","text":"參與野牛丘陵之戰（第40頁）。"}]},{"id":"fh_695","title":"大寒冬，第二年","order":695,"intro":["修正值","愛若黎亞、露娜塔什：D20 擲骰 +5。"],"entries":[{"range":"1–5","text":"幾乎凍死。因以下原因而活下來（擲 D6 或自行選擇）：\n1. 另一人的愛。獲得深愛（個人）。\n2. 家人的犧牲。獲得深愛（家族）+20%。\n3. 殺害並焚燒敵人。獲得憎恨（另一氏族或民族）。\n4. 崇拜橡火神以焚燒當地森林。獲得憎恨（奧德梨宓語）。\n5. 加入叛軍並參與野牛丘陵之戰（第40頁）。\n6. 逃往愛若黎亞並參與愛若黎亞內戰（第40頁）。"},{"range":"6–10","text":"幾乎餓死。因以下原因而活下來（擲 D6 或自行選擇）：\n1. 家人的犧牲。獲得深愛（家族）+10%。\n2. 投身你的酋長或國王麾下。獲得忠誠（氏族或部族）+10%。\n3. 偷竊陌生人的食物。獲得憎恨（另一氏族或民族）。\n4. 偷竊自己氏族的食物。忠誠（氏族）–20%。\n5. 由你的教團供養。獲得忠誠（神殿）60%。\n6. 由愛娜妲神殿供養。獲得虔信（愛娜妲）60%。"},{"range":"11–20","text":"存活。"}]},{"id":"fh_718","title":"愛若黎亞內戰","order":718,"intro":["修正值","露娜塔什：D20 擲骰 –5。","愛若黎亞、薩塔爾：D20 擲骰 +5。"],"entries":[{"range":"1–5","text":"勉強從舊大地同盟支持者的刺殺中生還。獲得憎恨（愛若黎亞人）。"},{"range":"6–15","text":"存活。於1623年參與諾切特圍城戰。"},{"range":"16–17","text":"勉強從露娜帝國紅土同盟支持者的刺殺中生還。獲得憎恨（露娜帝國）。"},{"range":"18–19","text":"劫掠紅土同盟支持者。獲得 3D6×100 L。"},{"range":"20","text":"光榮地戰鬥以保護薩瑪絲提娜女王免受紅土同盟刺客襲擊。獲得榮譽與忠誠（薩瑪絲提娜女王）。獲得 +1D6% 名望。"}]},{"id":"fh_734","title":"野牛丘陵之戰","order":734,"intro":["修正值","露娜塔什：D20 擲骰 –5。","薩塔爾：D20 擲骰 +5。"],"entries":[{"range":"1","text":"幾乎被叛軍法師殺死。獲得戰陣 +5% 與憎恨（薩塔爾人）60%。"},{"range":"2–5","text":"幾乎戰死。獲得戰陣 +5%。"},{"range":"6–15","text":"存活。獲得戰陣 +5%。"},{"range":"16–17","text":"在戰鬥中光榮負傷。獲得戰陣 +5% 與榮譽。"},{"range":"18–19","text":"為諸神而英勇作戰。獲得榮譽與忠誠（神殿）。獲得 +1D6% 名望。"},{"range":"20","text":"協助布羅揚國王喚醒奧嵐嗣。獲得戰陣 +5% 與虔信（神祇）；接著繼續擲愛若黎亞內戰結果。獲得 +1D6% 名望。"}]},{"id":"fh_755","title":"1623年事件","order":755,"intro":["修正值","騤銳茲原：D20 擲骰 +5。","愛若黎亞：D20 擲骰 +15。"],"entries":[{"range":"1–9","text":"平常的一年。"},{"range":"10","text":"幾乎因其他原因死亡。參見隨機死因表（第35頁），並調整結果，使冒險者僅以毫釐之差存活。"},{"range":"11–12","text":"隨機恩惠。參見隨機恩惠表（第40頁）。"},{"range":"13–14","text":"差點遭巨魔劫掠者殺死。獲得憎恨（巨魔）。"},{"range":"15–16","text":"內部紛爭（見下文）。"},{"range":"17–20","text":"參與諾切特圍城戰（見下文）。"}]},{"id":"fh_773","title":"內部紛爭","order":773,"intro":[],"entries":[{"range":"1–5","text":"遭外國士兵或劫掠者襲擊並身受重傷。選擇一種外國文化（任何非你本國且非鄰近家園者），獲得憎恨（外國文化）。"},{"range":"6–10","text":"遭敵對氏族成員襲擊並身受重傷。從家園描述中提供的鄰近氏族選擇一個。你的氏族與其氏族因這次事件結下世仇。獲得憎恨（敵對氏族）。"},{"range":"11–15","text":"殺死一名鄰近氏族成員，而對方現正尋求復仇。獲得憎恨（敵對氏族）。"},{"range":"16–20","text":"差點被古老種族殺死（龍裔、矮人、精靈、巨魔或獠牙騎士）。選擇一種並獲得憎恨（古老種族）。"}]},{"id":"fh_784","title":"諾切特圍城戰","order":784,"intro":["修正值","騤銳茲原、露娜塔什：D20 擲骰 –5。","愛若黎亞、薩塔爾：D20 擲骰 +5。"],"entries":[{"range":"1","text":"英勇奮戰。獲得榮譽烈情，並將戰陣技能提高 +10%。獲得 +1D3% 名望。"},{"range":"2–5","text":"遭大地魔法重創。獲得憎恨（愛若黎亞人）。"},{"range":"6–17","text":"存活。戰陣技能 +5%。於1624年參與彭內爾渡口之戰（第43頁）。"},{"range":"18","text":"幾乎被露娜魔法殺死或暫時逼瘋。獲得憎恨（露娜帝國）。"},{"range":"19","text":"與布羅揚國王並肩英勇作戰。獲得榮譽與虔信（神祇）烈情，並將戰陣技能提高 +10%。獲得 +1D3% 名望。於1624年參與彭內爾渡口之戰（第43頁）。"},{"range":"20","text":"受到薩瑪絲提娜女王祝福。獲得忠誠（薩瑪絲提娜女王）並將戰陣技能提高 +5%。獲得價值 1D6×100 L 的女王賞賜，以及 +1D3% 名望。於1624年參與彭內爾渡口之戰（第43頁）。"}]},{"id":"fh_807","title":"1624年事件","order":807,"intro":["修正值","破嵐刻司：D20 擲骰 –5。","愛若黎亞：D20 擲骰 +10。"],"entries":[{"range":"1","text":"若為破嵐刻司人或薩塔爾人，前往「賈爾頓·金牙受召」（見下文）。其他人則為平常的一年。"},{"range":"2–9","text":"平常的一年。"},{"range":"10","text":"幾乎因其他原因死亡。參見隨機死因表（第35頁），並調整結果，使冒險者僅以毫釐之差存活。"},{"range":"11–12","text":"隨機恩惠。參見第40頁隨機恩惠表。"},{"range":"13–14","text":"內部紛爭（見下文）。"},{"range":"15–20","text":"參與彭內爾渡口之戰（見下文）。"}]},{"id":"fh_825","title":"賈爾頓·金牙受召","order":825,"intro":[],"entries":[{"range":"1–10","text":"承認奧格雷嗣為白牛後返回你的部族。獲得忠誠（白牛）。"},{"range":"11–15","text":"承認奧格雷嗣為白牛。獲得忠誠（白牛）。於1625年參與帕維斯解放戰（第44頁）。"},{"range":"16–18","text":"向身為白牛的奧格雷嗣與賈爾頓·金牙宣誓永恆忠誠。獲得虔信（白牛）與忠誠（白牛）70%，或將既有數值提高 +20%。於1625年參與帕維斯解放戰（第44頁）。"},{"range":"19–20","text":"殺死一名反對與白牛結盟的部族成員。獲得忠誠（白牛）70%，或將既有數值提高 +20%；忠誠（部族）–10%。獲得 +1D6% 名望。於1625年參與帕維斯解放戰（第44頁）。"}]},{"id":"fh_836","title":"內部紛爭","order":836,"intro":[],"entries":[{"range":"1–5","text":"遭外國士兵或劫掠者襲擊並身受重傷。從地圖中選擇一種外國文化（或詢問遊戲主持人）。獲得憎恨（外國文化）。為自己增加一道顯眼疤痕。"},{"range":"6–10","text":"遭敵對氏族成員襲擊並身受重傷。從地圖中選擇一個鄰近氏族（或詢問遊戲主持人）。你的氏族與其氏族因這次事件結下世仇。獲得憎恨（敵對氏族）。為自己增加一道顯眼疤痕。"},{"range":"11–15","text":"殺死一名鄰近氏族成員，而對方如今正向你的家族尋求復仇。獲得憎恨（敵對氏族）。"},{"range":"16–20","text":"差點被古老種族殺死（龍裔、矮人、精靈、巨魔或獠牙騎士）。選擇一種並獲得憎恨（古老種族）。為自己增加一道顯眼疤痕。"}]},{"id":"fh_847","title":"彭內爾渡口之戰","order":847,"intro":["修正值","露娜塔什：D20 擲骰 –10。","薩塔爾：D20 擲骰 +10。"],"entries":[{"range":"1","text":"差點被狂戰者哈瑞克殺死。從這次攻擊留下駭人的疤痕。獲得恐懼（狂戰者哈瑞克），戰陣 +5%。獲得 +1D6% 名望。"},{"range":"2","text":"看見狂戰者哈瑞克並存活下來。獲得恐懼（狂戰者哈瑞克），戰陣 +5%。獲得 +1D3% 名望。"},{"range":"3","text":"英勇奮戰。獲得榮譽或虔信（神祇），戰陣 +10%。獲得 +1D6% 名望。"},{"range":"4–8","text":"差點戰死。戰陣 +5%，並獲得一道顯眼疤痕。"},{"range":"9–14","text":"存活。戰陣 +5%。"},{"range":"15–16","text":"差點戰死。戰陣 +5%，並獲得一道顯眼疤痕。"},{"range":"17","text":"幾乎被露娜魔法殺死或暫時逼瘋。獲得憎恨（露娜帝國）與靈體戰鬥 +5%。"},{"range":"18","text":"英勇奮戰。獲得榮譽或虔信（神祇），戰陣 +10%。獲得 +1D6% 名望。"},{"range":"19","text":"親眼見到狂戰者哈瑞克作戰。獲得恐懼（狂戰者哈瑞克），戰陣 +5%。"},{"range":"20","text":"英勇奮戰。獲得榮譽或虔信（神祇），戰陣 +10%。獲得 +1D6% 名望。選擇你是陪同奧格雷嗣前往「賈爾頓·金牙受召」，還是協助狂戰者哈瑞克洗劫奇蹟之城（見下文）。"}]},{"id":"fh_873","title":"洗劫奇蹟之城","order":873,"intro":[],"entries":[{"range":"1–5","text":"被狼海盜背叛並洗劫，遭棄置等死。獲得憎恨（狼海盜）。"},{"range":"6–8","text":"遭奇蹟之城的守護者詛咒，並差點被靈體殺死。靈體戰鬥 +10%。"},{"range":"9–14","text":"獲得價值 1D6×100 L 的戰利品。"},{"range":"15–18","text":"偷得一件魔法物品。在家族傳家寶表（第83頁）上擲 3D6+2。"},{"range":"19","text":"差點被狂戰者哈瑞克殺死。獲得恐懼（狂戰者哈瑞克）與 +1D3% 名望。"},{"range":"20","text":"與狂戰者哈瑞克成為朋友。獲得忠誠（狂戰者哈瑞克），並在家族傳家寶表（第83頁）上擲 3D6+2。獲得 +1D6% 名望。"}]},{"id":"fh_895","title":"1625年事件","order":895,"intro":["修正值","露娜塔什：D20 擲骰 –10。","破嵐刻司：D20 擲骰 +7。"],"entries":[{"range":"1","text":"在「真龍天災」中差點喪命。獲得恐懼（龍）80%。"},{"range":"2","text":"在帕維斯解放戰中對抗破嵐刻司人（見下文）。"},{"range":"3","text":"在露娜軍與叛軍的戰鬥中差點喪命。戰陣 +5%。獲得一道顯眼疤痕。"},{"range":"4–10","text":"目睹「真龍天災」並存活。獲得恐懼（龍）。若為露娜塔什人，前往「法茲爾將軍遭背叛」；若為舊塔什人，前往「震地女祭司任命新國王」；若為薩塔爾人，前往「薩塔爾解放」。"},{"range":"11–16","text":"目睹「真龍天災」並存活。若為舊塔什人，前往「震地女祭司任命新國王」；若為薩塔爾人，前往「薩塔爾解放」。"},{"range":"17–20","text":"參與帕維斯解放戰（見下文）。"}]},{"id":"fh_913","title":"帕維斯解放戰","order":913,"intro":["修正值","露娜塔什：D20 擲骰 –10。","破嵐刻司：D20 擲骰 +5。","薩塔爾：D20 擲骰 +5。"],"entries":[{"range":"1","text":"被賣為奴隸。你可能後來逃脫，也可能如今仍屬於他人所有。獲得憎恨（破嵐刻司人）80%。"},{"range":"2","text":"被破嵐刻司人或薩塔爾叛軍重創、洗劫並棄置等死。獲得憎恨（破嵐刻司人）或憎恨（薩塔爾人）。獲得一道顯眼疤痕。"},{"range":"3–8","text":"差點戰死。戰陣 +5%。獲得一道顯眼疤痕。"},{"range":"9–13","text":"存活。戰陣 +5%。"},{"range":"14","text":"英勇奮戰。獲得榮譽。戰陣 +10%，並獲得一道顯眼疤痕。獲得 +1D3% 名望。"},{"range":"15–19","text":"擁立奧格雷嗣為帕維斯之王。獲得忠誠（奧格雷嗣）與 +1D3% 名望。戰陣 +10%，並獲得 1D6×100 L 戰利品。"},{"range":"20","text":"當破嵐刻司人進軍巨龍關口摧毀新露娜神殿時，差點被露娜惡魔殺死或暫時逼瘋。獲得憎恨（露娜帝國）與靈體戰鬥 +10%。"}]},{"id":"fh_934","title":"法茲爾將軍遭背叛","order":934,"intro":[],"entries":[{"range":"1","text":"與薩塔爾人作戰時幾乎光榮戰死。獲得榮譽烈情。戰陣 +10%，獲得一道顯眼疤痕。獲得 +1D3% 名望。"},{"range":"2–5","text":"差點戰死。戰陣 +5%，獲得一道顯眼疤痕。"},{"range":"6–10","text":"存活。戰陣 +5%。"},{"range":"11–14","text":"背叛法茲爾將軍，轉而效忠菲蘭卓司國王。獲得忠誠（菲蘭卓司國王）與權謀 +5%。獲得 +1D3% 名望。"},{"range":"15–19","text":"仍然忠於法茲爾將軍。獲得忠誠（法茲爾將軍）與 +1D3% 名望。"},{"range":"20","text":"菲蘭卓司國王下令暗殺你。獲得忠誠（法茲爾將軍）與憎恨（菲蘭卓司國王）。權謀 +5%，並獲得 +1D6% 名望。"}]},{"id":"fh_949","title":"震地女祭司任命新國王","order":949,"intro":[],"entries":[{"range":"1","text":"被獻祭給食人處女，但不知何故存活下來。獲得虔信（神祇）與 +1D3% 名望。"},{"range":"2–6","text":"支持翁尤爾·法茲爾之子繼位為王。獲得忠誠（法茲爾將軍）。"},{"range":"7–18","text":"見證震地女祭司擁立安斯提為冬頂之王。獲得忠誠（震地神殿）。"},{"range":"19–20","text":"與菲蘭卓司國王的追隨者作戰時差點喪命。獲得憎恨（菲蘭卓司國王）與 +1D3% 名望，並獲得一道顯眼疤痕。"}]},{"id":"fh_960","title":"薩塔爾解放","order":960,"intro":[],"entries":[{"range":"1","text":"英勇奮戰。獲得榮譽與忠誠（薩塔爾），獲得 +1D3% 名望，並將戰陣提高 +10%。"},{"range":"2–5","text":"差點戰死。戰陣 +5%，並獲得一道顯眼疤痕。"},{"range":"6–10","text":"存活。戰陣 +5%。"},{"range":"11–20","text":"見證卡莉爾·星眉在博德霍姆被擁立為薩塔爾親王。獲得忠誠（薩塔爾）與戰陣 +5%。"}]}],"primary":[{"tableId":"fh_156","year":"1582 年","stage":"祖父母","participation":"參與故土：全部。","description":"塔卡洛國王與其妻羽馬女王為援助舊塔什人而向露娜帝國發動戰爭，並獲得來自破嵐刻司與愛若黎亞的傭兵及志願者支援。紅月皇帝親自率領露娜軍隊，當雙方軍隊於灰熊峰戰役相遇時，露娜軍憑藉遠為優勢的魔法師橫掃戰場。塔卡洛國王與其王后雙雙陣亡。\n特別值得注意的是，你的父母於此年之前出生。"},{"tableId":"fh_189","year":"1597 年","stage":"祖父母","participation":"參與故土：愛若黎亞、騤銳茲原、露娜塔什、薩塔爾。","description":"露娜刺客在神聖國度刺殺了薩塔爾王室成員，許多人因此捲入一連串的謀殺與復仇循環之中。"},{"tableId":"fh_208","year":"1602 年","stage":"祖父母","participation":"參與故土：全部。","description":"露娜軍隊以極大的成功入侵薩塔爾王國，儘管付出了高昂代價。他們以武力攻陷了據稱堅不可摧的首都博德霍姆，並熄滅了凝聚傳奇王國的薩塔爾之焰。"},{"tableId":"fh_238","year":"過渡年份（1603–1604）","stage":"祖父母","participation":"參與故土：愛若黎亞、露娜塔什、薩塔爾。","description":"博德霍姆戰役後，露娜帝國支配了巨龍關口。舊有的敵對關係再次被點燃，而露娜當局則鼓勵各部族彼此殘殺。1604 年是你的冒險者出生之年，除非你選擇讓角色更年長或更年輕。\n你的冒險者將於 1625 年——本遊戲的設定年份——年滿 21 歲。"},{"tableId":"fh_260","year":"1605 年","stage":"祖父母","participation":"參與故土：愛若黎亞、騤銳茲原、露娜塔什、薩塔爾。","description":"露娜軍隊發動大規模攻勢入侵神聖國度，直指人口稠密的愛若黎亞。作為反制，神王貝林塔爾施展強大的魔法力量，使露娜軍遭受決定性且極具羞辱性的慘敗。"},{"tableId":"fh_311","year":"1608年","stage":"父母","participation":"參與故土：露娜塔什、破嵐刻司。","description":"露娜帝國入侵破嵐刻司。露娜軍隊從一處綠洲躍進至另一處綠洲，但一路遭受襲擊與騷擾，最後在獲准進入帕普斯之前接受和平條件。儘管官方宣傳另有說法，這實際上是一次遊牧民的勝利。"},{"tableId":"fh_364","year":"1610年","stage":"父母","participation":"參與故土：露娜塔什、破嵐刻司。","description":"露娜軍隊這次準備更為充分、裝備更為精良，進軍破嵐刻司，在戰場上擊敗遊牧民，隨後佔領投降的帕維斯城。\n露娜半神雅莉爾·剃刀女王來到塔什，解放了莫伊拉德斯國王，使其超脫凡軀。儘管她後來生下了莫伊拉德斯的兒子，國王的長子菲蘭卓司仍繼位成為塔什國王。"},{"tableId":"fh_401","year":"1613年","stage":"父母","participation":"參與故土：騤銳茲原、露娜塔什、破嵐刻司、薩塔爾。","description":"薩塔爾人因對露娜勢力的存在感到憤怒，又受到社會動盪的推動，發起大規模叛亂，一度將露娜軍隊逐出境內。\n露娜軍隊重新集結，並在法茲爾·維德瑞德將軍的率領下徹底擊敗叛軍。紅月皇帝任命法茲爾·維德瑞德為巨龍關口總督。"},{"tableId":"fh_437","year":"1615年","stage":"父母","participation":"參與故土：騤銳茲原、露娜塔什、舊塔什。","description":"騤銳茲原人與露娜人之間的一場爭端演變成公開戰爭。前者在半神鐵蹄公及其獸人大軍的協助下，成功迴避並挫敗了兩支大規模入侵部隊。"},{"tableId":"fh_469","year":"1616年","stage":"父母","participation":"參與故土：愛若黎亞、破嵐刻司。","description":"來自神聖國度的一支大軍遭迪塔利野蠻人伏擊並全軍覆沒。與此同時，狂戰者哈瑞克及其狼海盜摧毀了神聖國度海軍。神王貝林塔爾失蹤，而「幸運與死亡宗師大會」也未能選出繼承者。\n在破嵐刻司，一名曾屬於野牛部族的奴隸創立了白牛社。來自各部族的大量破嵐刻司人紛紛加入其中。"},{"tableId":"fh_523","year":"1618年","stage":"父母","participation":"參與故土：愛若黎亞。","description":"索蘭希軍閥灰鬃率領一支龐大軍隊穿越迪塔利地區，深入神聖國度腹地，大肆掠奪財物，同時避免與敵軍進行決定性會戰。"},{"tableId":"fh_550","year":"1619年","stage":"父母","participation":"參與故土：露娜塔什、破嵐刻司、薩塔爾。","description":"露娜軍隊入侵亨德里金人北部領地並攻下卡爾斯城。亨德里金人的布羅揚國王率領其追隨者撤入白牆要塞神殿，成功抵擋露娜軍每一次奪城企圖。\n赤紅蝙蝠被派往巨龍關口，以恐懼震懾任何膽敢反抗皇帝的人。"},{"tableId":"fh_578","year":"1620年","stage":"父母","participation":"參與的故土：露娜塔什、破嵐刻司、薩塔爾。","description":"露娜軍在戰場上決定性地擊敗了馬爾孔瓦爾軍隊，並接受其投降。亨德里金國王與其同伴堅守白牆城，擊退了露娜軍向他們發動的一切攻勢，其中包括赤紅蝙蝠。"},{"tableId":"fh_615","year":"1621年","stage":"父母","participation":"參與的故土：全部。","description":"一座巨人搖籃沿著左拉費爾河漂流入海。露娜軍試圖奪取它，但遭到其守護者挫敗。\n歷經超過兩年的圍城，以及巨大的鮮血、財富與靈魂代價後，神聖堡壘白牆城與其奧嵐嗣信徒守軍終於被露娜軍攻陷。奧嵐嗣與愛娜妲被宣告死亡，而大寒冬降臨巨龍關口、神聖國度與破嵐刻司。紅月皇帝下令舉行為期一整年的慶典。"},{"tableId":"fh_679","year":"1622年","stage":"冒險者","participation":"參與家園：全部。","description":"紅月皇帝任命「光耀者」塔提烏斯為巨龍關口的露娜總督，取代法茲爾·維德瑞德。\n布羅揚國王重新現身，其亨德里金部族起兵反叛，並獲得眾多志願者加入。成群的蠍人自蘭斯特足印湧現，效忠一位名為珂菈舒忒女王的混沌半神。\n大寒冬持續肆虐，直到野牛丘陵之戰為止。布羅揚的叛軍伏擊並擊敗露娜軍隊，部分喚醒了奧嵐嗣與愛娜妲。愛若黎亞的親露娜女王在政變中被推翻，該地隨即爆發內戰。"},{"tableId":"fh_755","year":"1623年","stage":"冒險者","participation":"參與家園：全部。","description":"愛若黎亞的新女王獲得了一位新的盟友——布羅揚國王率領其衣衫襤褸的志願軍抵達，並擊敗了騤銳茲原騎兵軍團（羽馬女王不久後即遭自己的護衛殺害）。露娜軍隊隨後進入愛若黎亞，並在諾切特圍困薩瑪絲提娜女王與布羅揚國王。在北方，一支由巨魔、劣巨魔、昆蟲與黑暗生物組成的龐大軍團穿越巨龍關口，前往鉛堡。"},{"tableId":"fh_807","year":"1624年","stage":"冒險者","participation":"參與家園：全部。","description":"一顆新的行星（稱為「船之星」）出現在天空中，預示著毀滅與變革。狂戰者哈瑞克與他的狼海盜完成環繞世界航行後抵達神聖國度。他們與薩瑪絲提娜女王及布羅揚國王結盟，並在彭內爾渡口之戰擊潰露娜軍隊。戰鬥期間，奧嵐嗣自幽冥界獲得解放，而名為「奧嵐嗣之環」的星座出現更多星辰，並迅速升上天穹頂端。\n戰後，哈瑞克的同伴、「白牛」奧格雷嗣——一名來自新帕維斯的薩塔爾人——率領少數追隨者前往薩塔爾與破嵐刻司的邊境，召喚破嵐刻司半神賈爾頓·金牙，以承認其為白牛。\n當年冬季，哈瑞克與布羅揚洗劫奇蹟之城。同一個冬季，胡馬克信徒刺殺了露娜傀儡博德霍姆國王坦瑪爾坦。"},{"tableId":"fh_895","year":"1625年","stage":"冒險者","participation":"參與家園：全部。","description":"當前年份。\n在白牛會支持下，「白牛」奧格雷嗣自露娜帝國手中解放帕維斯，並被擁立為帕維斯之王。奧格雷嗣率領破嵐刻司盟友進軍巨龍關口，但遭露娜巫術擊敗，被迫撤回帕維斯。同時，布羅揚國王亦死於露娜巫術。\n露娜帝國聚集數千名法師、祭司與貴族，準備為新的臨月神殿舉行祝聖儀式，並將光輝線延伸至整個巨龍關口。由卡莉爾·星眉率領的一群薩塔爾英雄巡禮者闖入儀式，並在神殿下方召喚出一頭真龍。巨龍吞噬神殿與所有參與者；短短數分鐘內，露娜帝國在諸行省的大部分軍事與魔法力量便遭到毀滅。\n真龍隨後升上天空，顯露出其不可思議的龐大身軀——長達數公里。它飛入實體界空域，朝紅月而去。極訥特拉各地數百萬目擊者見證了此事；培羅利亞、雷列斯、克拉羅瑞拉與遙遠西方的人們，只看見一道「龍形雲影」遮蔽紅月；而距離較近的人則見聞更多。在整個巨龍關口，自慕龍帝國以來沉寂的古老龍族力量與意識紛紛甦醒。於露娜首都格拉摩爾，紅月皇帝犧牲了大量魔法與力量，才將巨龍驅退。真龍盤旋於巨龍關口上空，繞行凱洛芬山，最後返回其在新露娜神殿原址所撕開的巨大裂谷。\n卡莉爾·星眉進軍博德霍姆，並自稱薩塔爾親王。由法茲爾·維德瑞德將軍率領的露娜塔什軍隊與自由薩塔爾軍隊交戰未能分出勝負。當法茲爾得知其外甥——塔什國王菲蘭卓司——趁他遠征期間殺害了許多法茲爾的親族與支持者後，露娜塔什軍隊便撤退了。法茲爾返回敦斯托普集結盟友。在舊塔什，震地女祭司任命新的冬頂之王，而非允許法茲爾之子翁尤爾繼位。"}],"occupations":[{"range":"1","text":"薩滿助祭"},{"range":"2","text":"盜匪"},{"range":"3","text":"戰車御者"},{"range":"4","text":"工匠"},{"range":"5","text":"表演者"},{"range":"6–9","text":"農夫"},{"range":"10","text":"漁夫"},{"range":"11","text":"治療者"},{"range":"12","text":"放牧人"},{"range":"13","text":"獵人"},{"range":"14","text":"商人"},{"range":"15","text":"貴族"},{"range":"16","text":"哲人"},{"range":"17","text":"祭司"},{"range":"18","text":"書記"},{"range":"19","text":"竊賊"},{"range":"20","text":"戰士"}]};
 
       var BUILDER_STEPS = [
-        "故土", "符文", "屬性", "職業", "教團", "個人技能"
+        "故土", "符文", "屬性", "職業", "教團", "個人技能", "裝備"
       ];
       var ELEMENT_OPTIONS = [
         ["fire", "火焰／天空"], ["earth", "大地"], ["air", "空氣"],
@@ -5633,6 +6149,13 @@
       var builderStep = 0;
       var builderRenderedStep = -1;
       var builderWeaponEditing = false;
+      var equipmentManagerModal = document.getElementById("equipment-manager");
+      var equipmentManagerContent = document.getElementById("equipment-manager-content");
+      var equipmentManagerError = document.getElementById("equipment-manager-error");
+      var equipmentManagerSelections = {};
+      var equipmentManagerManualRows = 0;
+      var equipmentManagerManualEncumbrance = 0;
+      var equipmentManagerQuantities = {};
 
       function blankBuilderState() {
         return {
@@ -5662,7 +6185,8 @@
           cultPassion: "",
           cultSelections: {},
           personal25: ["", "", "", ""],
-          personal10: ["", "", "", "", ""]
+          personal10: ["", "", "", "", ""],
+          equipmentSelections: {}
         };
       }
 
@@ -5811,7 +6335,8 @@
         else if (builderStep === 2) renderBuilderAttributes();
         else if (builderStep === 3) renderBuilderOccupation();
         else if (builderStep === 4) renderBuilderCult();
-        else renderBuilderPersonalSkills();
+        else if (builderStep === 5) renderBuilderPersonalSkills();
+        else renderBuilderEquipment();
         renderBuilderProgress();
         document.getElementById("builder-step-count").textContent = "第 " + (builderStep + 1) + " 步，共 " + BUILDER_STEPS.length + " 步";
         document.getElementById("builder-back").disabled = builderStep === 0;
@@ -7111,6 +7636,287 @@
         builderContent.appendChild(sheet);
       }
 
+      function selectedBuilderEquipment() {
+        return EQUIPMENT_CATALOG.filter(function (item) { return Boolean(builderState.equipmentSelections[item.id]); });
+      }
+
+      function selectedEquipmentEncumbrance(items, quantities, additional) {
+        return (items || []).reduce(function (total, item) {
+          var quantity = Number(quantities && quantities[item.id]);
+          if (!Number.isFinite(quantity) || quantity < 0) quantity = 1;
+          return total + quantity * parseEquipmentEncumbrance(item.enc);
+        }, Number(additional) || 0);
+      }
+
+      function equipmentEncumbranceText(used, maximum) {
+        var maximumText = Number.isFinite(maximum) && maximum > 0 ? formatEquipmentNumber(maximum) : "—";
+        return "負重值 " + formatEquipmentNumber(used) + "/" + maximumText;
+      }
+
+      function equipmentDisplayName(item) {
+        if (!item) return "";
+        if (item.kind !== "armor") return item.name;
+        var material = String(item.material || "").replace(/[†*]+/g, "").trim();
+        var name = String(item.name || "").replace(/[†*]+/g, "").trim();
+        var alreadyNamed = ARMOR_MATERIAL_KEYWORDS.some(function (keyword) {
+          return material.indexOf(keyword) !== -1 && name.indexOf(keyword) !== -1;
+        });
+        return alreadyNamed ? name : material + name;
+      }
+
+      function equipmentCard(item, attributes, options) {
+        options = options || {};
+        var selectionAttribute = options.selectionAttribute || "data-builder-equipment-id";
+        var selections = options.selections || builderState.equipmentSelections;
+        var inputAttributes = { type: "checkbox", "aria-label": "選擇" + item.name };
+        inputAttributes[selectionAttribute] = item.id;
+        var selectable = el("input", inputAttributes);
+        selectable.checked = Boolean(selections[item.id]);
+        var requirement = equipmentRequirement(item, attributes.str, attributes.dex);
+        var unusable = (item.kind === "weapon" || item.kind === "shield") && !requirement.meets;
+        var title = equipmentDisplayName(item);
+        if (item.mode === "ranged") title += "／" + item.reach;
+        var badges = [];
+        if (unusable) badges.push(el("span", { class: "builder-equipment-badge", text: "STR 替代 DEX 後仍不足" }));
+        var details;
+        if (item.kind === "armor") {
+          details = "AP " + item.ap + " · ENC " + item.enc + " · 潛行 " + (item.stealth > 0 ? "+" : "") + item.stealth + " · " + item.price + " L";
+        } else {
+          details = item.category + " · " + equipmentRequirementText(item, attributes.str, attributes.dex) + " · 傷害 " + item.damage + " · HP " + item.hp + " · ENC " + item.enc + " · SR " + item.sr;
+        }
+        return el("label", { class: "builder-equipment-item" + (unusable ? " is-unusable" : "") }, [
+          selectable,
+          el("span", { class: "builder-equipment-copy" }, [
+            el("strong", {}, [document.createTextNode(title)].concat(badges)),
+            el("small", { text: details })
+          ])
+        ]);
+      }
+
+      function builderEquipmentGroup(title, items, attributes, open, options) {
+        var group = el("details", { class: "builder-equipment-group" });
+        if (open) group.open = true;
+        group.appendChild(el("summary", { text: title + "（" + items.length + " 項）" }));
+        var grid = el("div", { class: "builder-equipment-grid" });
+        items.forEach(function (item) { grid.appendChild(equipmentCard(item, attributes, options)); });
+        group.appendChild(grid);
+        return group;
+      }
+
+      function appendArmorEquipmentGroups(target, attributes, options) {
+        ARMOR_GROUPS.forEach(function (group) {
+          var items = EQUIPMENT_GROUPS.armor[group[0]];
+          if (items.length) target.appendChild(builderEquipmentGroup("防具｜" + group[1], items, attributes, group[0] === "胸部" || group[0] === "腹部", options));
+        });
+      }
+
+      function appendEquipmentCatalog(target, attributes, options) {
+        target.appendChild(builderEquipmentGroup("近戰武器與盾牌", EQUIPMENT_GROUPS.melee, attributes, true, options));
+        target.appendChild(builderEquipmentGroup("遠程武器", EQUIPMENT_GROUPS.ranged, attributes, false, options));
+        appendArmorEquipmentGroups(target, attributes, options);
+      }
+
+      function updateEquipmentStatus(config) {
+        var attributes = config.attributes;
+        var selected = config.selected;
+        var used = selectedEquipmentEncumbrance(selected, config.quantities, config.additionalEncumbrance);
+        var maximum = maximumEncumbrance(Number(attributes.str), Number(attributes.con));
+        var hasUnmetRequirement = selected.some(function (item) {
+          return (item.kind === "weapon" || item.kind === "shield") && !equipmentRequirement(item, attributes.str, attributes.dex).meets;
+        });
+        var usedStatus = byId(config.usedStatusId);
+        var remainingStatus = byId(config.remainingStatusId);
+        var requirementStatus = byId(config.requirementStatusId);
+        if (usedStatus) usedStatus.textContent = equipmentEncumbranceText(used, maximum);
+        if (remainingStatus) remainingStatus.hidden = true;
+        if (requirementStatus) {
+          requirementStatus.textContent = hasUnmetRequirement ? "STR 替代 DEX 後仍不足" : "";
+          requirementStatus.hidden = !hasUnmetRequirement;
+        }
+      }
+
+      function updateBuilderEquipmentStatus(attributes) {
+        updateEquipmentStatus({
+          attributes: attributes || computeBuilderAttributes(),
+          selected: selectedBuilderEquipment(),
+          usedStatusId: "builder-equipment-used-status",
+          remainingStatusId: "builder-equipment-remaining-status",
+          requirementStatusId: "builder-equipment-requirement-status"
+        });
+      }
+
+      function renderBuilderEquipment() {
+        var attributes = computeBuilderAttributes();
+        var guide = occupationGuide(builderState.occupation) || {};
+        builderContent.appendChild(el("p", { class: "builder-intro", text: "依職業裝備建議選擇要帶入角色表的武器、防具與盾牌。紅色武器表示目前不符合需求；多餘 STR 會以 2：1 自動補足不足的 DEX。" }));
+        builderContent.appendChild(builderInfo("職業裝備建議：" + (guide.equipment || "未列出固定裝備；可由下方完整清單挑選。")));
+        builderContent.appendChild(el("div", { class: "builder-equipment-status" }, [
+          el("span", { text: "目前 STR " + attributes.str + "／DEX " + attributes.dex }),
+          el("span", { id: "builder-equipment-used-status" }),
+          el("span", { id: "builder-equipment-remaining-status" }),
+          el("span", { id: "builder-equipment-requirement-status" })
+        ]));
+        appendEquipmentCatalog(builderContent, attributes);
+        updateBuilderEquipmentStatus(attributes);
+      }
+
+      function selectedManagerEquipment() {
+        return EQUIPMENT_CATALOG.filter(function (item) { return Boolean(equipmentManagerSelections[item.id]); });
+      }
+
+      function sheetOccupationGuide() {
+        var occupationField = document.querySelector('[name="occupation"]');
+        var occupationName = String(occupationField && occupationField.value || "").trim();
+        if (OCCUPATION_GUIDE[occupationName]) return OCCUPATION_GUIDE[occupationName];
+        var warriorKey = Object.keys(WARRIOR_TYPES).find(function (key) { return WARRIOR_TYPES[key].name === occupationName; });
+        return warriorKey ? WARRIOR_TYPES[warriorKey] : null;
+      }
+
+      function initializeEquipmentManagerState() {
+        equipmentManagerSelections = {};
+        equipmentManagerQuantities = {};
+        var catalogRows = {};
+        var records = gearRecords();
+        gearCatalogEntries(false, records).forEach(function (entry) {
+          equipmentManagerSelections[entry.item.id] = true;
+          catalogRows[entry.row] = true;
+          var quantity = finiteNumber(entry.record.qty);
+          if (!Number.isFinite(quantity) || quantity < 0) quantity = 1;
+          equipmentManagerQuantities[entry.item.id] = (equipmentManagerQuantities[entry.item.id] || 0) + quantity;
+        });
+        equipmentManagerManualRows = 0;
+        equipmentManagerManualEncumbrance = 0;
+        records.forEach(function (record) {
+          if (!cleanText(record.name) || catalogRows[record.index]) return;
+          var quantity = finiteNumber(record.qty);
+          if (!Number.isFinite(quantity) || quantity < 0) quantity = 1;
+          equipmentManagerManualRows += 1;
+          equipmentManagerManualEncumbrance += quantity * parseEquipmentEncumbrance(record.enc);
+        });
+      }
+
+      function updateEquipmentManagerStatus() {
+        var attributes = { str: numericFieldValue("char_str") || 0, con: numericFieldValue("char_con") || 0, dex: numericFieldValue("char_dex") || 0 };
+        updateEquipmentStatus({
+          attributes: attributes,
+          selected: selectedManagerEquipment(),
+          quantities: equipmentManagerQuantities,
+          additionalEncumbrance: equipmentManagerManualEncumbrance,
+          usedStatusId: "equipment-manager-used-status",
+          remainingStatusId: "equipment-manager-remaining-status",
+          requirementStatusId: "equipment-manager-requirement-status"
+        });
+      }
+
+      function renderEquipmentManager() {
+        var attributes = { str: numericFieldValue("char_str") || 0, con: numericFieldValue("char_con") || 0, dex: numericFieldValue("char_dex") || 0 };
+        var guide = sheetOccupationGuide() || {};
+        var options = {
+          selectionAttribute: "data-manager-equipment-id",
+          selections: equipmentManagerSelections
+        };
+        equipmentManagerContent.textContent = "";
+        equipmentManagerError.hidden = true;
+        equipmentManagerContent.appendChild(el("p", { class: "builder-intro", text: "從完整目錄新增或移除行囊裝備。紅色武器表示目前不符合需求；多餘 STR 會以 2：1 自動補足不足的 DEX。這個視窗不會更動故土、符文、屬性、職業、教團或技能。" }));
+        equipmentManagerContent.appendChild(builderInfo("職業裝備建議：" + (guide.equipment || "目前職業沒有可辨識的固定裝備建議；仍可由下方完整清單挑選。")));
+        equipmentManagerContent.appendChild(el("div", { class: "builder-equipment-status" }, [
+          el("span", { text: "目前 STR " + attributes.str + "／DEX " + attributes.dex }),
+          el("span", { id: "equipment-manager-used-status" }),
+          el("span", { id: "equipment-manager-remaining-status" }),
+          el("span", { id: "equipment-manager-requirement-status" })
+        ]));
+        appendEquipmentCatalog(equipmentManagerContent, attributes, options);
+        updateEquipmentManagerStatus();
+      }
+
+      function openEquipmentManager() {
+        initializeEquipmentManagerState();
+        renderEquipmentManager();
+        setModalVisibility(equipmentManagerModal, true);
+        document.body.classList.add("builder-open");
+        document.getElementById("equipment-manager-close").focus();
+      }
+
+      function closeEquipmentManager() {
+        setModalVisibility(equipmentManagerModal, false);
+        if (builderModal.hidden) document.body.classList.remove("builder-open");
+        document.getElementById("manage-equipment-button").focus();
+      }
+
+      function gearRowRecord(index) {
+        var prefix = "gear_" + index + "_";
+        var nameField = fieldByName(prefix + "name");
+        var quantityField = fieldByName(prefix + "qty");
+        var encumbranceField = fieldByName(prefix + "enc");
+        var idField = fieldByName(prefix + "equipment_id");
+        var equippedField = fieldByName(prefix + "equipped");
+        return {
+          index: index,
+          name: nameField ? nameField.value : "",
+          qty: quantityField ? quantityField.value : "",
+          enc: encumbranceField ? encumbranceField.value : "",
+          id: idField ? idField.value : "",
+          equipped: Boolean(equippedField && equippedField.checked),
+          nameField: nameField,
+          quantityField: quantityField,
+          encumbranceField: encumbranceField,
+          idField: idField,
+          equippedField: equippedField
+        };
+      }
+
+      function applyEquipmentManagerSelections() {
+        var existingRecords = gearRecords();
+        gearCatalogEntries(false, existingRecords);
+        var nextRecords = [];
+        var included = {};
+        existingRecords.forEach(function (record) {
+          var item = EQUIPMENT_BY_ID[cleanText(record.id)];
+          if (item) {
+            if (equipmentManagerSelections[item.id] && !included[item.id]) {
+              nextRecords.push({ item: item, qty: equipmentManagerQuantities[item.id], enc: record.enc, equipped: record.equipped });
+              included[item.id] = true;
+            }
+          } else if (cleanText(record.name)) {
+            nextRecords.push({ manual: true, record: record });
+          }
+        });
+        selectedManagerEquipment().forEach(function (item) {
+          if (included[item.id]) return;
+          nextRecords.push({ item: item, qty: equipmentManagerQuantities[item.id] || 1, enc: item.enc, equipped: false });
+          included[item.id] = true;
+        });
+        if (nextRecords.length > GEAR_ROW_COUNT) {
+          equipmentManagerError.textContent = "行囊已有手動物品，剩餘欄位不足以套用目前選擇。";
+          equipmentManagerError.hidden = false;
+          return;
+        }
+        for (var clearIndex = 0; clearIndex < GEAR_ROW_COUNT; clearIndex += 1) {
+          setSheetValue("gear_" + clearIndex + "_name", "");
+          setSheetValue("gear_" + clearIndex + "_qty", "");
+          setSheetValue("gear_" + clearIndex + "_enc", "");
+          setSheetValue("gear_" + clearIndex + "_equipment_id", "");
+          setSheetValue("gear_" + clearIndex + "_equipped", false);
+        }
+        nextRecords.forEach(function (entry, index) {
+          if (entry.manual) {
+            setSheetValue("gear_" + index + "_name", entry.record.name);
+            setSheetValue("gear_" + index + "_qty", entry.record.qty);
+            setSheetValue("gear_" + index + "_enc", entry.record.enc);
+            setSheetValue("gear_" + index + "_equipped", entry.record.equipped);
+            return;
+          }
+          setSheetValue("gear_" + index + "_name", cleanText(equipmentInventoryName(entry.item)));
+          setSheetValue("gear_" + index + "_qty", cleanText(entry.qty) || "1");
+          setSheetValue("gear_" + index + "_enc", cleanText(entry.enc) || entry.item.enc);
+          setSheetValue("gear_" + index + "_equipment_id", entry.item.id);
+          setSheetValue("gear_" + index + "_equipped", entry.equipped);
+        });
+        recalculateDerived();
+        saveData();
+        closeEquipmentManager();
+      }
+
       function allocationTotal() {
         return builderState.runeAllocations.reduce(function (total, entry) { return total + (Number(entry.points) || 0); }, 0);
       }
@@ -7273,6 +8079,7 @@
         }
         if (index === 4) return cultStepCompleted();
         if (index === 5) return builderState.personal25.every(Boolean) && builderState.personal10.every(Boolean);
+        if (index === 6) return selectedBuilderEquipment().length > 0 && selectedBuilderEquipment().length <= 12;
         return false;
       }
 
@@ -7359,6 +8166,11 @@
           if (selectedSkills.some(function (name) { return !name; })) return "請填滿四項 +25% 與五項 +10% 的技能。";
           if (new Set(selectedSkills).size !== selectedSkills.length) return "個人技能加值不可重複選擇同一技能。";
         }
+        if (index === 6) {
+          var selectedEquipmentCount = selectedBuilderEquipment().length;
+          if (!selectedEquipmentCount) return "請至少選擇一項要帶入行囊的裝備。";
+          if (selectedEquipmentCount > 12) return "行囊欄位不足，請減少要帶入的裝備。";
+        }
         return "";
       }
 
@@ -7366,16 +8178,14 @@
         if (!builderState) builderState = blankBuilderState();
         builderStep = 0;
         builderRenderedStep = -1;
-        builderModal.hidden = false;
-        builderModal.setAttribute("aria-hidden", "false");
+        setModalVisibility(builderModal, true);
         document.body.classList.add("builder-open");
         renderBuilderStep();
         document.getElementById("builder-close").focus();
       }
 
       function closeBuilder() {
-        builderModal.hidden = true;
-        builderModal.setAttribute("aria-hidden", "true");
+        setModalVisibility(builderModal, false);
         document.body.classList.remove("builder-open");
         document.getElementById("create-character-button").focus();
       }
@@ -7413,6 +8223,19 @@
         updateBuilderAttributePreview();
       });
       builderContent.addEventListener("change", function (event) {
+        var equipmentId = event.target.getAttribute("data-builder-equipment-id");
+        if (equipmentId) {
+          if (event.target.checked && selectedBuilderEquipment().length >= GEAR_ROW_COUNT) {
+            event.target.checked = false;
+            showBuilderError("行囊欄位已滿，請先取消另一項裝備。");
+            return;
+          }
+          builderState.equipmentSelections[equipmentId] = event.target.checked;
+          var equipmentAttributes = computeBuilderAttributes();
+          updateBuilderEquipmentStatus(equipmentAttributes);
+          renderBuilderProgress();
+          return;
+        }
         var path = event.target.getAttribute("data-builder-path");
         if (!path || (event.target.type === "radio" && !event.target.checked)) return;
         setBuilderValue(path, event.target.value);
@@ -7446,6 +8269,7 @@
           renderBuilderStep();
         } else if (path === "occupation") {
           builderState.occupationSelections = {};
+          builderState.equipmentSelections = {};
           builderState.warriorType = "";
           builderState.warriorWeaponPackage = "";
           builderState.warriorWeaponRoll = "";
@@ -7456,6 +8280,7 @@
           builderState.warriorWeaponPackage = "";
           builderState.warriorWeaponRoll = "";
           builderState.occupationSelections = {};
+          builderState.equipmentSelections = {};
           builderState.occupationPassion = "";
           builderState.occupationPassionCustom = "";
           renderBuilderStep();
@@ -7641,35 +8466,95 @@
         renderBuilderStep();
       });
       builderModal.addEventListener("click", function (event) { if (event.target === builderModal) closeBuilder(); });
-      document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape" && !builderModal.hidden) closeBuilder();
-      });
 
-      function setSheetValue(name, value) {
-        document.querySelectorAll('[name="' + name + '"]').forEach(function (field) {
-          if (field.type === "checkbox") field.checked = Boolean(value);
-          else field.value = value === undefined || value === null ? "" : String(value);
+      equipmentManagerContent.addEventListener("change", function (event) {
+        var equipmentId = event.target.getAttribute("data-manager-equipment-id");
+        if (!equipmentId) return;
+        if (event.target.checked && selectedManagerEquipment().length + equipmentManagerManualRows >= GEAR_ROW_COUNT) {
+          event.target.checked = false;
+          equipmentManagerError.textContent = "行囊欄位已滿；請先取消另一項目錄裝備，或回到行囊移除手動物品。";
+          equipmentManagerError.hidden = false;
+          return;
+        }
+        equipmentManagerSelections[equipmentId] = event.target.checked;
+        if (event.target.checked && equipmentManagerQuantities[equipmentId] === undefined) equipmentManagerQuantities[equipmentId] = 1;
+        equipmentManagerError.hidden = true;
+        updateEquipmentManagerStatus();
+      });
+      document.getElementById("manage-equipment-button").addEventListener("click", openEquipmentManager);
+      document.getElementById("equipment-manager-close").addEventListener("click", closeEquipmentManager);
+      document.getElementById("equipment-manager-cancel").addEventListener("click", closeEquipmentManager);
+      document.getElementById("equipment-manager-apply").addEventListener("click", applyEquipmentManagerSelections);
+      equipmentManagerModal.addEventListener("click", function (event) { if (event.target === equipmentManagerModal) closeEquipmentManager(); });
+
+      function appendSheetText(name, textValue) {
+        var addition = cleanText(textValue);
+        if (!addition) return;
+        fieldsByName(name).forEach(function (field) {
+          var current = cleanText(field.value);
+          field.value = current ? current + "\n\n" + addition : addition;
         });
       }
 
-      function appendSheetText(name, textValue) {
-        if (!String(textValue || "").trim()) return;
-        document.querySelectorAll('[name="' + name + '"]').forEach(function (field) {
-          var current = String(field.value || "").trim();
-          field.value = current ? current + "\n\n" + String(textValue).trim() : String(textValue).trim();
+      function equipmentInventoryName(item) {
+        if (!item) return "";
+        return equipmentDisplayName(item);
+      }
+
+      function equipmentLegacyInventoryName(item) {
+        if (!item) return "";
+        if (item.kind === "armor") return String(item.material || "").replace(/\*+/g, "") + " " + String(item.name || "").replace(/†/g, "");
+        return item.name;
+      }
+
+      function equipmentInventoryDetails(item) {
+        if (!item) return "";
+        if (item.kind === "armor") {
+          return item.category + "｜AP " + item.ap + "｜潛行 " + (Number(item.stealth) > 0 ? "+" : "") + Number(item.stealth || 0);
+        }
+        var requirements = [];
+        if (item.str !== null) requirements.push("STR " + item.str);
+        if (item.dex !== null) requirements.push("DEX " + item.dex);
+        var parts = [item.category];
+        if (requirements.length) parts.push(requirements.join("／"));
+        parts.push("傷害 " + item.damage, "HP " + item.hp);
+        if (item.mode === "ranged") parts.push("射程 " + item.reach, "速率 " + item.sr);
+        else parts.push("SR " + item.sr);
+        return parts.join("｜");
+      }
+
+      function syncGearInventoryDetails(state) {
+        var entriesByRow = {};
+        var gearState = state || createGearState();
+        gearState.entries.forEach(function (entry) { entriesByRow[entry.row] = entry.item; });
+        for (var i = 0; i < GEAR_ROW_COUNT; i += 1) {
+          var item = entriesByRow[i];
+          var nameField = gearState.records[i] && gearState.records[i].nameField;
+          if (item && nameField && normalizedText(nameField.value) === normalizedText(equipmentLegacyInventoryName(item))) {
+            nameField.value = equipmentInventoryName(item);
+          }
+          var detail = document.querySelector('[data-gear-detail-row="' + i + '"]');
+          if (detail) detail.textContent = equipmentInventoryDetails(item);
+        }
+      }
+
+      function applyBuilderEquipmentSelections() {
+        selectedBuilderEquipment().slice(0, GEAR_ROW_COUNT).forEach(function (item, index) {
+          setSheetValue("gear_" + index + "_name", cleanText(equipmentInventoryName(item)));
+          setSheetValue("gear_" + index + "_qty", 1);
+          setSheetValue("gear_" + index + "_enc", item.enc);
+          setSheetValue("gear_" + index + "_equipment_id", item.id);
+          setSheetValue("gear_" + index + "_equipped", false);
         });
       }
 
       function resetSheetForBuilder() {
         var preserved = {};
         ["player", "name", "birth_age"].forEach(function (name) {
-          var field = document.querySelector('[name="' + name + '"]');
+          var field = fieldByName(name);
           preserved[name] = field ? field.value : "";
         });
-        document.querySelectorAll(".persist").forEach(function (field) {
-          if (field.type === "checkbox") field.checked = false;
-          else field.value = "";
-        });
+        applyPersistData({}, true);
         initializeFixedSheetValues();
         Object.keys(preserved).forEach(function (name) { setSheetValue(name, preserved[name]); });
       }
@@ -8120,6 +9005,7 @@
         applyOccupationSelections(builderState.occupation);
         addPassionFromBuilder(occupationPassionValue());
         appendSheetText("property", "【職業裝備】\n" + occupation.equipment);
+        applyBuilderEquipmentSelections();
 
         setSheetValue("cult_rank", builderState.cult);
         applyCultGuideSkills(builderState.cult);
@@ -8144,7 +9030,7 @@
         builderState = null;
         closeBuilder();
         window.location.hash = "page-1";
-        window.alert("角色資料已依六個步驟建立並套用。姓名、玩家與年齡欄會保留原有內容；含任意／擇一的技能或裝備內容已記入背景。教團魔法仍留空，方便之後再研究與填寫。 ");
+        window.alert("角色資料已依七個步驟建立並套用。姓名、玩家與年齡欄會保留原有內容；步驟 7 選擇的裝備已記入行囊，勾選『穿戴』後會自動帶入武器或護甲。教團魔法仍留空，方便之後再研究與填寫。 ");
       }
 
       document.getElementById("builder-apply").addEventListener("click", applyBuilderState);
@@ -8164,6 +9050,20 @@
           }
         });
         return data;
+      }
+
+      function storedCheckboxValue(value) {
+        return value === true || value === "true" || value === 1 || value === "1";
+      }
+
+      function applyPersistData(data, clearMissing) {
+        persistFields().forEach(function (field) {
+          var hasValue = Object.prototype.hasOwnProperty.call(data, field.name);
+          if (!hasValue && !clearMissing) return;
+          var value = hasValue ? data[field.name] : "";
+          if (field.type === "checkbox" || field.type === "radio") field.checked = storedCheckboxValue(value);
+          else field.value = value === undefined || value === null ? "" : String(value);
+        });
       }
 
       function loadData() {
@@ -8193,36 +9093,30 @@
         }
         if (!data.honor && data.passion_0_value) data.honor = data.passion_0_value;
         if (!data.honor_xp && data.passion_0_xp) data.honor_xp = data.passion_0_xp;
-        [["mp", 24], ["rp", 10], ["rp2", 10]].forEach(function (resource) {
-          var prefix = resource[0];
-          var maximum = resource[1];
+        Object.keys(RESOURCE_TRACKS).forEach(function (prefix) {
+          var maximum = RESOURCE_TRACKS[prefix];
           if (data[prefix + "_current"] !== undefined && String(data[prefix + "_current"]).trim() !== "") return;
           for (var value = 0; value <= maximum; value += 1) {
             if (data[prefix + "_mark_" + value]) data[prefix + "_current"] = String(value);
           }
         });
-        for (var i = 0; i < 10; i += 1) {
+        for (var i = 0; i < HIT_LOCATION_COUNT; i += 1) {
           var currentKey = "location_" + i + "_current_hp";
           var legacyKey = "location_" + i + "_wound";
           if (!data[currentKey] && data[legacyKey]) data[currentKey] = data[legacyKey];
         }
-        document.querySelectorAll(".persist").forEach(function (field) {
-          if (!(field.name in data)) return;
-          if (field.type === "checkbox") field.checked = Boolean(data[field.name]);
-          else field.value = data[field.name];
-        });
+        applyPersistData(data, false);
       }
 
       function collectPersistData() {
-        var data = {};
-        document.querySelectorAll(".persist").forEach(function (field) {
+        return persistFields().reduce(function (data, field) {
           data[field.name] = field.type === "checkbox" ? field.checked : field.value;
-        });
-        return data;
+          return data;
+        }, {});
       }
 
       function setSaveState(text) {
-        var state = document.getElementById("save-state");
+        var state = byId("save-state");
         if (state) state.textContent = text;
       }
 
@@ -8231,14 +9125,17 @@
         setSaveState("儲存中");
         clearTimeout(saveTimer);
         saveTimer = setTimeout(function () {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(collectPersistData()));
-          setSaveState("已儲存");
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(collectPersistData()));
+            setSaveState("已儲存");
+          } catch (error) {
+            setSaveState("無法儲存");
+          }
         }, 180);
       }
 
       function safeJsonFilename() {
-        var nameField = document.querySelector('[name="name"]');
-        var characterName = nameField ? String(nameField.value || "").trim() : "";
+        var characterName = namedFieldText("name");
         var safeName = characterName.replace(/[\\/:*?"<>|]+/g, "-").replace(/^\s+|\s+$/g, "");
         return (safeName ? safeName + "-" : "") + "符文巡旅角色表.json";
       }
@@ -8271,22 +9168,16 @@
             if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("JSON 根層級必須是物件。");
             var imported = parsed.data && typeof parsed.data === "object" && !Array.isArray(parsed.data) ? parsed.data : parsed;
             mergeLegacySpellCosts(imported);
-            var fields = Array.from(document.querySelectorAll(".persist"));
-            var knownNames = {};
-            fields.forEach(function (field) { knownNames[field.name] = true; });
-            var matchingKeys = Object.keys(imported).filter(function (key) { return knownNames[key]; });
+            var knownNames = new Set(persistFields().map(function (field) { return field.name; }));
+            var matchingKeys = Object.keys(imported).filter(function (key) { return knownNames.has(key); });
             if (!matchingKeys.length) throw new Error("檔案中沒有可匯入的角色表欄位。");
             if (!window.confirm("匯入 JSON 將取代目前角色表內容。瀏覽器中的現有紀錄也會更新，要繼續嗎？")) return;
-            fields.forEach(function (field) {
-              var value = Object.prototype.hasOwnProperty.call(imported, field.name) ? imported[field.name] : "";
-              if (field.type === "checkbox") field.checked = value === true || value === "true" || value === 1 || value === "1";
-              else field.value = value === undefined || value === null ? "" : String(value);
-            });
+            applyPersistData(imported, true);
             if (parsed.layout === "folding" || parsed.layout === "standard") setLayoutMode(parsed.layout, true);
             var importedHomeland = String(homelandAppliedField.value || "").trim();
             applyHomelandDisplayDetails(HOMELAND_TEMPLATES[importedHomeland] || null);
             initializeOpposedRunes();
-            var importedSpiritCombatDamage = document.querySelector('[name="spirit_combat_weapon_damage"]');
+            var importedSpiritCombatDamage = fieldByName("spirit_combat_weapon_damage");
             if (importedSpiritCombatDamage) importedSpiritCombatDamage.removeAttribute("data-calculated-default");
             recalculateDerived();
             localStorage.setItem(STORAGE_KEY, JSON.stringify(collectPersistData()));
@@ -8301,35 +9192,28 @@
 
       function syncSharedField(source) {
         if (!source.name) return;
-        document.querySelectorAll(".persist").forEach(function (field) {
-          if (field === source || field.name !== source.name) return;
-          if (field.type === "checkbox") field.checked = source.checked;
-          else field.value = source.value;
+        fieldsByName(source.name).forEach(function (field) {
+          if (field === source) return;
+          assignFieldValue(field, source.type === "checkbox" || source.type === "radio" ? source.checked : source.value);
         });
       }
 
-      document.addEventListener("input", function (event) {
-        if (event.target.classList.contains("persist")) {
-          syncSharedField(event.target);
-          syncOpposedRune(event.target, false);
-          updateSpiritCombatDamageOverride(event.target);
-          if (/^(mp|rp|rp2)_(current|max)$/.test(event.target.name || "")) {
-            var resourcePrefix = event.target.name.replace(/_(current|max)$/, "");
-            syncResourceTrack(resourcePrefix, resourcePrefix === "mp" ? 24 : 10);
-          }
-          recalculateDerived();
-          saveData();
-        }
-      });
-      document.addEventListener("change", function (event) {
-        if (event.target.classList.contains("persist")) {
-          syncSharedField(event.target);
-          syncOpposedRune(event.target, true);
-          updateSpiritCombatDamageOverride(event.target);
-          recalculateDerived();
-          saveData();
-        }
-      });
+      function handlePersistMutation(event) {
+        var field = event.target;
+        if (!field.classList.contains("persist")) return;
+        var discrete = field.matches('input[type="checkbox"], input[type="radio"], select');
+        if ((event.type === "input" && discrete) || (event.type === "change" && !discrete)) return;
+        syncSharedField(field);
+        syncOpposedRune(field);
+        updateSpiritCombatDamageOverride(field);
+        var resourceMatch = String(field.name || "").match(/^(mp|rp|rp2)_(current|max)$/);
+        if (resourceMatch) syncResourceTrack(resourceMatch[1], RESOURCE_TRACKS[resourceMatch[1]]);
+        recalculateDerived();
+        saveData();
+      }
+
+      document.addEventListener("input", handlePersistMutation);
+      document.addEventListener("change", handlePersistMutation);
       document.addEventListener("click", function (event) {
         if (!document.body.classList.contains("sheet-preview")) return;
         var trigger = event.target.closest(".roll-copy-target");
@@ -8360,8 +9244,7 @@
 
       function openRestDialog() {
         showRestError("");
-        restModal.hidden = false;
-        restModal.setAttribute("aria-hidden", "false");
+        setModalVisibility(restModal, true);
         document.body.classList.add("rest-open");
         window.setTimeout(function () {
           restHoursInput.focus();
@@ -8370,24 +9253,18 @@
       }
 
       function closeRestDialog() {
-        restModal.hidden = true;
-        restModal.setAttribute("aria-hidden", "true");
+        setModalVisibility(restModal, false);
         document.body.classList.remove("rest-open");
         document.getElementById("rest-button").focus();
       }
 
-      function roundedResourceValue(value) {
-        return Math.round(value * 100) / 100;
-      }
-
       function displayResourceValue(value) {
-        var rounded = roundedResourceValue(value);
-        return Number.isInteger(rounded) ? String(rounded) : String(rounded);
+        return formatEquipmentNumber(value);
       }
 
       function fillResource(prefix) {
         var maximum = numericFieldValue(prefix + "_max");
-        var currentField = document.querySelector('[name="' + prefix + '_current"]');
+        var currentField = fieldByName(prefix + "_current");
         if (maximum === null || !currentField) return false;
         currentField.value = displayResourceValue(maximum);
         return true;
@@ -8395,9 +9272,9 @@
 
       function restoreAllLocations(amount, fillCompletely) {
         var changed = false;
-        for (var i = 0; i < 10; i += 1) {
+        for (var i = 0; i < HIT_LOCATION_COUNT; i += 1) {
           var maximum = numericFieldValue("location_" + i + "_hp");
-          var currentField = document.querySelector('[name="location_' + i + '_current_hp"]');
+          var currentField = fieldByName("location_" + i + "_current_hp");
           if (maximum === null || !currentField) continue;
           var current = numericFieldValue("location_" + i + "_current_hp");
           var restored = fillCompletely
@@ -8469,7 +9346,10 @@
         if (event.target === restModal) closeRestDialog();
       });
       document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape" && !restModal.hidden) closeRestDialog();
+        if (event.key !== "Escape") return;
+        if (!restModal.hidden) closeRestDialog();
+        else if (!equipmentManagerModal.hidden) closeEquipmentManager();
+        else if (!builderModal.hidden) closeBuilder();
       });
       document.getElementById("export-json-button").addEventListener("click", exportJson);
       document.getElementById("import-json-button").addEventListener("click", function () {
@@ -8483,10 +9363,7 @@
       document.getElementById("clear-button").addEventListener("click", function () {
         if (!window.confirm("要清除這份雛形中所有已輸入的內容嗎？")) return;
         localStorage.removeItem(STORAGE_KEY);
-        document.querySelectorAll(".persist").forEach(function (field) {
-          if (field.type === "checkbox") field.checked = false;
-          else field.value = "";
-        });
+        applyPersistData({}, true);
         initializeOpposedRunes();
         applyHomelandDisplayDetails(null);
         renderHomelandStatus("");
