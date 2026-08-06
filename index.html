@@ -2237,9 +2237,9 @@
     .builder-cult-magic-card h4 { margin: 0 0 6px; font-size: 11px; }
     .builder-cult-magic-card p { margin: 0; font-size: 11px; line-height: 1.6; }
     .builder-personal-status {
-      position: sticky;
-      z-index: 2;
-      top: -20px;
+      position: static;
+      z-index: auto;
+      top: auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -2281,6 +2281,7 @@
     }
     .builder-personal-skill-name { min-width: 0; font-size: 11.5px; line-height: 1.3; overflow-wrap: anywhere; }
     .builder-personal-skill-name small { display: block; margin: 1px 0 0; color: #777; font-size: 8.5px; line-height: 1.2; }
+    .builder-personal-skill-name .builder-cult-fixed-bonus { color: #444; font-weight: 800; }
     .builder-personal-skill-value { text-align: right; font-size: 12px; font-weight: 900; }
     .builder-skill-button {
       min-width: 0;
@@ -2661,7 +2662,7 @@
     .builder-cult-magic-card h4 { font-size: 12px; }
     .builder-cult-magic-card p { font-size: 12px; line-height: 1.7; }
     .builder-personal-status {
-      top: -28px;
+      top: auto;
       margin: -6px 0 18px;
       padding: 12px 14px;
       border-color: var(--builder-line);
@@ -2685,6 +2686,7 @@
     }
     .builder-personal-skill-name { font-size: 12.5px; line-height: 1.35; }
     .builder-personal-skill-name small { color: #8a7b6d; font-size: 9.5px; }
+    .builder-personal-skill-name .builder-cult-fixed-bonus { color: var(--builder-accent-dark); }
     .builder-personal-skill-value { color: var(--builder-accent-dark); font-size: 13px; }
     .builder-skill-button { border-color: var(--builder-line); border-radius: 2px; padding: 7px 3px; font-size: 10.5px; }
     .builder-skill-button.is-selected { border-color: var(--builder-accent-dark); background: var(--builder-accent); }
@@ -2740,7 +2742,7 @@
       .builder-progress-number { font-size: 15px; }
       .builder-progress-label { font-size: 12px; }
       .builder-content { padding: 24px 26px 30px; }
-      .builder-personal-status { top: -24px; }
+      .builder-personal-status { top: auto; }
       .builder-error { margin-right: 26px; margin-left: 26px; }
       .builder-footer { padding-right: 26px; padding-left: 26px; }
     }
@@ -6184,6 +6186,8 @@
           cult: "",
           cultPassion: "",
           cultSelections: {},
+          cultSkill20: "",
+          cultSkill15: "",
           personal25: ["", "", "", ""],
           personal10: ["", "", "", "", ""],
           equipmentSelections: {}
@@ -7134,6 +7138,66 @@
         return specs;
       }
 
+      function isOccupationCultureWeaponSpec(spec) {
+        return Boolean(spec && /^(?:主要|次要)?文化(?:近戰|射擊)?武器$/.test(String(spec.label || "").trim()));
+      }
+
+      function occupationCultureWeaponSpecs(specs) {
+        return (specs || []).filter(isOccupationCultureWeaponSpec);
+      }
+
+      function duplicateOccupationCultureWeapon(specs) {
+        var selected = new Set();
+        var duplicate = "";
+        occupationCultureWeaponSpecs(specs).some(function (spec) {
+          var weapon = String(builderState.occupationSelections[spec.id] || "").trim();
+          if (!weapon) return false;
+          if (selected.has(weapon)) {
+            duplicate = weapon;
+            return true;
+          }
+          selected.add(weapon);
+          return false;
+        });
+        return duplicate;
+      }
+
+      function normalizeOccupationCultureWeapons(specs) {
+        var selected = new Set();
+        occupationCultureWeaponSpecs(specs).forEach(function (spec) {
+          var weapon = String(builderState.occupationSelections[spec.id] || "").trim();
+          if (!weapon) return;
+          if (selected.has(weapon)) builderState.occupationSelections[spec.id] = "";
+          else selected.add(weapon);
+        });
+      }
+
+      function filterOccupationCultureWeaponOptions(options, blocked, current) {
+        return (options || []).map(function (option) {
+          if (option && !Array.isArray(option) && Array.isArray(option.options)) {
+            return {
+              group: option.group || option.label || "選項",
+              options: filterOccupationCultureWeaponOptions(option.options, blocked, current)
+            };
+          }
+          var value = String(Array.isArray(option) ? option[0] : option.value);
+          return value === current || !blocked.has(value) ? option : null;
+        }).filter(function (option) {
+          return option && (!Array.isArray(option.options) || option.options.length > 0);
+        });
+      }
+
+      function occupationCultureWeaponOptions(spec, specs) {
+        var current = String(builderState.occupationSelections[spec.id] || "").trim();
+        var blocked = new Set();
+        occupationCultureWeaponSpecs(specs).forEach(function (otherSpec) {
+          if (otherSpec.id === spec.id) return;
+          var selected = String(builderState.occupationSelections[otherSpec.id] || "").trim();
+          if (selected) blocked.add(selected);
+        });
+        return filterOccupationCultureWeaponOptions(spec.options, blocked, current);
+      }
+
       function occupationFixedSkillParts(occupationName) {
         if (occupationName === "戰士") {
           return occupationSkillParts(occupationName).filter(function (part) {
@@ -7243,18 +7307,20 @@
         builderContent.appendChild(automaticSection);
 
         var specs = occupationChoiceSpecs(builderState.occupation);
+        normalizeOccupationCultureWeapons(specs);
         if (specs.length) {
           var choicesSection = builderSection("需要你決定的職業技能");
           var choicesGrid = el("div", { class: "builder-grid" });
           specs.forEach(function (spec) {
             var labelText = spec.label + "　+" + spec.bonus + "%";
-            var field = builderField(labelText, "occupationSelections." + spec.id, spec.type === "select" ? "select" : "text", spec.options || []);
+            var specOptions = isOccupationCultureWeaponSpec(spec) ? occupationCultureWeaponOptions(spec, specs) : (spec.options || []);
+            var field = builderField(labelText, "occupationSelections." + spec.id, spec.type === "select" ? "select" : "text", specOptions);
             if (spec.example) field.querySelector("input").setAttribute("placeholder", spec.example);
             choicesGrid.appendChild(field);
           });
           choicesSection.appendChild(choicesGrid);
           if (builderChoicesMentionLanguage(specs)) choicesSection.appendChild(builderLanguageReference());
-          choicesSection.appendChild(el("p", { class: "builder-occupation-choice-note", text: "下拉選單只列出適用技能；必須手填的欄位會顯示參考範例。這些選擇會在完成角色時直接加到對應技能。" }));
+          choicesSection.appendChild(el("p", { class: "builder-occupation-choice-note", text: "下拉選單只列出適用技能；文化武器不可重複選擇。必須手填的欄位會顯示參考範例。這些選擇會在完成角色時直接加到對應技能。" }));
           builderContent.appendChild(choicesSection);
         }
 
@@ -7332,6 +7398,50 @@
         return guide ? occupationSkillPartsFromText(guide.skills).filter(function (_, index) { return !choices.has(index); }) : [];
       }
 
+      function cultImportedSkillEntries(name) {
+        var entries = [];
+        var entryMap = new Map();
+
+        function addEntry(skillName, bonus) {
+          var value = String(skillName || "").trim();
+          var amount = Number(bonus) || 0;
+          var key = normalizeSkillName(value);
+          if (!value || !key || !amount) return;
+          if (entryMap.has(key)) {
+            entryMap.get(key).bonus += amount;
+            return;
+          }
+          var entry = { name: value, bonus: amount };
+          entries.push(entry);
+          entryMap.set(key, entry);
+        }
+
+        if (name) {
+          addEntry("教團知識（" + name + "）", 15);
+          addEntry("崇拜（" + name + "）", 20);
+          addEntry("冥想", 5);
+        }
+        cultFixedSkillParts(name).forEach(function (part) {
+          addEntry(occupationSkillSubject(part), occupationBonusValues(part)[0]);
+        });
+        cultSkillChoiceSpecs(name).forEach(function (spec) {
+          var chosen = String(builderState.cultSelections[spec.id] || "").trim();
+          if (chosen) addEntry(occupationSelectionSkillName(spec, chosen), spec.bonus);
+        });
+        return entries;
+      }
+
+      function cultBonusSkillNames(name) {
+        return cultImportedSkillEntries(name).map(function (entry) { return entry.name; });
+      }
+
+      function normalizeCultBonusSkills() {
+        var available = cultBonusSkillNames(builderState.cult);
+        if (available.indexOf(builderState.cultSkill20) === -1) builderState.cultSkill20 = "";
+        if (available.indexOf(builderState.cultSkill15) === -1 || builderState.cultSkill15 === builderState.cultSkill20) builderState.cultSkill15 = "";
+        return available;
+      }
+
       function cultPassionOptions(guide) {
         var existing = existingPassionNames();
         return String(guide.passions || "").split("、").map(function (name) { return name.trim(); }).filter(Boolean).map(function (name) {
@@ -7342,7 +7452,93 @@
       function cultStepCompleted() {
         var guide = CULT_GUIDE[builderState.cult];
         if (!guide || !cultIsEligible(builderState.cult) || !builderState.cultPassion) return false;
-        return cultSkillChoiceSpecs(builderState.cult).every(function (spec) { return Boolean(String(builderState.cultSelections[spec.id] || "").trim()); });
+        var choicesComplete = cultSkillChoiceSpecs(builderState.cult).every(function (spec) { return Boolean(String(builderState.cultSelections[spec.id] || "").trim()); });
+        var available = cultBonusSkillNames(builderState.cult);
+        return choicesComplete && Boolean(builderState.cultSkill20) && Boolean(builderState.cultSkill15) &&
+          builderState.cultSkill20 !== builderState.cultSkill15 &&
+          available.indexOf(builderState.cultSkill20) !== -1 && available.indexOf(builderState.cultSkill15) !== -1;
+      }
+
+      function renderCultSkillBonuses() {
+        var importedSkills = cultImportedSkillEntries(builderState.cult);
+        var available = normalizeCultBonusSkills();
+        var selected20 = String(builderState.cultSkill20 || "");
+        var selected15 = String(builderState.cultSkill15 || "");
+        var fixedBonusMap = new Map(importedSkills.map(function (entry) { return [normalizeSkillName(entry.name), entry.bonus]; }));
+        var bonusSection = builderSection("教團技能");
+        bonusSection.appendChild(el("p", { class: "builder-help", text: "入門者獲得 3 點起始符文點。下列技能已導入教團提供的固定加值；所有列出的技能都可再選擇 +20% 或 +15%，但兩項不可套用在同一技能。再次點擊已選按鈕即可取消。" }));
+
+        var cultSpecs = cultSkillChoiceSpecs(builderState.cult);
+        if (cultSpecs.length) {
+          bonusSection.appendChild(el("p", { class: "builder-help", text: "先決定下列教團技能；完成選擇後，該技能會直接加入同一份技能清單。" }));
+          var choiceGrid = el("div", { class: "builder-grid", style: "margin:10px 0 16px" });
+          cultSpecs.forEach(function (spec) {
+            var field = builderField(spec.label + "　固定 +" + spec.bonus + "%", "cultSelections." + spec.id, spec.type, spec.options || []);
+            if (spec.example && field.querySelector("input")) field.querySelector("input").setAttribute("placeholder", spec.example);
+            choiceGrid.appendChild(field);
+          });
+          bonusSection.appendChild(choiceGrid);
+          if (builderChoicesMentionLanguage(cultSpecs)) bonusSection.appendChild(builderLanguageReference());
+        }
+
+        bonusSection.appendChild(el("div", { class: "builder-personal-status" }, [
+          el("span", { text: selected20 && selected15 ? "兩項教團技能加值已完成。" : "請完成一項 +20% 與一項 +15%。" }),
+          el("div", { class: "builder-personal-counts" }, [
+            el("span", { class: "builder-personal-count" + (selected20 ? " is-complete" : ""), text: "+20%　" + (selected20 ? "1" : "0") + "／1" }),
+            el("span", { class: "builder-personal-count" + (selected15 ? " is-complete" : ""), text: "+15%　" + (selected15 ? "1" : "0") + "／1" })
+          ])
+        ]));
+
+        var projection = personalSkillProjection();
+        var availableSet = new Set(available.map(normalizeSkillName));
+        var sheet = el("div", { class: "builder-skill-sheet" });
+        skillColumns.forEach(function (columnGroups) {
+          var column = el("div", { class: "builder-skill-sheet-column" });
+          columnGroups.forEach(function (sourceGroup) {
+            if (sourceGroup.continuation) return;
+            var group = projection.groupMap[sourceGroup.key];
+            var entries = group ? group.entries.filter(function (entry) {
+              return availableSet.has(normalizeSkillName(entry.value)) || availableSet.has(normalizeSkillName(entry.label));
+            }) : [];
+            if (!entries.length) return;
+            var modifier = builderSkillModifierNumber(sourceGroup);
+            var box = el("section", { class: "builder-personal-skill-group" });
+            box.appendChild(el("div", { class: "builder-personal-skill-head" }, [
+              el("h3", { text: group.title }),
+              el("span", { text: modifier === null ? "" : "修正值 " + (modifier >= 0 ? "+" : "") + modifier + "%" })
+            ]));
+            entries.forEach(function (entry) {
+              var is20 = selected20 === entry.value;
+              var is15 = selected15 === entry.value;
+              var button20 = el("button", {
+                type: "button", class: "builder-skill-button" + (is20 ? " is-selected" : ""), text: is20 ? "✓ +20" : "+20%",
+                title: (is20 ? "取消" : "增加") + entry.label + " +20%", "data-builder-cult-skill": entry.value, "data-builder-cult-amount": "20"
+              });
+              button20.disabled = Boolean(is15 || (selected20 && !is20));
+              var button15 = el("button", {
+                type: "button", class: "builder-skill-button" + (is15 ? " is-selected" : ""), text: is15 ? "✓ +15" : "+15%",
+                title: (is15 ? "取消" : "增加") + entry.label + " +15%", "data-builder-cult-skill": entry.value, "data-builder-cult-amount": "15"
+              });
+              button15.disabled = Boolean(is20 || (selected15 && !is15));
+              var english = skillEnglish[entry.value] || "";
+              var fixedBonus = fixedBonusMap.get(normalizeSkillName(entry.value)) || fixedBonusMap.get(normalizeSkillName(entry.label)) || 0;
+              box.appendChild(el("div", { class: "builder-personal-skill-row" }, [
+                el("span", { class: "builder-personal-skill-name", title: entry.label }, [
+                  document.createTextNode(entry.label),
+                  english ? el("small", { text: english }) : null,
+                  fixedBonus ? el("small", { class: "builder-cult-fixed-bonus", text: "固定 +" + fixedBonus + "%" }) : null
+                ].filter(Boolean)),
+                el("span", { class: "builder-personal-skill-value", text: entry.current + "%", title: "目前累積技能值" }),
+                button20,
+                button15
+              ]));
+            });
+            column.appendChild(box);
+          });
+          sheet.appendChild(column);
+        });
+        bonusSection.appendChild(sheet);
+        return bonusSection;
       }
 
       function renderBuilderCult() {
@@ -7381,27 +7577,7 @@
 
         var guide = CULT_GUIDE[builderState.cult];
         if (!guide) return;
-        var initiation = builderSection("入門者自動獲得");
-        var initiationList = el("ul", { class: "builder-occupation-summary" });
-        [
-          "起始符文點：3 點",
-          "教團知識（" + builderState.cult + "）+15%",
-          "崇拜（" + builderState.cult + "）+20%",
-          "冥想 +5%"
-        ].concat(cultFixedSkillParts(builderState.cult)).forEach(function (entry) { initiationList.appendChild(el("li", { text: entry })); });
-        initiation.appendChild(initiationList);
-        var cultSpecs = cultSkillChoiceSpecs(builderState.cult);
-        if (cultSpecs.length) {
-          var choiceGrid = el("div", { class: "builder-grid", style: "margin-top:12px" });
-          cultSpecs.forEach(function (spec) {
-            var field = builderField(spec.label + "　+" + spec.bonus + "%", "cultSelections." + spec.id, spec.type, spec.options || []);
-            if (spec.example && field.querySelector("input")) field.querySelector("input").setAttribute("placeholder", spec.example);
-            choiceGrid.appendChild(field);
-          });
-          initiation.appendChild(choiceGrid);
-          if (builderChoicesMentionLanguage(cultSpecs)) initiation.appendChild(builderLanguageReference());
-        }
-        builderContent.appendChild(initiation);
+        builderContent.appendChild(renderCultSkillBonuses());
 
         var passionSection = builderSection("偏好烈情");
         passionSection.appendChild(builderField("選擇一項偏好烈情", "cultPassion", "select", cultPassionOptions(guide)));
@@ -7572,6 +7748,8 @@
           addByName("崇拜（" + builderState.cult + "）", 20);
           addByName("冥想", 5);
         }
+        if (builderState.cultSkill20) addByName(builderState.cultSkill20, 20);
+        if (builderState.cultSkill15) addByName(builderState.cultSkill15, 15);
 
         builderState.personal25.filter(Boolean).forEach(function (name) { addByName(name, 25); });
         builderState.personal10.filter(Boolean).forEach(function (name) { addByName(name, 10); });
@@ -8073,7 +8251,8 @@
         if (index === 3) {
           if (!builderState.occupation) return false;
           if (builderState.occupation === "戰士" && (!builderState.warriorType || !warriorTypeAllowed(builderState.warriorType, builderState.homeland) || !warriorWeaponPackage())) return false;
-          return occupationChoiceSpecs(builderState.occupation).every(function (spec) {
+          var completionSpecs = occupationChoiceSpecs(builderState.occupation);
+          return !duplicateOccupationCultureWeapon(completionSpecs) && completionSpecs.every(function (spec) {
             return Boolean(String(builderState.occupationSelections[spec.id] || "").trim());
           }) && Boolean(occupationPassionValue());
         }
@@ -8139,9 +8318,7 @@
             var occupationSpec = occupationSpecs[occupationIndex];
             if (!String(builderState.occupationSelections[occupationSpec.id] || "").trim()) return "請完成職業技能選擇：「" + occupationSpec.label + "」。";
           }
-          var primaryWeaponChoice = occupationSpecs.find(function (spec) { return spec.label === "主要文化武器"; });
-          var secondaryWeaponChoice = occupationSpecs.find(function (spec) { return spec.label === "次要文化武器"; });
-          if (primaryWeaponChoice && secondaryWeaponChoice && builderState.occupationSelections[primaryWeaponChoice.id] === builderState.occupationSelections[secondaryWeaponChoice.id]) return "主要與次要文化武器必須選擇不同技能。";
+          if (duplicateOccupationCultureWeapon(occupationSpecs)) return "文化武器不可重複選擇同一技能。";
           if (builderState.occupation === "戰士") {
             var packageWeapons = (warriorWeaponPackage().fixed || []).slice();
             occupationSpecs.forEach(function (spec) {
@@ -8159,6 +8336,11 @@
           for (var cultSpecIndex = 0; cultSpecIndex < cultSpecs.length; cultSpecIndex += 1) {
             if (!String(builderState.cultSelections[cultSpecs[cultSpecIndex].id] || "").trim()) return "請完成教團起始技能選擇：「" + cultSpecs[cultSpecIndex].label + "」。";
           }
+          var availableCultSkills = cultBonusSkillNames(builderState.cult);
+          if (!builderState.cultSkill20) return "請從教團技能中選擇一項獲得 +20%。";
+          if (!builderState.cultSkill15) return "請從教團技能中選擇另一項獲得 +15%。";
+          if (builderState.cultSkill20 === builderState.cultSkill15) return "教團技能的 +20% 與 +15% 不可選擇同一技能。";
+          if (availableCultSkills.indexOf(builderState.cultSkill20) === -1 || availableCultSkills.indexOf(builderState.cultSkill15) === -1) return "額外加值必須選擇目前教團提供的技能。";
           if (!builderState.cultPassion) return "請選擇一項教團偏好烈情。";
         }
         if (index === 5) {
@@ -8288,7 +8470,7 @@
           builderState.warriorWeaponRoll = "";
           builderState.occupationSelections = {};
           renderBuilderStep();
-        } else if (path.indexOf("occupationSelections.") === 0 && builderState.occupation === "戰士") {
+        } else if (path.indexOf("occupationSelections.") === 0) {
           renderBuilderStep();
         } else if (path === "occupationPassion") {
           if (event.target.value !== "__custom__") builderState.occupationPassionCustom = "";
@@ -8296,6 +8478,10 @@
         } else if (path === "cult") {
           builderState.cultSelections = {};
           builderState.cultPassion = "";
+          builderState.cultSkill20 = "";
+          builderState.cultSkill15 = "";
+          renderBuilderStep();
+        } else if (path.indexOf("cultSelections.") === 0) {
           renderBuilderStep();
         } else {
           updateBuilderRuneTotal();
@@ -8304,6 +8490,15 @@
         }
       });
       builderContent.addEventListener("click", function (event) {
+        var cultSkillButton = event.target.closest("[data-builder-cult-skill]");
+        if (cultSkillButton) {
+          var cultSkill = cultSkillButton.getAttribute("data-builder-cult-skill");
+          var cultAmount = Number(cultSkillButton.getAttribute("data-builder-cult-amount"));
+          var cultKey = cultAmount === 20 ? "cultSkill20" : "cultSkill15";
+          builderState[cultKey] = builderState[cultKey] === cultSkill ? "" : cultSkill;
+          renderBuilderStep();
+          return;
+        }
         var personalSkillButton = event.target.closest("[data-builder-personal-skill]");
         if (personalSkillButton) {
           var personalSkill = personalSkillButton.getAttribute("data-builder-personal-skill");
@@ -8794,6 +8989,8 @@
         addFlexibleSkillBonus("教團知識（" + cultName + "）", 15);
         addFlexibleSkillBonus("崇拜（" + cultName + "）", 20);
         addFlexibleSkillBonus("冥想", 5);
+        addFlexibleSkillBonus(builderState.cultSkill20, 20);
+        addFlexibleSkillBonus(builderState.cultSkill15, 15);
       }
 
       function cultSelectionSummary() {
@@ -8810,6 +9007,8 @@
           var value = String(builderState.cultSelections[spec.id] || "").trim();
           if (value) lines.push(spec.label + "：" + value + "（+" + spec.bonus + "%）");
         });
+        if (builderState.cultSkill20) lines.push("額外教團技能：" + builderState.cultSkill20 + "（+20%）");
+        if (builderState.cultSkill15) lines.push("額外教團技能：" + builderState.cultSkill15 + "（+15%）");
         return lines.join("\n");
       }
 
