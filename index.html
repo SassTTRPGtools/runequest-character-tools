@@ -3640,6 +3640,7 @@
             <section class="card tight weapon-card">
               <div class="card-head"><h3>武器</h3></div>
               <div class="card-body">
+                <input type="hidden" class="persist" name="weapon_equipment_overrides">
                 <table class="weapon-table">
                   <thead>
                     <tr><th>武器</th><th style="width:20%">%</th><th style="width:11%">SR</th><th style="width:23%">傷害</th><th style="width:10%">耐久</th><th style="width:13px" aria-label="成長"></th></tr>
@@ -4906,9 +4907,63 @@
         return !bonus || bonus === "—" ? baseDamage : baseDamage + bonus;
       }
 
+      function managedWeaponDefaults(item) {
+        return {
+          name: item.mode === "ranged" ? item.name + "/" + item.reach : item.name,
+          skill: formatEquipmentNumber(skillCurrentTotal(item.skill, item.base)),
+          sr: weaponDisplayStrikeRank(item),
+          damage: weaponDisplayDamage(item),
+          hp: item.hp
+        };
+      }
+
+      function managedWeaponOverrides() {
+        var field = fieldByName("weapon_equipment_overrides");
+        if (!field || !cleanText(field.value)) return {};
+        try {
+          var parsed = JSON.parse(field.value);
+          return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function setManagedWeaponOverrides(overrides) {
+        var field = fieldByName("weapon_equipment_overrides");
+        if (!field) return;
+        field.value = Object.keys(overrides || {}).length ? JSON.stringify(overrides) : "";
+      }
+
+      function rememberManagedWeaponOverride(field) {
+        if (!field || field.type !== "text") return;
+        var match = String(field.name || "").match(/^weapon_(\d+)_(name|skill|sr|damage|hp)$/);
+        if (!match) return;
+        var equipmentId = namedFieldText("weapon_" + match[1] + "_equipment_id");
+        var item = EQUIPMENT_BY_ID[equipmentId];
+        if (!item) return;
+        var key = match[2];
+        var overrides = managedWeaponOverrides();
+        var equipmentOverrides = overrides[equipmentId] && typeof overrides[equipmentId] === "object"
+          ? overrides[equipmentId]
+          : {};
+        var defaults = managedWeaponDefaults(item);
+        if (String(field.value) === String(defaults[key])) delete equipmentOverrides[key];
+        else equipmentOverrides[key] = String(field.value);
+        if (Object.keys(equipmentOverrides).length) overrides[equipmentId] = equipmentOverrides;
+        else delete overrides[equipmentId];
+        setManagedWeaponOverrides(overrides);
+      }
+
+      function isManagedWeaponTextField(field) {
+        if (!field || field.type !== "text") return false;
+        var match = String(field.name || "").match(/^weapon_(\d+)_(name|skill|sr|damage|hp)$/);
+        return Boolean(match && namedFieldText("weapon_" + match[1] + "_equipment_id"));
+      }
+
       function syncEquippedWeapons(equippedEntries) {
         var indexes = sheetWeaponIndexes.filter(function (index) { return index !== null; });
         var growthByEquipment = {};
+        var overrides = managedWeaponOverrides();
         indexes.forEach(function (index) {
           var idField = fieldByName("weapon_" + index + "_equipment_id");
           var growthField = fieldByName("weapon_" + index + "_xp");
@@ -4927,11 +4982,12 @@
           });
           if (targetIndex === undefined) return;
           var item = entry.item;
-          setSheetValue("weapon_" + targetIndex + "_name", item.mode === "ranged" ? item.name + "/" + item.reach : item.name);
-          setSheetValue("weapon_" + targetIndex + "_skill", formatEquipmentNumber(skillCurrentTotal(item.skill, item.base)));
-          setSheetValue("weapon_" + targetIndex + "_sr", weaponDisplayStrikeRank(item));
-          setSheetValue("weapon_" + targetIndex + "_damage", weaponDisplayDamage(item));
-          setSheetValue("weapon_" + targetIndex + "_hp", item.hp);
+          var defaults = managedWeaponDefaults(item);
+          var equipmentOverrides = overrides[item.id] && typeof overrides[item.id] === "object" ? overrides[item.id] : {};
+          ["name", "skill", "sr", "damage", "hp"].forEach(function (key) {
+            var value = Object.prototype.hasOwnProperty.call(equipmentOverrides, key) ? equipmentOverrides[key] : defaults[key];
+            setSheetValue("weapon_" + targetIndex + "_" + key, value);
+          });
           setSheetValue("weapon_" + targetIndex + "_equipment_id", item.id);
           setSheetValue("weapon_" + targetIndex + "_xp", Boolean(growthByEquipment[item.id]));
         });
@@ -9410,7 +9466,14 @@
         if (!field.classList.contains("persist")) return;
         var discrete = field.matches('input[type="checkbox"], input[type="radio"], select');
         if ((event.type === "input" && discrete) || (event.type === "change" && !discrete)) return;
+        if (event.type === "input" && isManagedWeaponTextField(field)) {
+          rememberManagedWeaponOverride(field);
+          updateAllSuccessDisplays();
+          saveData();
+          return;
+        }
         syncSharedField(field);
+        rememberManagedWeaponOverride(field);
         syncOpposedRune(field);
         updateSpiritCombatDamageOverride(field);
         var resourceMatch = String(field.name || "").match(/^(mp|rp|rp2)_(current|max)$/);
