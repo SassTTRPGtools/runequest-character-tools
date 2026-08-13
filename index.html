@@ -4898,6 +4898,14 @@
         return base === null ? item.sr : String(base + Number(item.sr));
       }
 
+      function weaponDisplayDamage(item) {
+        if (!item) return "";
+        var baseDamage = cleanText(item.damage);
+        if (item.mode !== "melee" || !/\d+D\d+/i.test(baseDamage)) return baseDamage;
+        var bonus = damageBonus(numericFieldValue("char_str"), numericFieldValue("char_siz"));
+        return !bonus || bonus === "—" ? baseDamage : baseDamage + bonus;
+      }
+
       function syncEquippedWeapons(equippedEntries) {
         var indexes = sheetWeaponIndexes.filter(function (index) { return index !== null; });
         var growthByEquipment = {};
@@ -4922,7 +4930,7 @@
           setSheetValue("weapon_" + targetIndex + "_name", item.mode === "ranged" ? item.name + "/" + item.reach : item.name);
           setSheetValue("weapon_" + targetIndex + "_skill", formatEquipmentNumber(skillCurrentTotal(item.skill, item.base)));
           setSheetValue("weapon_" + targetIndex + "_sr", weaponDisplayStrikeRank(item));
-          setSheetValue("weapon_" + targetIndex + "_damage", item.damage);
+          setSheetValue("weapon_" + targetIndex + "_damage", weaponDisplayDamage(item));
           setSheetValue("weapon_" + targetIndex + "_hp", item.hp);
           setSheetValue("weapon_" + targetIndex + "_equipment_id", item.id);
           setSheetValue("weapon_" + targetIndex + "_xp", Boolean(growthByEquipment[item.id]));
