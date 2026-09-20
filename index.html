@@ -1582,7 +1582,39 @@
       line-height: 1.55;
     }
     .common-rune-spells strong { color: var(--ink); }
-    .sorcery-lines { display: grid; gap: 7px; }
+    .sorcery-lines { display: grid; gap: 5px; }
+    .sorcery-card-head-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sorcery-mastery-line {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      align-items: center;
+      min-height: 19px;
+      gap: 5px;
+      border-bottom: 1px solid var(--write-line);
+      font-size: 9px;
+    }
+    .sorcery-mastery-label { color: var(--muted); font-weight: 800; }
+    .sorcery-mastery-display {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 2px 5px;
+      min-width: 0;
+    }
+    .sorcery-mastery-display.is-empty { color: var(--muted); }
+    .sorcery-mastery-chip { display: inline-flex; align-items: center; min-width: 0; }
+    .sorcery-mastery-glyph,
+    .sorcery-spell-glyph,
+    .sorcery-symbol-glyph {
+      font-family: "Glorantha Core Runes", serif;
+      font-weight: 400;
+      line-height: 1;
+    }
+    .sorcery-mastery-glyph { font-size: 15px; }
     .magic-bottom-layout {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1629,13 +1661,80 @@
       font-weight: 800;
     }
     .sorcery-table {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
       height: 100%;
       margin-top: 8px;
     }
+    .sorcery-table thead,
+    .sorcery-table tbody { min-height: 0; }
+    .sorcery-table thead tr,
+    .sorcery-table tbody tr {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 88px;
+    }
+    .sorcery-table tbody {
+      display: grid;
+      grid-template-rows: repeat(4, minmax(0, 1fr));
+    }
+    .sorcery-table tbody tr {
+      grid-template-rows: auto auto;
+      align-content: center;
+      padding: 5px 0 7px;
+      border-bottom: 1px solid var(--write-line);
+    }
+    .sorcery-table tbody tr:last-child { border-bottom: 0; }
+    .sorcery-table th,
+    .sorcery-table td { width: auto !important; }
     .sorcery-table th:nth-child(1) { width: auto; }
-    .sorcery-table th:nth-child(2) { width: 88px; text-align: center; }
-    .sorcery-table td { height: 26px; }
-    .sorcery-table td:last-child input { text-align: center; }
+    .sorcery-spell-display {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      min-height: 24px;
+      gap: 5px;
+      padding: 0 3px;
+    }
+    .sorcery-spell-display[hidden] { display: none; }
+    .sorcery-spell-glyphs { display: inline-flex; align-items: center; white-space: nowrap; }
+    .sorcery-spell-glyph { font-size: 18px; }
+    .sorcery-spell-title {
+      min-width: 0;
+      overflow: hidden;
+      font-size: 9px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sorcery-spell-cost { font-size: 9px; font-weight: 900; white-space: nowrap; }
+    .sorcery-is-unmastered { color: #a51616; }
+    .sorcery-table th:nth-child(2) { width: auto; text-align: center; }
+    .sorcery-table td {
+      height: 28px;
+      border-bottom: 0;
+    }
+    .sorcery-table td:nth-child(2) input { text-align: center; }
+    .sorcery-note-cell {
+      grid-column: 1 / -1;
+      height: 25px !important;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .sorcery-note-field {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .sorcery-note-field input {
+      width: 100%;
+      height: 100%;
+      min-height: 20px;
+      min-width: 0;
+      border: 0;
+      padding: 0 4px;
+      background: transparent;
+      text-align: left;
+    }
     .spirit-record + .spirit-record {
       position: relative;
       margin-top: 10px;
@@ -2471,6 +2570,56 @@
       white-space: nowrap;
     }
     .rune-spell-cost { font-size: 9px; font-weight: 900; white-space: nowrap; }
+    .sorcery-manager-dialog {
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
+      width: min(980px, 100%);
+    }
+    .sorcery-manager-content { padding-top: 16px; }
+    .sorcery-symbol-groups { display: grid; gap: 14px; }
+    .sorcery-symbol-group {
+      border: 1px solid #b4a797;
+      border-radius: 10px;
+      padding: 10px;
+      background: #fffdf8;
+    }
+    .sorcery-symbol-group h3 { margin: 0 0 8px; font-size: 13px; }
+    .sorcery-symbol-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 7px;
+    }
+    .sorcery-symbol-option {
+      display: grid;
+      grid-template-columns: auto 32px minmax(0, 1fr);
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+      padding: 7px 8px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .sorcery-symbol-option.is-selected {
+      border-color: #111;
+      box-shadow: inset 3px 0 0 var(--builder-accent, #111);
+    }
+    .sorcery-symbol-option input { margin: 0; accent-color: #111; }
+    .sorcery-symbol-glyph { font-size: 24px; text-align: center; }
+    .sorcery-symbol-copy { min-width: 0; }
+    .sorcery-symbol-copy strong,
+    .sorcery-symbol-copy small {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sorcery-symbol-copy strong { font-size: 11px; }
+    .sorcery-symbol-copy small { margin-top: 2px; color: #666; font-size: 9px; }
+    .sorcery-spell-option { grid-template-columns: auto 58px minmax(0, 1fr) auto; }
+    .sorcery-spell-option .sorcery-spell-glyph { font-size: 23px; }
+    .sorcery-spell-option-cost { display: grid; justify-items: end; gap: 1px; font-size: 11px; font-weight: 900; white-space: nowrap; }
+    .sorcery-spell-option-cost small { font-size: 8px; font-weight: 700; }
     .builder-error {
       margin: 0 22px -2px;
       padding: 8px 10px;
@@ -3238,6 +3387,9 @@
       .weapon-card td:nth-child(4) { grid-column: 1 / -1; }
       .spell-table tr { grid-template-columns: minmax(0, 1fr); }
       .sorcery-table tr { grid-template-columns: minmax(0, 1fr) 112px; }
+      .sorcery-table td:nth-child(3) { grid-column: 1 / -1; }
+      .sorcery-table .sorcery-note-cell::before { display: none; }
+      .sorcery-note-field { display: block; }
       .gear-table tr { grid-template-columns: minmax(0, 1fr) 72px 86px; }
       .hit-location-card tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .hit-location-card td:nth-child(5) { grid-column: 1 / -1; }
@@ -3486,6 +3638,12 @@
       .rune-spell-display { min-height: 32px; }
       .rune-spell-title { font-size: 15px; }
       .rune-spell-cost { font-size: 13px; }
+      .sorcery-symbol-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .sorcery-manager-dialog { max-height: calc(100vh - 24px); }
+      .sorcery-manager-content { padding: 14px 16px 18px; }
+      .sorcery-spell-display { min-height: 32px; }
+      .sorcery-spell-title { font-size: 14px; }
+      .sorcery-spell-cost { font-size: 12px; }
 
       .rest-modal { padding: 12px; }
       .rest-dialog-head { padding: 15px 16px; }
@@ -3671,6 +3829,62 @@
         <div class="builder-footer-actions">
           <button type="button" id="rune-spell-manager-cancel">取消</button>
           <button type="button" class="builder-primary" id="rune-spell-manager-apply">套用至符文魔法</button>
+        </div>
+      </footer>
+    </section>
+  </div>
+
+  <div class="character-builder screen-only" id="sorcery-mastery-manager" hidden aria-hidden="true">
+    <section class="builder-dialog sorcery-manager-dialog" role="dialog" aria-modal="true" aria-labelledby="sorcery-mastery-manager-title">
+      <header class="builder-head">
+        <div>
+          <p class="builder-kicker">巫術能力設定</p>
+          <h2 id="sorcery-mastery-manager-title">設定已學會的符文與技巧</h2>
+          <p class="builder-source">勾選角色已掌握的符文與技巧；法術需要的未掌握符號會標紅，且每個符號令費用 +1。</p>
+        </div>
+        <button type="button" class="builder-close" id="sorcery-mastery-manager-close" aria-label="關閉巫術符文與技巧設定">×</button>
+      </header>
+      <div class="builder-content sorcery-manager-content">
+        <div class="sorcery-symbol-groups" id="sorcery-symbol-groups" role="group" aria-label="巫術符文與技巧清單"></div>
+      </div>
+      <p class="builder-error" id="sorcery-mastery-manager-error" role="alert" hidden></p>
+      <footer class="builder-footer">
+        <span class="equipment-manager-footer-note">元素、力量、型態與修飾均視為符文；技巧另列。</span>
+        <div class="builder-footer-actions">
+          <button type="button" id="sorcery-mastery-manager-cancel">取消</button>
+          <button type="button" class="builder-primary" id="sorcery-mastery-manager-apply">套用符文與技巧</button>
+        </div>
+      </footer>
+    </section>
+  </div>
+
+  <div class="character-builder rune-spell-manager screen-only" id="sorcery-spell-manager" hidden aria-hidden="true">
+    <section class="builder-dialog rune-spell-manager-dialog sorcery-manager-dialog" role="dialog" aria-modal="true" aria-labelledby="sorcery-spell-manager-title">
+      <header class="builder-head">
+        <div>
+          <p class="builder-kicker">巫術法術設定</p>
+          <h2 id="sorcery-spell-manager-title">設定巫術法術</h2>
+          <p class="builder-source">從清單選擇最多 4 項法術。紅色符號代表尚未掌握；每個未掌握符號使基礎費用 +1。</p>
+        </div>
+        <button type="button" class="builder-close" id="sorcery-spell-manager-close" aria-label="關閉巫術法術設定">×</button>
+      </header>
+      <div class="builder-content rune-spell-manager-content sorcery-manager-content">
+        <div class="rune-spell-manager-toolbar">
+          <label class="rune-spell-search">
+            <span>搜尋法術</span>
+            <input type="search" id="sorcery-spell-search" autocomplete="off" placeholder="輸入中文或英文名稱">
+          </label>
+          <span class="rune-spell-selected-count" id="sorcery-spell-selected-count" aria-live="polite">已選 0／4</span>
+        </div>
+        <div class="rune-spell-catalog" id="sorcery-spell-catalog" role="group" aria-label="巫術法術清單"></div>
+        <p class="rune-spell-no-results" id="sorcery-spell-no-results" hidden>沒有符合搜尋條件的法術。</p>
+      </div>
+      <p class="builder-error" id="sorcery-spell-manager-error" role="alert" hidden></p>
+      <footer class="builder-footer">
+        <span class="equipment-manager-footer-note">已填寫的法術％數與備註會跟隨同一項法術保留。</span>
+        <div class="builder-footer-actions">
+          <button type="button" id="sorcery-spell-manager-cancel">取消</button>
+          <button type="button" class="builder-primary" id="sorcery-spell-manager-apply">套用至巫術法術</button>
         </div>
       </footer>
     </section>
@@ -3994,17 +4208,29 @@
 
         <div class="magic-bottom-layout">
           <section class="card tight sorcery-card">
-            <div class="card-head">
+            <div class="card-head spell-card-head">
               <h3>巫術</h3>
-              <label class="compact-title-field"><span>自由 INT</span><input type="text" class="persist" name="sorcery_free_int"></label>
+              <div class="sorcery-card-head-actions">
+                <label class="compact-title-field"><span>自由 INT</span><input type="text" class="persist" name="sorcery_free_int"></label>
+                <button type="button" class="sheet-action-button screen-only" id="sorcery-mastery-manager-button" data-edit-only>符文／技巧</button>
+                <button type="button" class="sheet-action-button screen-only" id="sorcery-spell-manager-button" data-edit-only>法術</button>
+              </div>
             </div>
             <div class="card-body">
               <div class="sorcery-lines">
-                <label class="field">巫術符文<input type="text" class="line persist" name="sorcery_runes"></label>
-                <label class="field">技巧<input type="text" class="line persist" name="sorcery_techniques"></label>
+                <div class="sorcery-mastery-line">
+                  <span class="sorcery-mastery-label">巫術符文</span>
+                  <span class="sorcery-mastery-display is-empty" id="sorcery-runes-display">尚未設定</span>
+                </div>
+                <div class="sorcery-mastery-line">
+                  <span class="sorcery-mastery-label">技巧</span>
+                  <span class="sorcery-mastery-display is-empty" id="sorcery-techniques-display">尚未設定</span>
+                </div>
+                <input type="hidden" class="persist" name="sorcery_runes">
+                <input type="hidden" class="persist" name="sorcery_techniques">
               </div>
               <table class="sorcery-table">
-                <thead><tr><th>巫術法術</th><th>%</th></tr></thead>
+                <thead><tr><th>巫術</th><th>%</th></tr></thead>
                 <tbody id="page3-sorcery-rows"></tbody>
               </table>
             </div>
@@ -4225,6 +4451,105 @@
       });
       var RUNE_SPELL_BY_ID = Object.create(null);
       RUNE_SPELL_CATALOG.forEach(function (spell) { RUNE_SPELL_BY_ID[spell.id] = spell; });
+      var SORCERY_SPELL_LIMIT = 4;
+      var SORCERY_SYMBOL_GROUPS = [
+        { label: "元素", kind: "rune", items: [
+          ["w", "流水", "Water"], ["e", "大地", "Earth"], ["o", "黑暗", "Darkness"],
+          ["g", "空氣", "Air"], [".", "火焰／天空", "Fire/Sky"], ["/", "月亮", "Moon"]
+        ] },
+        { label: "力量", kind: "rune", items: [
+          ["x", "豐饒", "Fertility"], ["t", "死亡", "Death"], ["c", "停滯", "Stasis"],
+          ["s", "運動", "Movement"], ["l", "和諧", "Harmony"], ["j", "混亂", "Disorder"],
+          ["y", "真理", "Truth"], ["i", "幻象", "Illusion"]
+        ] },
+        { label: "型態", kind: "rune", items: [
+          [",", "人類", "Man"], ["B", "野獸", "Beast"], ["?", "混沌", "Chaos"],
+          ["A", "龍裔", "Dragonewt"], ["b", "靈體", "Spirit"], ["p", "植物", "Plant"],
+          ["u", "不死", "Undead"], ["d", "龍族", "Dragon"]
+        ] },
+        { label: "技巧", kind: "technique", items: [
+          ["!", "合併", "Combine"], ["@", "命令", "Command"], ["#", "驅散", "Dispel"],
+          ["$", "分離", "Separate"], ["%", "召喚", "Summon"], ["^", "汲取", "Tap"]
+        ] },
+        { label: "修飾", kind: "rune", items: [
+          ["W", "精通", "Mastery"], ["R", "魔法", "Magic"], ["S", "無限", "Infinity"],
+          ["K", "幸運", "Luck"], ["X", "命運", "Fate"], ["a", "法律", "Law"]
+        ] }
+      ];
+      var SORCERY_SYMBOL_BY_GLYPH = Object.create(null);
+      var SORCERY_SYMBOL_ORDER = [];
+      SORCERY_SYMBOL_GROUPS.forEach(function (group) {
+        group.items = group.items.map(function (item) {
+          var symbol = { glyph: item[0], zh: item[1], en: item[2], kind: group.kind, group: group.label };
+          SORCERY_SYMBOL_BY_GLYPH[symbol.glyph] = symbol;
+          SORCERY_SYMBOL_ORDER.push(symbol.glyph);
+          return symbol;
+        });
+      });
+      var SORCERY_SPELL_CATALOG = [
+        "Enhance INT|強化 INT|2|.%",
+        "Geomancy|地占術|3|ye@",
+        "Identify Otherworld Entity|辨識異界實體|3|yR@",
+        "Logical Clarity|邏輯明晰|2|i#",
+        "Logician|邏輯學者|2|y%",
+        "Reveal Rune|顯現符文|2|y@",
+        "Solace of the Logical Mind|理性心智的慰藉|2|y@",
+        "Speak to Mind|心靈交談|3|y,@",
+        "Total Recall|完全回憶|2|y%",
+        "Neutralize Magic|中和魔法|2|R#",
+        "Conflagration|喚焰術|2|.%",
+        "Accelerate Healing|加速治癒術|2|x@",
+        "Animate Dead|屍體活化術|4|tx!@",
+        "Attract Magic|吸引魔法術|2|R@",
+        "Attract Missiles|吸引飛彈術|4|gs!@",
+        "Attract Spirits|吸引靈體術|2|b@",
+        "Bind Elemental|束縛元素附魔|2|b@",
+        "Bind Spirit|束縛靈體附魔|2|b@",
+        "Boon of Kargan Tor|卡爾甘托之恩賜|2|t%",
+        "Call Cold|召寒術|2|o%",
+        "Call Light|召光術|2|.%",
+        "Calm Water|平靜水域術|3|wl!",
+        "Castback|反彈術|4|Rc!@",
+        "Create Hallucination|創造幻覺術|2|i!",
+        "Create Image|創造影像術|3|i.!",
+        "Create Odor|創造氣味術|3|ig!",
+        "Create Sensation|創造感覺術|3|ie!",
+        "Create Sound|創造聲音術|3|io!",
+        "Create Taste|創造味道術|3|iw!",
+        "Create Wall of Flames|火牆術|2|.#",
+        "Dampen Damage|削弱傷害術|2|t#",
+        "Disappear|消失術|4|i.!@",
+        "Dominate (humanoid)|支配（人形生物）|2|,@",
+        "Dominate (animal)|支配（動物）|2|B@",
+        "Dominate (discorporate spirit)|支配（離體靈體）|2|b@",
+        "Dominate (elemental)|支配（元素）|3|b@",
+        "Drain Soul|汲魂術|2|R#",
+        "Finger of Fire|焰指術|3|.s!",
+        "Hasten Vessel|迅航術|3|sw!",
+        "Identify Spell|辨識法術|2|i#",
+        "Mend Flesh|癒合血肉術|3|lx!",
+        "Moonfire|月火術|4|./!%",
+        "Move Across Water|水上行走術|3|wg!",
+        "Neutralize Armor|護甲中和術|2|c#",
+        "Neutralize (Rune)|中和（符文）|2|#",
+        "Neutralize Spirit Magic|中和靈體魔法|2|b#",
+        "Open Seas|開海術|2|w@",
+        "Pierce Veil|刺破帷幕|3|Ry!",
+        "Protective Circle|防護結界|2|t#",
+        "Spirit Warding|靈體守護|2|b#",
+        "Preserve Item|保存物品術|2|c@",
+        "Rogue Wave|巨浪術|3|wj!",
+        "Steal Breath|竊息術|2|g^",
+        "Stop Vessel|止航術|3|wc!",
+        "Summon (species)|召喚（物種）|3|@%",
+        "Tap Body|汲取肉體|2|,^",
+        "Ward Against Weapons|武器防護結界|2|t#"
+      ].map(function (record) {
+        var parts = record.split("|");
+        return { id: parts[0], en: parts[0], zh: parts[1], cost: Number(parts[2]), glyph: parts[3] };
+      });
+      var SORCERY_SPELL_BY_ID = Object.create(null);
+      SORCERY_SPELL_CATALOG.forEach(function (spell) { SORCERY_SPELL_BY_ID[spell.id] = spell; });
 
       function byId(id) {
         return document.getElementById(id);
@@ -5856,10 +6181,377 @@
         if (event.target === runeSpellManagerModal) closeRuneSpellManager();
       });
 
-      makeRows("page3-sorcery-rows", 8, function (i) {
+      function sorceryMasteredGlyphs() {
+        var mastered = new Set();
+        ["sorcery_runes", "sorcery_techniques"].forEach(function (name) {
+          var field = fieldByName(name);
+          var raw = cleanText(field && field.value);
+          if (!raw) return;
+          var compact = raw.replace(/[\s、，;；]+/g, "");
+          var chars = Array.from(compact);
+          if (chars.length && chars.every(function (glyph) { return Boolean(SORCERY_SYMBOL_BY_GLYPH[glyph]); })) {
+            chars.forEach(function (glyph) { mastered.add(glyph); });
+            return;
+          }
+          var lower = raw.toLowerCase();
+          SORCERY_SYMBOL_GROUPS.forEach(function (group) {
+            group.items.forEach(function (symbol) {
+              if (raw.indexOf(symbol.zh) !== -1 || lower.indexOf(symbol.en.toLowerCase()) !== -1) mastered.add(symbol.glyph);
+            });
+          });
+        });
+        return mastered;
+      }
+
+      function renderSorceryMasteryDisplay(targetId, kind, mastered) {
+        var target = byId(targetId);
+        if (!target) return;
+        target.textContent = "";
+        var glyphs = SORCERY_SYMBOL_ORDER.filter(function (glyph) {
+          return mastered.has(glyph) && SORCERY_SYMBOL_BY_GLYPH[glyph].kind === kind;
+        });
+        target.classList.toggle("is-empty", !glyphs.length);
+        if (!glyphs.length) {
+          target.textContent = "尚未設定";
+          return;
+        }
+        glyphs.forEach(function (glyph) {
+          var symbol = SORCERY_SYMBOL_BY_GLYPH[glyph];
+          target.appendChild(el("span", { class: "sorcery-mastery-chip", title: symbol.zh + "／" + symbol.en }, [
+            el("span", { class: "sorcery-mastery-glyph", text: glyph, "aria-label": symbol.zh + "／" + symbol.en })
+          ]));
+        });
+      }
+
+      function syncSorceryMasteryDisplay() {
+        var mastered = sorceryMasteredGlyphs();
+        renderSorceryMasteryDisplay("sorcery-runes-display", "rune", mastered);
+        renderSorceryMasteryDisplay("sorcery-techniques-display", "technique", mastered);
+      }
+
+      function sorcerySpellRequirementState(spell) {
+        var mastered = sorceryMasteredGlyphs();
+        var required = Array.from(spell ? spell.glyph : "");
+        var unmatched = required.filter(function (glyph) { return !mastered.has(glyph); });
+        return {
+          mastered: mastered,
+          unmatched: unmatched,
+          surcharge: unmatched.length,
+          cost: (spell ? spell.cost : 0) + unmatched.length
+        };
+      }
+
+      function sorceryGlyphSequence(spell, state, className) {
+        var wrap = el("span", { class: className || "sorcery-spell-glyphs" });
+        Array.from(spell.glyph).forEach(function (glyph) {
+          var symbol = SORCERY_SYMBOL_BY_GLYPH[glyph];
+          var missing = !state.mastered.has(glyph);
+          var title = symbol ? symbol.zh + "／" + symbol.en : glyph;
+          if (missing) title += "（未掌握，費用 +1）";
+          wrap.appendChild(el("span", {
+            class: "sorcery-spell-glyph" + (missing ? " sorcery-is-unmastered" : ""),
+            text: glyph,
+            title: title,
+            "aria-label": title
+          }));
+        });
+        return wrap;
+      }
+
+      function resolveSorcerySpell(idValue, nameValue) {
+        var id = cleanText(idValue);
+        if (id && SORCERY_SPELL_BY_ID[id]) return SORCERY_SPELL_BY_ID[id];
+        var name = normalizedText(nameValue);
+        if (!name) return null;
+        var lowerName = name.toLowerCase();
+        var exact = SORCERY_SPELL_CATALOG.find(function (spell) {
+          return lowerName === spell.en.toLowerCase() || name === spell.zh;
+        });
+        if (exact) return exact;
+        return SORCERY_SPELL_CATALOG.slice().sort(function (left, right) {
+          return Math.max(right.zh.length, right.en.length) - Math.max(left.zh.length, left.en.length);
+        }).find(function (spell) {
+          return name.indexOf(spell.zh) !== -1 || lowerName.indexOf(spell.en.toLowerCase()) === 0;
+        }) || null;
+      }
+
+      function renderSorcerySpellRow(index) {
+        var row = byId("page3-sorcery-rows").children[index];
+        var idField = fieldByName("sorcery_" + index + "_spell_id");
+        var nameField = fieldByName("sorcery_" + index + "_name");
+        var display = row && row.querySelector("[data-sorcery-spell-display]");
+        if (!row || !idField || !nameField || !display) return;
+        var spell = resolveSorcerySpell(idField.value, nameField.value);
+        display.textContent = "";
+        if (!spell) {
+          idField.value = "";
+          display.hidden = true;
+          nameField.hidden = false;
+          return;
+        }
+        var state = sorcerySpellRequirementState(spell);
+        idField.value = spell.id;
+        nameField.value = spell.zh;
+        nameField.hidden = true;
+        display.hidden = false;
+        display.appendChild(sorceryGlyphSequence(spell, state));
+        display.appendChild(el("span", { class: "sorcery-spell-title", text: spell.zh, title: spell.zh + "／" + spell.en }));
+        display.appendChild(el("span", {
+          class: "sorcery-spell-cost" + (state.surcharge ? " sorcery-is-unmastered" : ""),
+          text: "(" + state.cost + ")",
+          title: state.surcharge ? "基礎費用 " + spell.cost + "；未掌握 " + state.surcharge + " 項；實際費用 " + state.cost : "費用 " + state.cost
+        }));
+        display.setAttribute("aria-label", spell.zh + "，費用 " + state.cost + (state.surcharge ? "，含未掌握符號加價 " + state.surcharge : ""));
+      }
+
+      function syncSorcerySpellRows() {
+        syncSorceryMasteryDisplay();
+        for (var i = 0; i < SORCERY_SPELL_LIMIT; i += 1) renderSorcerySpellRow(i);
+      }
+
+      makeRows("page3-sorcery-rows", SORCERY_SPELL_LIMIT, function (i) {
         var tr = el("tr");
-        ["name", "value"].forEach(function (key) { tr.appendChild(el("td", {}, [input("sorcery_" + i + "_" + key)])); });
+        var display = el("div", { class: "sorcery-spell-display", "data-sorcery-spell-display": String(i), hidden: "" });
+        var nameField = input("sorcery_" + i + "_name");
+        nameField.setAttribute("aria-label", "巫術法術 " + (i + 1) + " 名稱");
+        tr.appendChild(el("td", {}, [display, nameField, input("sorcery_" + i + "_spell_id", "", "hidden")]));
+        tr.appendChild(el("td", {}, [input("sorcery_" + i + "_value")]));
+        var noteField = input("sorcery_" + i + "_note");
+        noteField.setAttribute("aria-label", "巫術法術 " + (i + 1) + " 備註");
+        tr.appendChild(el("td", { class: "sorcery-note-cell" }, [
+          el("label", { class: "sorcery-note-field" }, [
+            noteField
+          ])
+        ]));
         return tr;
+      });
+
+      var sorceryMasteryManagerModal = byId("sorcery-mastery-manager");
+      var sorcerySymbolGroups = byId("sorcery-symbol-groups");
+      var sorceryMasteryDraft = new Set();
+
+      function buildSorcerySymbolGroups() {
+        sorcerySymbolGroups.textContent = "";
+        SORCERY_SYMBOL_GROUPS.forEach(function (group) {
+          var grid = el("div", { class: "sorcery-symbol-grid" });
+          group.items.forEach(function (symbol) {
+            var selected = sorceryMasteryDraft.has(symbol.glyph);
+            var checkbox = el("input", {
+              type: "checkbox",
+              "data-sorcery-symbol": symbol.glyph,
+              "aria-label": "選擇" + symbol.zh
+            });
+            checkbox.checked = selected;
+            grid.appendChild(el("label", { class: "sorcery-symbol-option" + (selected ? " is-selected" : "") }, [
+              checkbox,
+              el("span", { class: "sorcery-symbol-glyph", text: symbol.glyph, "aria-hidden": "true" }),
+              el("span", { class: "sorcery-symbol-copy" }, [
+                el("strong", { text: symbol.zh }),
+                el("small", { text: symbol.en })
+              ])
+            ]));
+          });
+          sorcerySymbolGroups.appendChild(el("section", { class: "sorcery-symbol-group" }, [
+            el("h3", { text: group.label + (group.kind === "rune" ? "（符文）" : "") }),
+            grid
+          ]));
+        });
+      }
+
+      function openSorceryMasteryManager() {
+        sorceryMasteryDraft = new Set(sorceryMasteredGlyphs());
+        buildSorcerySymbolGroups();
+        setModalVisibility(sorceryMasteryManagerModal, true);
+        document.body.classList.add("spell-manager-open");
+        var first = sorcerySymbolGroups.querySelector('input[type="checkbox"]');
+        if (first) window.setTimeout(function () { first.focus(); }, 0);
+      }
+
+      function closeSorceryMasteryManager() {
+        setModalVisibility(sorceryMasteryManagerModal, false);
+        document.body.classList.remove("spell-manager-open");
+        byId("sorcery-mastery-manager-button").focus();
+      }
+
+      function applySorceryMasteryManager() {
+        var runeGlyphs = SORCERY_SYMBOL_ORDER.filter(function (glyph) {
+          return sorceryMasteryDraft.has(glyph) && SORCERY_SYMBOL_BY_GLYPH[glyph].kind === "rune";
+        });
+        var techniqueGlyphs = SORCERY_SYMBOL_ORDER.filter(function (glyph) {
+          return sorceryMasteryDraft.has(glyph) && SORCERY_SYMBOL_BY_GLYPH[glyph].kind === "technique";
+        });
+        setSheetValue("sorcery_runes", runeGlyphs.join(""));
+        setSheetValue("sorcery_techniques", techniqueGlyphs.join(""));
+        syncSorcerySpellRows();
+        saveData();
+        closeSorceryMasteryManager();
+      }
+
+      sorcerySymbolGroups.addEventListener("change", function (event) {
+        var checkbox = event.target.closest("[data-sorcery-symbol]");
+        if (!checkbox) return;
+        var glyph = checkbox.getAttribute("data-sorcery-symbol");
+        if (checkbox.checked) sorceryMasteryDraft.add(glyph);
+        else sorceryMasteryDraft.delete(glyph);
+        var option = checkbox.closest(".sorcery-symbol-option");
+        if (option) option.classList.toggle("is-selected", checkbox.checked);
+      });
+      byId("sorcery-mastery-manager-button").addEventListener("click", openSorceryMasteryManager);
+      byId("sorcery-mastery-manager-close").addEventListener("click", closeSorceryMasteryManager);
+      byId("sorcery-mastery-manager-cancel").addEventListener("click", closeSorceryMasteryManager);
+      byId("sorcery-mastery-manager-apply").addEventListener("click", applySorceryMasteryManager);
+      sorceryMasteryManagerModal.addEventListener("click", function (event) {
+        if (event.target === sorceryMasteryManagerModal) closeSorceryMasteryManager();
+      });
+
+      var sorcerySpellManagerModal = byId("sorcery-spell-manager");
+      var sorcerySpellCatalog = byId("sorcery-spell-catalog");
+      var sorcerySpellSearch = byId("sorcery-spell-search");
+      var sorcerySpellSelectedCount = byId("sorcery-spell-selected-count");
+      var sorcerySpellNoResults = byId("sorcery-spell-no-results");
+      var sorcerySpellManagerError = byId("sorcery-spell-manager-error");
+      var sorcerySpellDraft = [];
+
+      function currentSorcerySpellIds() {
+        var result = [];
+        for (var i = 0; i < SORCERY_SPELL_LIMIT; i += 1) {
+          var idField = fieldByName("sorcery_" + i + "_spell_id");
+          var nameField = fieldByName("sorcery_" + i + "_name");
+          var spell = resolveSorcerySpell(idField && idField.value, nameField && nameField.value);
+          if (spell && result.indexOf(spell.id) === -1) result.push(spell.id);
+        }
+        return result;
+      }
+
+      function showSorcerySpellManagerError(message) {
+        sorcerySpellManagerError.textContent = message || "";
+        sorcerySpellManagerError.hidden = !message;
+      }
+
+      function buildSorcerySpellCatalog() {
+        sorcerySpellCatalog.textContent = "";
+        var fragment = document.createDocumentFragment();
+        SORCERY_SPELL_CATALOG.forEach(function (spell) {
+          var state = sorcerySpellRequirementState(spell);
+          var checkbox = el("input", {
+            type: "checkbox",
+            "data-sorcery-spell-id": spell.id,
+            "aria-label": "選擇" + spell.zh
+          });
+          var cost = el("span", {
+            class: "sorcery-spell-option-cost" + (state.surcharge ? " sorcery-is-unmastered" : "")
+          }, [
+            el("strong", { text: "費用 " + state.cost }),
+            el("small", { text: state.surcharge ? "基礎 " + spell.cost + " +" + state.surcharge : "基礎費用" })
+          ]);
+          fragment.appendChild(el("label", {
+            class: "rune-spell-option sorcery-spell-option",
+            "data-sorcery-spell-option": spell.id,
+            "data-sorcery-spell-search": (spell.zh + " " + spell.en).toLowerCase()
+          }, [
+            checkbox,
+            sorceryGlyphSequence(spell, state),
+            el("span", { class: "rune-spell-option-copy" }, [
+              el("strong", { text: spell.zh }),
+              el("small", { text: spell.en })
+            ]),
+            cost
+          ]));
+        });
+        sorcerySpellCatalog.appendChild(fragment);
+      }
+
+      function syncSorcerySpellManagerUI() {
+        var query = normalizedText(sorcerySpellSearch.value).toLowerCase();
+        var atLimit = sorcerySpellDraft.length >= SORCERY_SPELL_LIMIT;
+        var visibleCount = 0;
+        sorcerySpellCatalog.querySelectorAll("[data-sorcery-spell-option]").forEach(function (option) {
+          var id = option.getAttribute("data-sorcery-spell-option");
+          var selected = sorcerySpellDraft.indexOf(id) !== -1;
+          var matches = !query || option.getAttribute("data-sorcery-spell-search").indexOf(query) !== -1;
+          var checkbox = option.querySelector('input[type="checkbox"]');
+          option.hidden = !matches;
+          if (matches) visibleCount += 1;
+          option.classList.toggle("is-selected", selected);
+          option.classList.toggle("is-disabled", atLimit && !selected);
+          checkbox.checked = selected;
+          checkbox.disabled = atLimit && !selected;
+        });
+        sorcerySpellSelectedCount.textContent = "已選 " + sorcerySpellDraft.length + "/" + SORCERY_SPELL_LIMIT;
+        sorcerySpellNoResults.hidden = visibleCount !== 0;
+      }
+
+      function openSorcerySpellManager() {
+        syncSorcerySpellRows();
+        sorcerySpellDraft = currentSorcerySpellIds();
+        sorcerySpellSearch.value = "";
+        showSorcerySpellManagerError("");
+        buildSorcerySpellCatalog();
+        syncSorcerySpellManagerUI();
+        setModalVisibility(sorcerySpellManagerModal, true);
+        document.body.classList.add("spell-manager-open");
+        window.setTimeout(function () { sorcerySpellSearch.focus(); }, 0);
+      }
+
+      function closeSorcerySpellManager() {
+        setModalVisibility(sorcerySpellManagerModal, false);
+        document.body.classList.remove("spell-manager-open");
+        byId("sorcery-spell-manager-button").focus();
+      }
+
+      function applySorcerySpellManager() {
+        var valuesById = Object.create(null);
+        var notesById = Object.create(null);
+        for (var i = 0; i < SORCERY_SPELL_LIMIT; i += 1) {
+          var currentIdField = fieldByName("sorcery_" + i + "_spell_id");
+          var currentNameField = fieldByName("sorcery_" + i + "_name");
+          var currentValueField = fieldByName("sorcery_" + i + "_value");
+          var currentNoteField = fieldByName("sorcery_" + i + "_note");
+          var currentSpell = resolveSorcerySpell(currentIdField && currentIdField.value, currentNameField && currentNameField.value);
+          if (currentSpell) {
+            if (currentValueField) valuesById[currentSpell.id] = currentValueField.value;
+            if (currentNoteField) notesById[currentSpell.id] = currentNoteField.value;
+          }
+        }
+        for (var row = 0; row < SORCERY_SPELL_LIMIT; row += 1) {
+          var spell = SORCERY_SPELL_BY_ID[sorcerySpellDraft[row]] || null;
+          setSheetValue("sorcery_" + row + "_spell_id", spell ? spell.id : "");
+          setSheetValue("sorcery_" + row + "_name", spell ? spell.zh : "");
+          setSheetValue("sorcery_" + row + "_value", spell && Object.prototype.hasOwnProperty.call(valuesById, spell.id) ? valuesById[spell.id] : "");
+          setSheetValue("sorcery_" + row + "_note", spell && Object.prototype.hasOwnProperty.call(notesById, spell.id) ? notesById[spell.id] : "");
+        }
+        syncSorcerySpellRows();
+        updateAllSuccessDisplays();
+        saveData();
+        closeSorcerySpellManager();
+      }
+
+      sorcerySpellSearch.addEventListener("input", syncSorcerySpellManagerUI);
+      sorcerySpellCatalog.addEventListener("change", function (event) {
+        var checkbox = event.target.closest("[data-sorcery-spell-id]");
+        if (!checkbox) return;
+        var id = checkbox.getAttribute("data-sorcery-spell-id");
+        var index = sorcerySpellDraft.indexOf(id);
+        if (checkbox.checked && index === -1) {
+          if (sorcerySpellDraft.length >= SORCERY_SPELL_LIMIT) {
+            checkbox.checked = false;
+            showSorcerySpellManagerError("巫術法術最多可設定 " + SORCERY_SPELL_LIMIT + " 項。");
+          } else {
+            sorcerySpellDraft.push(id);
+            showSorcerySpellManagerError("");
+          }
+        } else if (!checkbox.checked && index !== -1) {
+          sorcerySpellDraft.splice(index, 1);
+          showSorcerySpellManagerError("");
+        }
+        syncSorcerySpellManagerUI();
+      });
+      byId("sorcery-spell-manager-button").addEventListener("click", openSorcerySpellManager);
+      byId("sorcery-spell-manager-close").addEventListener("click", closeSorcerySpellManager);
+      byId("sorcery-spell-manager-cancel").addEventListener("click", closeSorcerySpellManager);
+      byId("sorcery-spell-manager-apply").addEventListener("click", applySorcerySpellManager);
+      sorcerySpellManagerModal.addEventListener("click", function (event) {
+        if (event.target === sorcerySpellManagerModal) closeSorcerySpellManager();
       });
 
       function spiritField(labelText, name) {
@@ -6062,6 +6754,7 @@
         });
         document.querySelectorAll(".sorcery-table tbody tr").forEach(function (row) {
           var fields = row.querySelectorAll('input[type="text"]');
+          mark(row.querySelector(".sorcery-spell-display"));
           mark(fields[0]);
           mark(successTarget(fields[1]), "預覽模式：點一下複製標準巫術值");
         });
@@ -9596,13 +10289,15 @@
       }
 
       function applySorceryOccupationSpell(name, bonus) {
-        for (var i = 0; i < 8; i += 1) {
+        for (var i = 0; i < SORCERY_SPELL_LIMIT; i += 1) {
           var nameField = document.querySelector('[name="sorcery_' + i + '_name"]');
           var valueField = document.querySelector('[name="sorcery_' + i + '_value"]');
+          var idField = document.querySelector('[name="sorcery_' + i + '_spell_id"]');
           if (!nameField || !valueField) continue;
           if (String(nameField.value || "").trim() === String(name || "").trim() || !String(nameField.value || "").trim()) {
             nameField.value = String(name || "").trim();
             valueField.value = String(bonus);
+            if (idField) idField.value = "";
             return true;
           }
         }
@@ -9907,6 +10602,7 @@
         setSheetValue("clan_tribe", HOMELAND_TEMPLATES[builderState.homeland].tribe || "");
         setSheetValue("background_record", builderBackgroundText());
         renderHomelandStatus(builderState.homeland);
+        syncSorcerySpellRows();
         initializeOpposedRunes();
         recalculateDerived();
         saveData();
@@ -10057,6 +10753,7 @@
             if (!window.confirm("匯入 JSON 將取代目前角色表內容。瀏覽器中的現有紀錄也會更新，要繼續嗎？")) return;
             applyPersistData(imported, true);
             syncRuneSpellRows();
+            syncSorcerySpellRows();
             if (parsed.layout === "folding" || parsed.layout === "standard") setLayoutMode(parsed.layout, true);
             var importedHomeland = String(homelandAppliedField.value || "").trim();
             applyHomelandDisplayDetails(HOMELAND_TEMPLATES[importedHomeland] || null);
@@ -10239,6 +10936,8 @@
       document.addEventListener("keydown", function (event) {
         if (event.key !== "Escape") return;
         if (!restModal.hidden) closeRestDialog();
+        else if (!sorcerySpellManagerModal.hidden) closeSorcerySpellManager();
+        else if (!sorceryMasteryManagerModal.hidden) closeSorceryMasteryManager();
         else if (!runeSpellManagerModal.hidden) closeRuneSpellManager();
         else if (!equipmentManagerModal.hidden) closeEquipmentManager();
         else if (!builderModal.hidden) closeBuilder();
@@ -10289,6 +10988,7 @@
         localStorage.removeItem(STORAGE_KEY);
         applyPersistData({}, true);
         syncRuneSpellRows();
+        syncSorcerySpellRows();
         initializeOpposedRunes();
         applyHomelandDisplayDetails(null);
         renderHomelandStatus("");
@@ -10366,6 +11066,7 @@
 
       loadData();
       syncRuneSpellRows();
+      syncSorcerySpellRows();
       initializeResourceValues();
       var loadedHomeland = String(homelandAppliedField.value || "").trim();
       if (loadedHomeland && HOMELAND_TEMPLATES[loadedHomeland]) {
