@@ -655,25 +655,66 @@
       grid-template-columns: repeat(7, minmax(0, 1fr));
       gap: 5px;
     }
+    .characteristic-item { min-width: 0; text-align: center; }
     .stat {
       position: relative;
-      padding: 5px;
+      padding: 4px 4px 3px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: white;
       text-align: center;
     }
-    .stat label { display: block; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .08em; }
+    .stat label { display: block; color: var(--muted); font-size: 10px; font-weight: 800; line-height: 1; letter-spacing: .08em; }
     .stat input {
       width: 100%;
       border: 0;
       outline: 0;
-      padding: 2px 0 0;
+      padding: 1px 0 0;
       background: transparent;
       text-align: center;
       font-size: 20px;
       font-weight: 900;
+      line-height: 1;
     }
+    .characteristic-success {
+      display: inline-grid;
+      grid-template-columns: auto 4px auto 4px auto;
+      align-items: baseline;
+      justify-content: center;
+      width: auto;
+      max-width: 100%;
+      min-height: 8px;
+      margin-top: 2px;
+      padding: 0;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .characteristic-success .success-standard {
+      grid-column: 1;
+      grid-row: 1;
+      min-width: 0;
+      font-size: 8px;
+      text-align: center;
+    }
+    .characteristic-success .success-separator {
+      color: #888;
+      font-size: 6px;
+      font-weight: 650;
+      text-align: center;
+    }
+    .characteristic-success .success-special {
+      color: #555;
+      font-size: 7px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .characteristic-success .success-critical {
+      color: #777;
+      font-size: 6px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .characteristic-success.is-empty .success-separator { visibility: hidden; }
     .derived {
       display: grid;
       grid-template-columns: repeat(4, minmax(0,1fr));
@@ -1531,6 +1572,7 @@
     #page-3 .spell-table td { height: 29px; }
     #page-3 .spell-table th:nth-child(1) { width: 38%; }
     #page-3 .spell-table th:nth-child(2) { width: auto; }
+    #page-3 .rune-spell-table th:nth-child(1) { width: 48%; }
     .common-rune-spells {
       margin-top: 6px;
       padding-top: 6px;
@@ -1778,7 +1820,8 @@
       line-height: 1.45;
     }
 
-    body.builder-open { overflow: hidden; }
+    body.builder-open,
+    body.spell-manager-open { overflow: hidden; }
     .character-builder {
       position: fixed;
       z-index: 100;
@@ -2320,6 +2363,114 @@
     .equipment-manager-dialog { grid-template-rows: auto minmax(0, 1fr) auto auto; }
     .equipment-manager-content { padding-top: 16px; }
     .equipment-manager-footer-note { color: #555; font-size: 10px; line-height: 1.45; }
+    .rune-spell-manager-dialog {
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
+      width: min(960px, 100%);
+    }
+    .rune-spell-manager-content { padding-top: 16px; }
+    .rune-spell-manager-toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .rune-spell-search {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .rune-spell-search input {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid #777;
+      border-radius: 7px;
+      padding: 9px 10px;
+      color: #111;
+      background: #fff;
+      font-size: 14px;
+    }
+    .rune-spell-selected-count {
+      border: 1px solid #999;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .rune-spell-catalog {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .rune-spell-option {
+      display: grid;
+      grid-template-columns: auto 44px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+      padding: 9px 10px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .rune-spell-option.is-selected {
+      border-color: #111;
+      box-shadow: inset 3px 0 0 var(--builder-accent, #111);
+    }
+    .rune-spell-option.is-disabled { color: #888; background: #f4f4f4; cursor: not-allowed; }
+    .rune-spell-option[hidden] { display: none; }
+    .rune-spell-option input { margin: 0; accent-color: #111; }
+    .rune-spell-option-glyph,
+    .rune-spell-glyph {
+      font-family: "Glorantha Core Runes", serif;
+      font-weight: 400;
+      line-height: 1;
+    }
+    .rune-spell-option-glyph { font-size: 25px; text-align: center; }
+    .rune-spell-option-copy { min-width: 0; }
+    .rune-spell-option-copy strong {
+      display: block;
+      overflow: hidden;
+      font-size: 12px;
+      line-height: 1.3;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .rune-spell-option-copy small {
+      display: block;
+      overflow: hidden;
+      margin-top: 2px;
+      color: #666;
+      font-size: 9px;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .rune-spell-option-cost { font-size: 12px; font-weight: 900; white-space: nowrap; }
+    .rune-spell-no-results { margin: 18px 0 0; color: #666; font-size: 12px; text-align: center; }
+    .rune-spell-display {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 5px;
+      min-height: 27px;
+      padding: 0 3px;
+    }
+    .rune-spell-display.is-empty { display: block; }
+    .rune-spell-glyph { font-size: 20px; text-align: center; white-space: nowrap; }
+    .rune-spell-title {
+      min-width: 0;
+      overflow: hidden;
+      font-size: 10px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .rune-spell-cost { font-size: 9px; font-weight: 900; white-space: nowrap; }
     .builder-error {
       margin: 0 22px -2px;
       padding: 8px 10px;
@@ -2962,7 +3113,7 @@
       .identity.compact .occupation-field,
       .identity.compact .homeland-field { grid-column: auto; }
       .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }
-      .stat { min-height: 66px; padding: 7px 5px; }
+      .stat { min-height: 56px; padding: 7px 5px; }
       .stat label { font-size: 11px; }
       .stat input { font-size: 23px; }
       .derived { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
@@ -3322,7 +3473,19 @@
       .mobile-sheet-nav i { font-size: 16px; }
       .mobile-sheet-nav button[aria-selected="true"] { color: #fff; background: #111; }
       body.builder-open .mobile-sheet-nav,
+      body.spell-manager-open .mobile-sheet-nav,
       body.rest-open .mobile-sheet-nav { display: none; }
+
+      .rune-spell-manager-toolbar { grid-template-columns: 1fr; align-items: stretch; }
+      .rune-spell-selected-count { justify-self: start; }
+      .rune-spell-catalog { grid-template-columns: 1fr; }
+      .rune-spell-manager-dialog { max-height: calc(100vh - 24px); }
+      .rune-spell-manager-content { padding: 14px 16px 18px; }
+      .rune-spell-option-copy strong { font-size: 14px; }
+      .rune-spell-option-copy small { font-size: 10px; }
+      .rune-spell-display { min-height: 32px; }
+      .rune-spell-title { font-size: 15px; }
+      .rune-spell-cost { font-size: 13px; }
 
       .rest-modal { padding: 12px; }
       .rest-dialog-head { padding: 15px 16px; }
@@ -3481,6 +3644,38 @@
     </section>
   </div>
 
+  <div class="character-builder rune-spell-manager screen-only" id="rune-spell-manager" hidden aria-hidden="true">
+    <section class="builder-dialog rune-spell-manager-dialog" role="dialog" aria-modal="true" aria-labelledby="rune-spell-manager-title">
+      <header class="builder-head">
+        <div>
+          <p class="builder-kicker">符文魔法設定</p>
+          <h2 id="rune-spell-manager-title">設定符文魔法</h2>
+          <p class="builder-source">從清單選擇最多 8 項法術；備註請直接在角色表填寫。</p>
+        </div>
+        <button type="button" class="builder-close" id="rune-spell-manager-close" aria-label="關閉符文魔法設定">×</button>
+      </header>
+      <div class="builder-content rune-spell-manager-content">
+        <div class="rune-spell-manager-toolbar">
+          <label class="rune-spell-search">
+            <span>搜尋法術</span>
+            <input type="search" id="rune-spell-search" autocomplete="off" placeholder="輸入中文或英文名稱">
+          </label>
+          <span class="rune-spell-selected-count" id="rune-spell-selected-count" aria-live="polite">已選 0／8</span>
+        </div>
+        <div class="rune-spell-catalog" id="rune-spell-catalog" role="group" aria-label="符文魔法清單"></div>
+        <p class="rune-spell-no-results" id="rune-spell-no-results" hidden>沒有符合搜尋條件的法術。</p>
+      </div>
+      <p class="builder-error" id="rune-spell-manager-error" role="alert" hidden></p>
+      <footer class="builder-footer">
+        <span class="equipment-manager-footer-note">已填寫的備註會跟隨同一項法術保留。</span>
+        <div class="builder-footer-actions">
+          <button type="button" id="rune-spell-manager-cancel">取消</button>
+          <button type="button" class="builder-primary" id="rune-spell-manager-apply">套用至符文魔法</button>
+        </div>
+      </footer>
+    </section>
+  </div>
+
   <div class="rest-modal screen-only" id="rest-modal" hidden aria-hidden="true">
     <section class="rest-dialog" role="dialog" aria-modal="true" aria-labelledby="rest-dialog-title">
       <header class="rest-dialog-head">
@@ -3614,7 +3809,7 @@
             </section>
 
             <section class="card tight">
-              <div class="card-head"><h3>屬性</h3></div>
+              <div class="card-head"><h3>屬性</h3><span>檢定：標準／特殊／關鍵（×5）</span></div>
               <div class="card-body">
                 <div class="stats" id="characteristics"></div>
                 <div class="derived">
@@ -3764,9 +3959,12 @@
         <div class="magic-layout">
           <div>
             <section class="card tight">
-              <div class="card-head"><h3>符文魔法</h3></div>
+              <div class="card-head spell-card-head">
+                <h3>符文魔法</h3>
+                <button type="button" class="sheet-action-button screen-only" id="rune-spell-manager-button" data-edit-only>設定</button>
+              </div>
               <div class="card-body">
-                <table class="spell-table">
+                <table class="spell-table rune-spell-table">
                   <thead><tr><th>法術名稱</th><th>備註</th></tr></thead>
                   <tbody id="rune-spell-rows"></tbody>
                 </table>
@@ -3842,6 +4040,191 @@
       var RESOURCE_TRACKS = { mp: 24, rp: 10, rp2: 10 };
       var DERIVED_ROLL_COPY_FIELDS = { dodge_core: "閃避", current_stealth: "潛行" };
       var ARMOR_MATERIAL_KEYWORDS = ["皮革", "厚皮革", "煮蠟硬革", "鉚釘皮革", "亞麻", "青銅", "板甲", "鱗甲", "環甲", "龜殼", "絎縫布"];
+      var RUNE_SPELL_LIMIT = 8;
+      var RUNE_SPELL_CATALOG = [
+        "Absorption|吸收術|1+|eo",
+        "Analyze Magic|分析魔法|1+|y",
+        "Arouse Passion|激發烈情|1+|e",
+        "Axe Trance|斧之冥想|1|t",
+        "Axis Mundi|世界之軸|1|R",
+        "Ban|放逐|1+|R",
+        "Bear’s Skin|熊之厚革|3|B",
+        "Bear’s Strength|熊之偉力|2|B",
+        "Become (Other Sex)|轉相術|3|l",
+        "Berserker|狂戰化|2|tB",
+        "Bind Ghost|束縛鬼魂|1|t",
+        "Binding Enchantment|束縛附魔|1+|R",
+        "Blast Earth|毀壞土地|1+|et",
+        "Bless Animals|祝福牲畜|1|xB",
+        "Bless Champion|祝福勇士|2+|ex",
+        "Bless Crops|祝福作物|1+|ex",
+        "Bless Pregnancy|祝福孕育|2+|ex",
+        "Bless Woad|祝福藍靛草|1+|gs",
+        "Breathe Air/Water|水陸呼吸|2|wg",
+        "Catseye|貓眼術|1|.B",
+        "Charisma|魅力術|1|xiB",
+        "Clairvoyance|千里眼|2|y",
+        "Claws|利爪術|2|B",
+        "Cloud Call|召雲術|1+|g",
+        "Cloud Clear|驅雲術|1+|g.",
+        "Comfort Song|慰藉之歌|1|xl",
+        "Command Cult Spirit (Elemental)|命令教團靈體（元素）|2|R",
+        "Command Worshipers|命令信眾|2|g",
+        "Create Fissure|製造裂隙|2|ej",
+        "Create Shadow|創造暗影|1+|o",
+        "Cure All Disease|疫病康復術|2|xl",
+        "Cure Chaos Wound|治癒混沌創傷|1|xl",
+        "Cure Poison|治癒毒素|1|xl",
+        "Dark Walk|暗影匿蹤|1|os",
+        "Detect Honor|偵測榮譽|1+|g",
+        "Detect Truth|偵測真實|1|y",
+        "Discorporation|靈魂出竅|1+|R",
+        "Dismiss Magic|解除魔法|1+|R",
+        "Divination|神諭|1+|R",
+        "Earth Shield|大地之盾|3|eg",
+        "Earthpower|大地之力|3+|e",
+        "Extension|延續術|1+|R",
+        "Face Chaos|直面混沌|1+|gB",
+        "Fear|恐懼術|1|o",
+        "Fearless|無畏術|2|g",
+        "Fight Disease|對抗疾病|1|.x",
+        "Find Enemy|尋敵術|1|R",
+        "Find Grain|尋糧術|1|R",
+        "Find Magic|尋魔術|1|R",
+        "Find (substance)|尋找（物質）|1|R",
+        "Detect Gold|偵測黃金|1|R",
+        "Fireshield|火焰護盾|2+|w",
+        "Flight|飛行術|1+|gs",
+        "Free Ghost|釋放鬼魂|1+|,t",
+        "Gnome to Gargoyle|地靈化作石像怪|1+|e",
+        "Harmony|和諧術|1+|l",
+        "Heal Body|完全治癒術|3|exl",
+        "Heal Wound|治癒傷口|1|R",
+        "Healing Trance|入定恢復|1|lx",
+        "Identify Scent|辨識氣味|1+|g",
+        "Illusory Motion|幻象移動|1+|i",
+        "Illusory Odor|幻象氣味|1+|i",
+        "Illusory Sight|幻象視覺|1+|i/",
+        "Illusory Sound|幻象聲音|1+|i",
+        "Illusory Substance|幻象實體|1+|i",
+        "Illusory Taste|幻象味覺|1+|i",
+        "Impede Chaos|阻礙混沌|1+|gtB",
+        "Incarnate Ancestor|祖先降世|3|,",
+        "Increase/Decrease Wind|操風術|1+|g",
+        "Inviolable|息兵止戈|1+|exl",
+        "Knowledge|知識術|2|y",
+        "Leap|飛躍術|1+|s",
+        "Lie|謊言術|2|ij",
+        "Lightning|閃電術|1+|g",
+        "Lock|封鎖術|1+|ls",
+        "Madness|瘋狂術|2|/",
+        "Magic Point Enchantment|附魔儲能|1+|R",
+        "Matrix Creation|法術矩陣製作|1+|R",
+        "Mind Read|讀心術|2|y",
+        "Mindblast|心靈爆破|2|/",
+        "Mist Cloud|迷霧雲|1+|g",
+        "Morale|士氣術|2|ty",
+        "Multispell|複合法術|1+|R",
+        "Oath|誓約術|2+|ty",
+        "Passage|通行術|1+|g",
+        "Path Watch|路徑警戒|2|s",
+        "Reconstruction|過往重現|3|y",
+        "Reflection|反射術|1+|/i",
+        "Regrow Limb|再生肢體|2|xs/",
+        "Reproduce|繁衍術|2|x",
+        "Restore Health|恢復健康|1+|xI,",
+        "Resurrect|復活術|3|XI,",
+        "Safe|安護結界|2|I",
+        "Sanctify|聖化術|1+|R",
+        "Sever Spirit|斷魂術|3|t",
+        "Shake Earth|撼地術|1+|ej",
+        "Shield|護盾術|1+|R",
+        "Slash|裂斬術|1+|t",
+        "Soul Sight|靈視術|1|R",
+        "Speak with Herd Beasts|牧畜交談術|1|B",
+        "Spell Trading|法術交易|2|I",
+        "Spirit Armor Enchantment|靈體護甲附魔|1+|R",
+        "Spirit Block|靈體屏障|1+|R",
+        "Spirit Guardian|靈體守護者|1+|,",
+        "Spirit Melding|靈體融合|2|,",
+        "Strongnet|強力漁網|2|w",
+        "Summon Cult Spirit|召喚教團靈體|1+|R",
+        "Summon Ancestor|召喚祖先|1|,",
+        "Summon Elemental (Type)|召喚元素（類型）|1+|R",
+        "Summon Healing Spirit|召喚治療靈體|1|R",
+        "Summon Household Guardian|召喚家宅守護者|1|eI",
+        "Summon Naiad|召喚水仙靈|2|R",
+        "Summon Specific Ancestor|召喚特定祖先|1|,",
+        "Summon Spirit of Law|召喚律法之靈|1|,",
+        "Summon Spirit Teacher|召喚靈體導師|2|,",
+        "Summons of Evil|召喚邪惡|3|g",
+        "Sunbright|晝明術|2|.",
+        "Suppress Lodril|壓制洛德里爾|3+|o",
+        "Sureshot|神射術|1|otI",
+        "Sword Trance|劍之冥想|1|t",
+        "Teleportation|傳送術|3|s",
+        "Thunderbolt|雷霆擊|3+|g",
+        "Translate|翻譯術|1|y",
+        "Truespeak|真言術|2|y",
+        "Truesword|神劍術|1|t",
+        "Turn Undead|驅散不死|1+|t",
+        "Warding|守護結界|1+|R",
+        "Wind Warp|風向偏轉|1+|gs",
+        "Wind Words|風語術|1|gs",
+        "Affix Darkness|附著黑暗|1+|o",
+        "Speak with Insects|昆蟲交談術|1|oB",
+        "Accelerate Growth|加速生長|1+|ex",
+        "Bless Grave|祝福墳墓|1|et",
+        "Peace|平和術|3|I",
+        "Transform Self|變化自身|2|B",
+        "Bless Thunderstone|祝福雷鳴石|1+|g",
+        "Sunspear|日矛術|3|.",
+        "Alter Creature|轉化生靈|2|,",
+        "Bear Fruit|結果術|1|x",
+        "Become [Other Shape]|變化［其他形態］|3|i",
+        "Call Founder|召喚始祖|6|,",
+        "Chaos Gift|混沌恩賜|2|/?",
+        "Clever Tongue|巧舌術|1|ij",
+        "Command Priests|命令祭司|3|g",
+        "Command (Species)|命令（物種）|2|R",
+        "Command Dinosaur|命令恐龍|2|R",
+        "Command Horse|命令馬匹|2|R",
+        "Command Snake|命令蛇類|2|R",
+        "Command Swine|命令豬隻|2|R",
+        "Crack|碎裂術|2|j",
+        "Create Great Market|創建大市集|1|l",
+        "Create Market (Create Neutral Ground)|創建市集（創造中立地帶）|3|l",
+        "Create Wildfire|創造野火|1+|.",
+        "Cremate Dead|火葬亡者|1|.",
+        "Dismiss Elemental (type)|驅散元素（類型）|1+|R",
+        "Draw Beast|引獸術|1+|R",
+        "Enchant (metal)|附魔（金屬）|1|R",
+        "Float|漂浮術|1+|w",
+        "Group Laughter|群體歡笑術|1+|i",
+        "Guided Teleportation|引導傳送|3|s",
+        "Hallucinate|幻覺術|1+|i",
+        "Hide Fire|藏火術|2+|i",
+        "Hide Wealth|藏財術|1+|ex",
+        "Invigorate|振奮術|1|ex",
+        "Invisibility|隱形術|3+|i",
+        "Panic|恐慌術|2|ij",
+        "Pathway|尋徑術|1+|e",
+        "Rain|降雨術|1+|gw",
+        "Remove (body part)|分離（身體部位）|2|ij",
+        "Snow|降雪術|1+|g",
+        "Swallow|吞噬術|1+|j",
+        "Tame Bull|馴牛術|1|g",
+        "True (Weapon)|神兵術（武器）|1|t",
+        "Seal Soul|封魂術|3|x",
+        "Shattering|粉碎術|1|j",
+        "Strike|強擊術|1|j",
+        "Beastmaster|獸群之主|2+|B"
+      ].map(function (record) {
+        var parts = record.split("|");
+        return { id: parts[0], en: parts[0], zh: parts[1], cost: parts[2], glyph: parts[3] };
+      });
+      var RUNE_SPELL_BY_ID = Object.create(null);
+      RUNE_SPELL_CATALOG.forEach(function (spell) { RUNE_SPELL_BY_ID[spell.id] = spell; });
 
       function byId(id) {
         return document.getElementById(id);
@@ -3933,13 +4316,22 @@
 
       var characteristics = ["STR", "CON", "SIZ", "DEX", "INT", "POW", "CHA"];
       characteristics.forEach(function (name) {
+        var item = el("div", { class: "characteristic-item" });
         var wrap = el("div", { class: "stat" });
         wrap.appendChild(el("label", { text: name }));
         var characteristic = input("char_" + name.toLowerCase());
         characteristic.setAttribute("inputmode", "numeric");
         characteristic.setAttribute("pattern", "[0-9]*");
         wrap.appendChild(characteristic);
-        document.getElementById("characteristics").appendChild(wrap);
+        item.appendChild(wrap);
+        item.appendChild(el("span", { class: "characteristic-success is-empty" }, [
+          el("span", { class: "success-standard" }),
+          el("span", { class: "success-separator", text: "/", "aria-hidden": "true" }),
+          el("span", { class: "success-special", "aria-hidden": "true" }),
+          el("span", { class: "success-separator", text: "/", "aria-hidden": "true" }),
+          el("span", { class: "success-critical", "aria-hidden": "true" })
+        ]));
+        document.getElementById("characteristics").appendChild(item);
       });
 
       var elementalRunes = [
@@ -5253,15 +5645,216 @@
         });
       });
 
+      function runeSpellCostLabel(cost) {
+        var value = cleanText(cost);
+        return /\+$/.test(value) ? value : "(" + value + ")";
+      }
+
+      function runeSpellStoredName(spell) {
+        return spell ? spell.zh + " " + runeSpellCostLabel(spell.cost) : "";
+      }
+
+      function resolveRuneSpell(idValue, nameValue) {
+        var id = cleanText(idValue);
+        if (id && RUNE_SPELL_BY_ID[id]) return RUNE_SPELL_BY_ID[id];
+        var name = normalizedText(nameValue);
+        if (!name) return null;
+        var lowerName = name.toLowerCase();
+        var exact = RUNE_SPELL_CATALOG.find(function (spell) {
+          return lowerName === spell.en.toLowerCase() ||
+            name === spell.zh ||
+            name === runeSpellStoredName(spell);
+        });
+        if (exact) return exact;
+        return RUNE_SPELL_CATALOG.slice().sort(function (left, right) {
+          return Math.max(right.zh.length, right.en.length) - Math.max(left.zh.length, left.en.length);
+        }).find(function (spell) {
+          return name.indexOf(spell.zh) !== -1 || lowerName.indexOf(spell.en.toLowerCase()) === 0;
+        }) || null;
+      }
+
+      function renderRuneSpellRow(index) {
+        var idField = fieldByName("rune_spell_" + index + "_spell_id");
+        var nameField = fieldByName("rune_spell_" + index + "_name");
+        var display = document.querySelector('[data-rune-spell-display="' + index + '"]');
+        if (!display || !nameField || !idField) return;
+        var spell = resolveRuneSpell(idField.value, nameField.value);
+        display.textContent = "";
+        display.classList.toggle("is-empty", !spell && !cleanText(nameField.value));
+        if (!spell) {
+          if (cleanText(nameField.value)) {
+            display.appendChild(el("span", { class: "rune-spell-title", text: cleanText(nameField.value) }));
+          }
+          display.setAttribute("aria-label", cleanText(nameField.value) || "未設定符文魔法");
+          return;
+        }
+        idField.value = spell.id;
+        nameField.value = runeSpellStoredName(spell);
+        display.classList.remove("is-empty");
+        display.appendChild(el("span", { class: "rune-spell-glyph", text: spell.glyph, "aria-hidden": "true" }));
+        display.appendChild(el("span", { class: "rune-spell-title", text: spell.zh, title: spell.zh }));
+        display.appendChild(el("span", { class: "rune-spell-cost", text: runeSpellCostLabel(spell.cost) }));
+        display.setAttribute("aria-label", spell.zh + "，費用 " + runeSpellCostLabel(spell.cost));
+      }
+
+      function syncRuneSpellRows() {
+        for (var i = 0; i < RUNE_SPELL_LIMIT; i += 1) renderRuneSpellRow(i);
+      }
+
       function spellRow(prefix, i) {
         var tr = el("tr");
+        if (prefix === "rune_spell") {
+          var display = el("div", { class: "rune-spell-display is-empty", "data-rune-spell-display": i, "aria-label": "未設定符文魔法" });
+          var nameField = input(prefix + "_" + i + "_name", "", "hidden");
+          var idField = input(prefix + "_" + i + "_spell_id", "", "hidden");
+          tr.appendChild(el("td", { "data-mobile-label": "法術名稱" }, [display, nameField, idField]));
+          tr.appendChild(el("td", { "data-mobile-label": "備註" }, [input(prefix + "_" + i + "_note")]));
+          return tr;
+        }
         ["name", "note"].forEach(function (key) {
           tr.appendChild(el("td", {}, [input(prefix + "_" + i + "_" + key)]));
         });
         return tr;
       }
-      makeRows("rune-spell-rows", 8, function (i) { return spellRow("rune_spell", i); });
+      makeRows("rune-spell-rows", RUNE_SPELL_LIMIT, function (i) { return spellRow("rune_spell", i); });
       makeRows("spirit-spell-rows", 8, function (i) { return spellRow("spirit_spell", i); });
+
+      var runeSpellManagerModal = byId("rune-spell-manager");
+      var runeSpellCatalog = byId("rune-spell-catalog");
+      var runeSpellSearch = byId("rune-spell-search");
+      var runeSpellSelectedCount = byId("rune-spell-selected-count");
+      var runeSpellNoResults = byId("rune-spell-no-results");
+      var runeSpellManagerError = byId("rune-spell-manager-error");
+      var runeSpellDraft = [];
+
+      function currentRuneSpellIds() {
+        var result = [];
+        for (var i = 0; i < RUNE_SPELL_LIMIT; i += 1) {
+          var idField = fieldByName("rune_spell_" + i + "_spell_id");
+          var nameField = fieldByName("rune_spell_" + i + "_name");
+          var spell = resolveRuneSpell(idField && idField.value, nameField && nameField.value);
+          if (spell && result.indexOf(spell.id) === -1) result.push(spell.id);
+        }
+        return result;
+      }
+
+      function showRuneSpellManagerError(message) {
+        runeSpellManagerError.textContent = message || "";
+        runeSpellManagerError.hidden = !message;
+      }
+
+      function buildRuneSpellCatalog() {
+        runeSpellCatalog.textContent = "";
+        var fragment = document.createDocumentFragment();
+        RUNE_SPELL_CATALOG.forEach(function (spell) {
+          var checkbox = el("input", {
+            type: "checkbox",
+            "data-rune-spell-id": spell.id,
+            "aria-label": "選擇" + spell.zh
+          });
+          var option = el("label", {
+            class: "rune-spell-option",
+            "data-rune-spell-option": spell.id,
+            "data-rune-spell-search": (spell.zh + " " + spell.en).toLowerCase()
+          }, [
+            checkbox,
+            el("span", { class: "rune-spell-option-glyph", text: spell.glyph, "aria-hidden": "true" }),
+            el("span", { class: "rune-spell-option-copy" }, [
+              el("strong", { text: spell.zh }),
+              el("small", { text: spell.en })
+            ]),
+            el("span", { class: "rune-spell-option-cost", text: runeSpellCostLabel(spell.cost) })
+          ]);
+          fragment.appendChild(option);
+        });
+        runeSpellCatalog.appendChild(fragment);
+      }
+
+      function syncRuneSpellManagerUI() {
+        var query = normalizedText(runeSpellSearch.value).toLowerCase();
+        var atLimit = runeSpellDraft.length >= RUNE_SPELL_LIMIT;
+        var visibleCount = 0;
+        runeSpellCatalog.querySelectorAll("[data-rune-spell-option]").forEach(function (option) {
+          var id = option.getAttribute("data-rune-spell-option");
+          var selected = runeSpellDraft.indexOf(id) !== -1;
+          var matches = !query || option.getAttribute("data-rune-spell-search").indexOf(query) !== -1;
+          var checkbox = option.querySelector('input[type="checkbox"]');
+          option.hidden = !matches;
+          if (matches) visibleCount += 1;
+          option.classList.toggle("is-selected", selected);
+          option.classList.toggle("is-disabled", atLimit && !selected);
+          checkbox.checked = selected;
+          checkbox.disabled = atLimit && !selected;
+        });
+        runeSpellSelectedCount.textContent = "已選 " + runeSpellDraft.length + "/" + RUNE_SPELL_LIMIT;
+        runeSpellNoResults.hidden = visibleCount !== 0;
+      }
+
+      function openRuneSpellManager() {
+        syncRuneSpellRows();
+        runeSpellDraft = currentRuneSpellIds();
+        runeSpellSearch.value = "";
+        showRuneSpellManagerError("");
+        buildRuneSpellCatalog();
+        syncRuneSpellManagerUI();
+        setModalVisibility(runeSpellManagerModal, true);
+        document.body.classList.add("spell-manager-open");
+        window.setTimeout(function () { runeSpellSearch.focus(); }, 0);
+      }
+
+      function closeRuneSpellManager() {
+        setModalVisibility(runeSpellManagerModal, false);
+        document.body.classList.remove("spell-manager-open");
+        byId("rune-spell-manager-button").focus();
+      }
+
+      function applyRuneSpellManager() {
+        var notesById = Object.create(null);
+        for (var i = 0; i < RUNE_SPELL_LIMIT; i += 1) {
+          var currentIdField = fieldByName("rune_spell_" + i + "_spell_id");
+          var currentNameField = fieldByName("rune_spell_" + i + "_name");
+          var currentNoteField = fieldByName("rune_spell_" + i + "_note");
+          var currentSpell = resolveRuneSpell(currentIdField && currentIdField.value, currentNameField && currentNameField.value);
+          if (currentSpell && currentNoteField) notesById[currentSpell.id] = currentNoteField.value;
+        }
+        for (var row = 0; row < RUNE_SPELL_LIMIT; row += 1) {
+          var spell = RUNE_SPELL_BY_ID[runeSpellDraft[row]] || null;
+          setSheetValue("rune_spell_" + row + "_spell_id", spell ? spell.id : "");
+          setSheetValue("rune_spell_" + row + "_name", runeSpellStoredName(spell));
+          setSheetValue("rune_spell_" + row + "_note", spell && Object.prototype.hasOwnProperty.call(notesById, spell.id) ? notesById[spell.id] : "");
+        }
+        syncRuneSpellRows();
+        saveData();
+        closeRuneSpellManager();
+      }
+
+      runeSpellSearch.addEventListener("input", syncRuneSpellManagerUI);
+      runeSpellCatalog.addEventListener("change", function (event) {
+        var checkbox = event.target.closest("[data-rune-spell-id]");
+        if (!checkbox) return;
+        var id = checkbox.getAttribute("data-rune-spell-id");
+        var index = runeSpellDraft.indexOf(id);
+        if (checkbox.checked && index === -1) {
+          if (runeSpellDraft.length >= RUNE_SPELL_LIMIT) {
+            checkbox.checked = false;
+            showRuneSpellManagerError("符文魔法最多可設定 " + RUNE_SPELL_LIMIT + " 項。");
+          } else {
+            runeSpellDraft.push(id);
+            showRuneSpellManagerError("");
+          }
+        } else if (!checkbox.checked && index !== -1) {
+          runeSpellDraft.splice(index, 1);
+          showRuneSpellManagerError("");
+        }
+        syncRuneSpellManagerUI();
+      });
+      byId("rune-spell-manager-button").addEventListener("click", openRuneSpellManager);
+      byId("rune-spell-manager-close").addEventListener("click", closeRuneSpellManager);
+      byId("rune-spell-manager-cancel").addEventListener("click", closeRuneSpellManager);
+      byId("rune-spell-manager-apply").addEventListener("click", applyRuneSpellManager);
+      runeSpellManagerModal.addEventListener("click", function (event) {
+        if (event.target === runeSpellManagerModal) closeRuneSpellManager();
+      });
 
       makeRows("page3-sorcery-rows", 8, function (i) {
         var tr = el("tr");
@@ -5401,8 +5994,34 @@
         }
       }
 
+      function updateCharacteristicSuccessDisplay(item) {
+        var field = item.querySelector(".stat input");
+        var rawValue = field ? parseRollNumber(field.value) : null;
+        var standard = rawValue === null ? null : rawValue * 5;
+        var special = successThreshold(standard, 5);
+        var critical = successThreshold(standard, 20);
+        var wrapper = item.querySelector(".characteristic-success");
+        if (!wrapper) return;
+        var standardNode = wrapper.querySelector(".success-standard");
+        standardNode.textContent = formatSuccessNumber(standard);
+        wrapper.querySelector(".success-special").textContent = formatSuccessNumber(special);
+        wrapper.querySelector(".success-critical").textContent = formatSuccessNumber(critical);
+        wrapper.classList.toggle("is-empty", standard === null);
+        if (standard === null) {
+          wrapper.removeAttribute("aria-label");
+          wrapper.removeAttribute("title");
+          standardNode.removeAttribute("aria-label");
+        } else {
+          var description = "標準 " + formatSuccessNumber(standard) + "；特殊 " + formatSuccessNumber(special) + "；關鍵 " + formatSuccessNumber(critical);
+          wrapper.setAttribute("aria-label", description);
+          wrapper.setAttribute("title", description);
+          standardNode.setAttribute("aria-label", "屬性 ×5 標準值 " + formatSuccessNumber(standard) + "，點選複製");
+        }
+      }
+
       function updateAllSuccessDisplays() {
         document.querySelectorAll(".success-values").forEach(updateSuccessDisplay);
+        document.querySelectorAll("#characteristics .characteristic-item").forEach(updateCharacteristicSuccessDisplay);
       }
 
       function markRollCopyTargets() {
@@ -5456,9 +6075,10 @@
         Object.keys(DERIVED_ROLL_COPY_FIELDS).forEach(function (name) {
           mark(successTarget(fieldByName(name)), "預覽模式：點一下複製標準" + DERIVED_ROLL_COPY_FIELDS[name] + "值");
         });
-        document.querySelectorAll("#characteristics .stat").forEach(function (stat) {
-          mark(stat.querySelector("label"));
-          mark(stat.querySelector("input"));
+        document.querySelectorAll("#characteristics .characteristic-item").forEach(function (item) {
+          mark(item.querySelector("label"));
+          mark(item.querySelector("input"), "預覽模式：點一下複製屬性 ×5 標準值");
+          mark(item.querySelector(".characteristic-success .success-standard"), "預覽模式：點一下複製屬性 ×5 標準值");
         });
       }
 
@@ -5470,13 +6090,13 @@
       }
 
       function rollCopyPayload(trigger) {
-        var characteristic = trigger.closest("#characteristics .stat");
+        var characteristic = trigger.closest("#characteristics .characteristic-item");
         if (characteristic) {
           var characteristicName = characteristic.querySelector("label");
           var characteristicField = characteristic.querySelector("input");
           var characteristicValue = characteristicField ? parseRollNumber(characteristicField.value) : null;
           return characteristicName && characteristicValue !== null ? {
-            value: characteristicValue,
+            value: characteristicValue * 5,
             name: String(characteristicName.textContent || "").trim()
           } : null;
         }
@@ -9436,6 +10056,7 @@
             if (!matchingKeys.length) throw new Error("檔案中沒有可匯入的角色表欄位。");
             if (!window.confirm("匯入 JSON 將取代目前角色表內容。瀏覽器中的現有紀錄也會更新，要繼續嗎？")) return;
             applyPersistData(imported, true);
+            syncRuneSpellRows();
             if (parsed.layout === "folding" || parsed.layout === "standard") setLayoutMode(parsed.layout, true);
             var importedHomeland = String(homelandAppliedField.value || "").trim();
             applyHomelandDisplayDetails(HOMELAND_TEMPLATES[importedHomeland] || null);
@@ -9618,6 +10239,7 @@
       document.addEventListener("keydown", function (event) {
         if (event.key !== "Escape") return;
         if (!restModal.hidden) closeRestDialog();
+        else if (!runeSpellManagerModal.hidden) closeRuneSpellManager();
         else if (!equipmentManagerModal.hidden) closeEquipmentManager();
         else if (!builderModal.hidden) closeBuilder();
       });
@@ -9634,6 +10256,7 @@
         if (!window.confirm("要清除這份雛形中所有已輸入的內容嗎？")) return;
         localStorage.removeItem(STORAGE_KEY);
         applyPersistData({}, true);
+        syncRuneSpellRows();
         initializeOpposedRunes();
         applyHomelandDisplayDetails(null);
         renderHomelandStatus("");
@@ -9710,6 +10333,7 @@
       setLayoutMode(savedLayoutMode, false);
 
       loadData();
+      syncRuneSpellRows();
       initializeResourceValues();
       var loadedHomeland = String(homelandAppliedField.value || "").trim();
       if (loadedHomeland && HOMELAND_TEMPLATES[loadedHomeland]) {
