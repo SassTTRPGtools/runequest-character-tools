@@ -10251,7 +10251,39 @@
         importJsonFile(event.target.files && event.target.files[0]);
         event.target.value = "";
       });
-      document.getElementById("print-button").addEventListener("click", function () { window.print(); });
+      var documentTitleBeforePrint = document.title;
+      var printTitleApplied = false;
+
+      function characterSheetPdfTitle() {
+        var nameField = fieldByName("name");
+        var characterName = String(nameField ? nameField.value : "").trim()
+          .replace(/[\\/:*?"<>|]+/g, "_")
+          .replace(/\s+/g, " ")
+          .replace(/[. ]+$/g, "")
+          .slice(0, 80);
+        return (characterName || "未命名角色") + "_RQG_非官方角色表";
+      }
+
+      function applyPrintDocumentTitle() {
+        if (!printTitleApplied) {
+          documentTitleBeforePrint = document.title;
+          printTitleApplied = true;
+        }
+        document.title = characterSheetPdfTitle();
+      }
+
+      function restoreDocumentTitleAfterPrint() {
+        if (!printTitleApplied) return;
+        document.title = documentTitleBeforePrint;
+        printTitleApplied = false;
+      }
+
+      window.addEventListener("beforeprint", applyPrintDocumentTitle);
+      window.addEventListener("afterprint", restoreDocumentTitleAfterPrint);
+      document.getElementById("print-button").addEventListener("click", function () {
+        applyPrintDocumentTitle();
+        window.print();
+      });
       document.getElementById("clear-button").addEventListener("click", function () {
         if (!window.confirm("要清除這份雛形中所有已輸入的內容嗎？")) return;
         localStorage.removeItem(STORAGE_KEY);
