@@ -678,10 +678,10 @@
     }
     .characteristic-success {
       display: inline-grid;
-      grid-template-columns: auto 4px auto 4px auto;
+      grid-template-columns: 17px 4px 13px 4px 11px;
       align-items: baseline;
       justify-content: center;
-      width: auto;
+      width: 49px;
       max-width: 100%;
       min-height: 8px;
       margin-top: 2px;
@@ -692,7 +692,11 @@
     .characteristic-success .success-standard {
       grid-column: 1;
       grid-row: 1;
-      min-width: 0;
+      width: 17px;
+      min-width: 17px;
+      min-height: 8px;
+      border-bottom: 1px solid var(--write-line);
+      box-sizing: border-box;
       font-size: 8px;
       text-align: center;
     }
@@ -703,12 +707,16 @@
       text-align: center;
     }
     .characteristic-success .success-special {
+      width: 13px;
+      min-width: 13px;
       color: #555;
       font-size: 7px;
       font-weight: 800;
       text-align: center;
     }
     .characteristic-success .success-critical {
+      width: 11px;
+      min-width: 11px;
       color: #777;
       font-size: 6px;
       font-weight: 800;
@@ -3697,6 +3705,31 @@
       .fold-guide, .fold-gear { left: 8mm; right: 8mm; }
       .fold-gear { bottom: 14mm; }
       input, textarea, select { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      body.print-blank-sheet .success-values .success-standard,
+      body.print-blank-sheet .success-values .success-special,
+      body.print-blank-sheet .success-values .success-critical,
+      body.print-blank-sheet .characteristic-success .success-standard,
+      body.print-blank-sheet .characteristic-success .success-special,
+      body.print-blank-sheet .characteristic-success .success-critical,
+      body.print-blank-sheet .calculated-field,
+      body.print-blank-sheet .print-auto-empty,
+      body.print-blank-sheet .sorcery-mastery-display.is-empty,
+      body.print-blank-sheet .current-value-penalty {
+        color: transparent !important;
+        text-shadow: none !important;
+      }
+      body.print-blank-sheet .success-values.is-empty .success-separator,
+      body.print-blank-sheet .characteristic-success.is-empty .success-separator {
+        visibility: visible !important;
+        color: var(--muted) !important;
+      }
+      body.print-blank-sheet .circle-track input:checked + span,
+      body.print-blank-sheet .circle-track label.is-spent span {
+        border-color: var(--line) !important;
+        color: var(--ink) !important;
+        font-weight: 400 !important;
+        background: transparent !important;
+      }
     }
   </style>
 </head>
@@ -4261,6 +4294,7 @@
       var STORAGE_KEY = "rq-modern-character-sheet-v1";
       var MODE_KEY = STORAGE_KEY + "-layout-mode";
       var RUNE_BLANK_MIGRATION_KEY = STORAGE_KEY + "-blank-opposed-runes-v1";
+      var RUNE_POINT_BLANK_MIGRATION_KEY = STORAGE_KEY + "-blank-rune-points-v1";
       var GEAR_ROW_COUNT = 12;
       var HIT_LOCATION_COUNT = 10;
       var RESOURCE_TRACKS = { mp: 24, rp: 10, rp2: 10 };
@@ -5872,8 +5906,8 @@
         var mpMaximum = numericFieldValue("mp_max");
         var mpCurrentField = fieldByName("mp_current");
         syncCalculatedDefault(mpCurrentField, mpMaximum, "data-resource-default");
-        syncCalculatedDefault(fieldByName("rp_max"), 10, "data-resource-default");
-        syncCalculatedDefault(fieldByName("rp2_max"), 10, "data-resource-default");
+        syncCalculatedDefault(fieldByName("rp_max"), null, "data-resource-default");
+        syncCalculatedDefault(fieldByName("rp2_max"), null, "data-resource-default");
         Object.keys(RESOURCE_TRACKS).forEach(function (prefix) {
           syncResourceTrack(prefix, RESOURCE_TRACKS[prefix]);
         });
@@ -10670,6 +10704,28 @@
             localStorage.setItem(RUNE_BLANK_MIGRATION_KEY, "done");
           } catch (e) { /* 無法使用儲存空間時仍維持本次顯示 */ }
         }
+        var shouldMigrateRunePointDefaults = false;
+        try { shouldMigrateRunePointDefaults = localStorage.getItem(RUNE_POINT_BLANK_MIGRATION_KEY) !== "done"; } catch (e) { shouldMigrateRunePointDefaults = false; }
+        if (shouldMigrateRunePointDefaults) {
+          var migratedRunePointDefaults = false;
+          [["rp", "cult_rank"], ["rp2", "associated_cult"]].forEach(function (entry) {
+            var prefix = entry[0];
+            var cultKey = entry[1];
+            var maximum = data[prefix + "_max"] === undefined ? "" : String(data[prefix + "_max"]).trim();
+            var current = data[prefix + "_current"] === undefined ? "" : String(data[prefix + "_current"]).trim();
+            var cult = data[cultKey] === undefined ? "" : String(data[cultKey]).trim();
+            if (!cult && maximum === "10" && (current === "" || current === "10")) {
+              data[prefix + "_max"] = "";
+              data[prefix + "_current"] = "";
+              for (var value = 0; value <= 10; value += 1) data[prefix + "_mark_" + value] = false;
+              migratedRunePointDefaults = true;
+            }
+          });
+          try {
+            if (migratedRunePointDefaults) localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            localStorage.setItem(RUNE_POINT_BLANK_MIGRATION_KEY, "done");
+          } catch (e) { /* 無法使用儲存空間時仍維持本次顯示 */ }
+        }
         if (!data.honor && data.passion_0_value) data.honor = data.passion_0_value;
         if (!data.honor_xp && data.passion_0_xp) data.honor_xp = data.passion_0_xp;
         Object.keys(RESOURCE_TRACKS).forEach(function (prefix) {
@@ -10963,7 +11019,52 @@
         return (characterName || "未命名角色") + "_RQG_非官方角色表";
       }
 
+      function fieldContainsEnteredSheetData(field) {
+        if (!field || field.disabled) return false;
+        if (field.type === "checkbox" || field.type === "radio") return field.checked;
+        var value = String(field.value || "").trim();
+        if (!value) return false;
+        var name = String(field.name || "");
+
+        // These values are generated by the blank sheet itself and are not
+        // evidence that the user has started filling in a character.
+        if (field.classList.contains("calculated-field")) return false;
+        if (name === "spirit_combat_weapon_name" || name === "spirit_combat_weapon_sr") return false;
+        if (/^location_\d+_(name|range)$/.test(name)) return false;
+        if (field.hasAttribute("data-resource-default") && value === field.getAttribute("data-resource-default")) return false;
+        if (field.hasAttribute("data-location-hp-default") && value === field.getAttribute("data-location-hp-default")) return false;
+        if (field.hasAttribute("data-calculated-default") && value === field.getAttribute("data-calculated-default")) return false;
+        return true;
+      }
+
+      function sheetHasEnteredData() {
+        return Array.prototype.some.call(document.querySelectorAll("input.persist, textarea.persist, select.persist"), fieldContainsEnteredSheetData);
+      }
+
+      function prepareBlankSheetForPrint() {
+        var isBlank = !sheetHasEnteredData();
+        document.body.classList.toggle("print-blank-sheet", isBlank);
+        document.querySelectorAll(".print-auto-empty").forEach(function (field) {
+          field.classList.remove("print-auto-empty");
+        });
+        if (!isBlank) return;
+        document.querySelectorAll("[data-resource-default], [data-location-hp-default], [data-calculated-default]").forEach(function (field) {
+          var automaticValue = field.getAttribute("data-resource-default");
+          if (automaticValue === null) automaticValue = field.getAttribute("data-location-hp-default");
+          if (automaticValue === null) automaticValue = field.getAttribute("data-calculated-default");
+          if (String(field.value || "").trim() === String(automaticValue || "").trim()) field.classList.add("print-auto-empty");
+        });
+      }
+
+      function restoreBlankSheetAfterPrint() {
+        document.body.classList.remove("print-blank-sheet");
+        document.querySelectorAll(".print-auto-empty").forEach(function (field) {
+          field.classList.remove("print-auto-empty");
+        });
+      }
+
       function applyPrintDocumentTitle() {
+        prepareBlankSheetForPrint();
         if (!printTitleApplied) {
           documentTitleBeforePrint = document.title;
           printTitleApplied = true;
@@ -10972,6 +11073,7 @@
       }
 
       function restoreDocumentTitleAfterPrint() {
+        restoreBlankSheetAfterPrint();
         if (!printTitleApplied) return;
         document.title = documentTitleBeforePrint;
         printTitleApplied = false;
